@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Market Detective</string>
+    <string name="action_settings">Settings</string>
+    <string name="scan">Scan</string>
+    <string name="search_text">Search Text</string>
+    <string name="search_hint">Enter product name..</string>
+    <string name="search">Search</string>
+    <string name="location">Locate</string>
+    <string name="detective">Detective</string>
+    <string name="products_text">Your spied products listed here..</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="comma">,</string>
+    <string name="logtag">MDlog</string>
+    <string name="setProductPrice">Set a price for the product</string>
+    <string name="title_activity_market_select">MarketSelectActivity</string>
+
+    <string name="facebook_app_id">897460156962618</string>
+
+</resources>

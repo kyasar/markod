@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+    
+   <EditText
+       android:id="@+id/numberMain"
+       android:layout_width="100sp"
+       android:layout_height="wrap_content"
+       android:padding="10dip"
+       android:gravity="center"
+       android:inputType="number"
+       android:layout_weight="1"
+       android:maxLength="2"
+       android:textStyle="bold"
+       android:textSize="48sp" />
+   
+   <TextView android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:padding="10dip"
+       android:text="@string/comma"
+       android:gravity="center"
+       android:textStyle="bold"
+       android:textSize="48sp" />
+   
+  	<EditText
+       android:id="@+id/numberCent"
+       android:layout_width="100sp"
+       android:layout_height="wrap_content"
+       android:padding="10dip"
+       android:gravity="center"
+       android:inputType="number"
+       android:layout_weight="1"
+       android:maxLength="2"
+       android:textStyle="bold"
+       android:textSize="48sp" />
+   	
+</LinearLayout>
