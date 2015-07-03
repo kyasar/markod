@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.dopamin.markod.authentication.FacebookSignup;
+import com.dopamin.markod.objects.User;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -29,6 +31,7 @@ public class MainActivity extends Activity {
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
     public static String MARKET_DETAILS_HASHMAP = "MARKET_DETAILS";
     public static String TAG = "MDlog";
+    public static User user;
     private CallbackManager callbackManager;
     private LoginButton loginButton;
     private TextView loginNameTxt;
@@ -67,15 +70,20 @@ public class MainActivity extends Activity {
             }
         });
 
+        /* Facebook Login */
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("user_friends");
 
+        /* These classes call your code when access token or profile changes happen */
         setupTokenTracker();
         setupProfileTracker();
 
         mTokenTracker.startTracking();
         mProfileTracker.startTracking();
+
+        /* This is dev code; gets current profile info even if app shuts down */
+        setProfileTextView();
 
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -104,6 +112,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.v(TAG, "onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+
         if (requestCode == SELECT_NEARBY_MARKET_REQUESTCODE && resultCode == RESULT_OK && data != null) {
             //num1 = data.getIntExtra(Number1Code);
             //num2 = data.getIntExtra(Number2Code);
@@ -117,15 +128,20 @@ public class MainActivity extends Activity {
             startActivity(intent);
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
         }
-
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        else { /* Facebook Activity returns */
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void setupTokenTracker() {
         mTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-                Log.d(TAG, "" + currentAccessToken);
+                if (currentAccessToken != null)
+                    Log.d(TAG, "Token changed new token: " + currentAccessToken.getToken());
+                else {
+                    Log.d(TAG, "Logout request.");
+                }
             }
         };
     }
@@ -134,8 +150,17 @@ public class MainActivity extends Activity {
         mProfileTracker = new ProfileTracker() {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-                Log.d(TAG, "" + currentProfile);
-                loginNameTxt.setText(constructWelcomeMessage(currentProfile));
+                if (currentProfile != null) {
+                    Log.d(TAG, "Profile changed new name: " + currentProfile.getName());
+                    Log.d(TAG, "Profile changed token: " + AccessToken.getCurrentAccessToken().getToken());
+                    loginNameTxt.setText(constructWelcomeMessage(currentProfile));
+
+                    FacebookSignup fs = new FacebookSignup();
+                    fs.execute(currentProfile.getFirstName(), currentProfile.getLastName(), currentProfile.getMiddleName(),
+                            currentProfile.getId(), AccessToken.getCurrentAccessToken().getToken());
+                } else {
+                    Log.d(TAG, "Profile gone.");
+                }
             }
         };
     }
@@ -146,5 +171,9 @@ public class MainActivity extends Activity {
             stringBuffer.append("Welcome " + profile.getName());
         }
         return stringBuffer.toString();
+    }
+
+    private void setProfileTextView() {
+        loginNameTxt.setText(constructWelcomeMessage(Profile.getCurrentProfile()));
     }
 }

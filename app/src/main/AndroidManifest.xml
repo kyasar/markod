@@ -2,13 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dopamin.markod" >
 
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Permissions for Google services -->
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- Location permission -->
@@ -19,25 +18,33 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
+    <!--
+     To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user. This disconnect
+     option is required to comply with the Google+ Sign-In developer policies
+    -->
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" /> <!-- To retrieve the account name (email) as part of sign-in: -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name="com.dopamin.markod.MainActivity"
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,19 +53,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dopamin.markod.MarketSelectActivity"
+            android:name=".MarketSelectActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_market_select" >
         </activity>
-        <activity android:name="com.dopamin.markod.PlaceDetailsActivity" />
-        <activity android:name="com.dopamin.markod.SpyMarketActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-
-        <activity android:name="com.facebook.FacebookActivity"
+        <activity android:name=".PlaceDetailsActivity" />
+        <activity
+            android:name=".SpyMarketActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <uses-library android:name="com.google.android.maps" />
+
     </application>
 
 </manifest>
