@@ -1,8 +1,13 @@
 package com.dopamin.markod.authentication;
 
+import android.app.Activity;
+import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.dopamin.markod.LoginActivity;
 import com.dopamin.markod.MainActivity;
 import com.dopamin.markod.objects.User;
 
@@ -11,8 +16,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,32 +35,50 @@ import java.util.List;
 /**
  * Created by kadir on 02.07.2015.
  */
-public class FacebookSignup extends AsyncTask<String, Integer, String> {
+public class FacebookSignup extends AsyncTask<String, Integer, Boolean> {
 
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public AsyncLoginResponse delegate = null;
+    /** progress dialog to show user that the backup is processing. */
+    private ProgressDialog dialog;
+    /** application context. */
+    private Activity activity;
+
+    public FacebookSignup(Activity activity) {
+        this.activity = activity;
+        dialog = new ProgressDialog(activity);
+    }
+
+    protected void onPreExecute() {
+        this.dialog.setMessage("Logging into markod.com");
+        this.dialog.show();
+    }
 
     //String data = null;
     private JSONObject sendHttpPost(String firstName, String lastName, String email, String id, String token) {
-        HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost(MDS_SERVER + "/mds/signup/fb");
+        // set the connection timeout value to 10 seconds (10000 milliseconds)
+        final HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+
+        HttpClient client = new DefaultHttpClient(httpParams);
+        HttpPost post = new HttpPost(LoginActivity.MDS_SERVER + "/mds/signup/fb");
         JSONObject json = null;
 
-        try {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-            nameValuePairs.add(new BasicNameValuePair("email", email));
-            nameValuePairs.add(new BasicNameValuePair("firstName", firstName));
-            nameValuePairs.add(new BasicNameValuePair("lastName", lastName));
-            nameValuePairs.add(new BasicNameValuePair("id", id));
-            nameValuePairs.add(new BasicNameValuePair("token", token));
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("firstName", firstName));
+        nameValuePairs.add(new BasicNameValuePair("lastName", lastName));
+        nameValuePairs.add(new BasicNameValuePair("id", id));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
 
-            /* UTF-8 charset encoding support */
+        /* UTF-8 charset encoding support */
+        try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
             post.setEntity(entity);
 
             HttpResponse response = client.execute(post);
             BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 
-            StringBuffer sb  = new StringBuffer();
+            StringBuffer sb = new StringBuffer();
             String line = "";
             while ((line = rd.readLine()) != null) {
                 sb.append(line);
@@ -61,9 +89,10 @@ public class FacebookSignup extends AsyncTask<String, Integer, String> {
 
             if (json.getString("status").equals("OK")) {
                 return json.getJSONObject("user");
-            }
-            else
+            } else
                 return null;
+        } catch (ConnectTimeoutException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -92,7 +121,7 @@ public class FacebookSignup extends AsyncTask<String, Integer, String> {
     // Invoked by execute() method of this object
     // Does not affect main activity
     @Override
-    protected String doInBackground(String... args) {
+    protected Boolean doInBackground(String... args) {
         JSONObject jsonUser;
         String firstName = args[0];
         String lastName  = args[1];
@@ -104,20 +133,23 @@ public class FacebookSignup extends AsyncTask<String, Integer, String> {
         MainActivity.user = createUserObject(jsonUser);
 
         if (MainActivity.user != null)
-            return "User object created.";
+            return true;
         else
-            return "User object can NOT be created !";
+            return false;
     }
 
     // Executed after the complete execution of doInBackground() method
     // This method is executed in Main Activity
     @Override
-    protected void onPostExecute(String result) {
-        //ParserTask parserTask = new ParserTask();
+    protected void onPostExecute(Boolean result) {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
 
         // Start parsing the Google places in JSON format
         // Invokes the "doInBackground()" method of the class ParseTask
-        Log.d(MainActivity.TAG, "postFB result: " + result);
+        Log.d(MainActivity.TAG, "postFB result, User acquired: " + result);
         //parserTask.execute(result);
+        delegate.processFinish(result);
     }
 }

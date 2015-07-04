@@ -6,21 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.dopamin.markod.authentication.FacebookSignup;
 import com.dopamin.markod.objects.User;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 
 import java.util.HashMap;
 
@@ -30,21 +18,15 @@ public class MainActivity extends Activity {
     private Button searchBtn, detectiveBtn;
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
     public static String MARKET_DETAILS_HASHMAP = "MARKET_DETAILS";
+    private int USER_LOGIN_REQUESTCODE = 2;
+    public static String USER_DETAILS = "USER_DETAILS";
     public static String TAG = "MDlog";
     public static User user;
-    private CallbackManager callbackManager;
-    private LoginButton loginButton;
     private TextView loginNameTxt;
-    private AccessTokenTracker mTokenTracker;
-    private ProfileTracker mProfileTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Facebook Sdk before UI
-        FacebookSdk.sdkInitialize(getApplicationContext());
-
         setContentView(R.layout.activity_main);
 
         searchBtn = (Button) findViewById(R.id.search_button);
@@ -64,48 +46,15 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 				/* Explicit intent for selecting a nearby market */
                 Log.v(TAG, "Detective Button clicked. OK.");
-                Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
-                startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
-                Log.v(TAG, "MainActivity: MarketSelectActivity is started. OK.");
-            }
-        });
-
-        /* Facebook Login */
-        callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("user_friends");
-
-        /* These classes call your code when access token or profile changes happen */
-        setupTokenTracker();
-        setupProfileTracker();
-
-        mTokenTracker.startTracking();
-        mProfileTracker.startTracking();
-
-        /* This is dev code; gets current profile info even if app shuts down */
-        setProfileTextView();
-
-        // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                AccessToken accessToken = loginResult.getAccessToken();
-                Log.v(TAG, "fblogin onSuccess, token: " + accessToken.getToken());
-                Profile profile = Profile.getCurrentProfile();
-                loginNameTxt.setText(constructWelcomeMessage(profile));
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.v(TAG, "fblogin onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.v(TAG, "fblogin onError");
+                if (user == null) {
+                    Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                    startActivityForResult(intent, USER_LOGIN_REQUESTCODE);
+                    Log.v(TAG, "LoginActivity is started. OK.");
+                } else {
+                    Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
+                    startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
+                    Log.v(TAG, "MarketSelectActivity is started. OK.");
+                }
             }
         });
     }
@@ -127,53 +76,15 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(getBaseContext(), SpyMarketActivity.class);
             startActivity(intent);
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
+        } else if (requestCode == USER_LOGIN_REQUESTCODE && resultCode == RESULT_OK) {
+
+            Log.v(TAG, "MainActivity: User is ready.");
+            loginNameTxt.setText(user.getFirstName()+ " " + user.getLastName() + " " + user.getPoints());
+
+            Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
+            startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
+            Log.v(TAG, "MarketSelectActivity is started. OK.");
         }
-        else { /* Facebook Activity returns */
-            callbackManager.onActivityResult(requestCode, resultCode, data);
-        }
     }
 
-    private void setupTokenTracker() {
-        mTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-                if (currentAccessToken != null)
-                    Log.d(TAG, "Token changed new token: " + currentAccessToken.getToken());
-                else {
-                    Log.d(TAG, "Logout request.");
-                }
-            }
-        };
-    }
-
-    private void setupProfileTracker() {
-        mProfileTracker = new ProfileTracker() {
-            @Override
-            protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-                if (currentProfile != null) {
-                    Log.d(TAG, "Profile changed new name: " + currentProfile.getName());
-                    Log.d(TAG, "Profile changed token: " + AccessToken.getCurrentAccessToken().getToken());
-                    loginNameTxt.setText(constructWelcomeMessage(currentProfile));
-
-                    FacebookSignup fs = new FacebookSignup();
-                    fs.execute(currentProfile.getFirstName(), currentProfile.getLastName(), currentProfile.getMiddleName(),
-                            currentProfile.getId(), AccessToken.getCurrentAccessToken().getToken());
-                } else {
-                    Log.d(TAG, "Profile gone.");
-                }
-            }
-        };
-    }
-
-    private String constructWelcomeMessage(Profile profile) {
-        StringBuffer stringBuffer = new StringBuffer();
-        if (profile != null) {
-            stringBuffer.append("Welcome " + profile.getName());
-        }
-        return stringBuffer.toString();
-    }
-
-    private void setProfileTextView() {
-        loginNameTxt.setText(constructWelcomeMessage(Profile.getCurrentProfile()));
-    }
 }

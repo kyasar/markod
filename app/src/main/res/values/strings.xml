@@ -17,5 +17,12 @@
     <string name="title_activity_market_select">MarketSelectActivity</string>
 
     <string name="facebook_app_id">897460156962618</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="password_hint">Password</string>
+    <string name="email_hint">Email</string>
+    <string name="loginBtn">Login</string>
+    <string name="registerText">New to Markod ! Click to register</string>
 
 </resources>
