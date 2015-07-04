@@ -79,7 +79,8 @@ public class MainActivity extends Activity {
         } else if (requestCode == USER_LOGIN_REQUESTCODE && resultCode == RESULT_OK) {
 
             Log.v(TAG, "MainActivity: User is ready.");
-            loginNameTxt.setText(user.getFirstName()+ " " + user.getLastName() + " " + user.getPoints());
+            loginNameTxt.setText(user.getFirstName()+ " " + user.getLastName() + " \n"
+                    + user.getPoints() + "\nsocial_id: " + user.getSocial_id() + " \nid: " + user.getId());
 
             Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
             startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);

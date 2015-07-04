@@ -8,6 +8,7 @@ public class User {
     private int points;
     private String token;
     private String id;
+    private String social_id;
     private UserLoginType userLoginType;
 
     public User(String firstName, String lastName, String token, String id, UserLoginType userLoginType) {
@@ -88,6 +89,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSocial_id() {
+        return social_id;
+    }
+
+    public void setSocial_id(String social_id) {
+        this.social_id = social_id;
     }
 
     public UserLoginType getUserLoginType() {
