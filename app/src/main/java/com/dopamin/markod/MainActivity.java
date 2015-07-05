@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 
 import java.util.HashMap;
@@ -16,13 +17,22 @@ public class MainActivity extends Activity {
 
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     private Button searchBtn, detectiveBtn;
+    /* Select market request for the Market Select Activity */
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
     public static String MARKET_DETAILS_HASHMAP = "MARKET_DETAILS";
+
+    /* User request for Login Activity */
     private int USER_LOGIN_REQUESTCODE = 2;
     public static String USER_DETAILS = "USER_DETAILS";
+
     public static String TAG = "MDlog";
+
+    /* Objects */
     public static User user;
+    public static Market market;
+
     private TextView loginNameTxt;
+    private TextView marketNameTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +42,7 @@ public class MainActivity extends Activity {
         searchBtn = (Button) findViewById(R.id.search_button);
         detectiveBtn = (Button) findViewById(R.id.detective_button);
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
+        marketNameTxt = (TextView) findViewById(R.id.market_name_text);
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,10 +79,9 @@ public class MainActivity extends Activity {
             //num1 = data.getIntExtra(Number1Code);
             //num2 = data.getIntExtra(Number2Code);
 
-            HashMap<String, String> market = (HashMap<String, String>) data.getExtras().getSerializable(MARKET_DETAILS_HASHMAP);
-
-            Log.v(TAG, "MainActivity: selected market name: " + market.get("place_name").toString());
-            Log.v(TAG, "MainActivity: selected market   ID: " + market.get("place_id").toString());
+            Log.v(TAG, "MainActivity: Market is ready");
+            marketNameTxt.setText(market.getPlace_name() + " \nid: " + market.getGmap_id() + " \n"
+                    + market.getVicinity());
 
             Intent intent = new Intent(getBaseContext(), SpyMarketActivity.class);
             startActivity(intent);

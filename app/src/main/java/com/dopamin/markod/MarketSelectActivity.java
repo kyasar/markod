@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.dopamin.markod.objects.Market;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -128,8 +129,9 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
                 if (hmPlace != null) {
                     Intent output = new Intent();
-                    output.putExtra(MainActivity.MARKET_DETAILS_HASHMAP, hmPlace);
-                    //output.putExtra(ActivityOne.Number2Code, num2);
+                    MainActivity.market = new Market(hmPlace.get("place_name").toString(),
+                            hmPlace.get("place_id").toString(),
+                            hmPlace.get("vicinity").toString());
                     setResult(RESULT_OK, output);
                     finish();
                 } else {
