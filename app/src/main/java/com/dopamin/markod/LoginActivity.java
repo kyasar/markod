@@ -24,18 +24,18 @@ import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 
 public class LoginActivity extends Activity implements AsyncLoginResponse {
 
-    public static String MDS_SERVER = "http://192.168.1.23:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
     private CallbackManager callbackManager;
     private LoginButton loginButton;
-    private TextView loginNameTxt;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
-    FacebookSignup fs;
+    private FacebookSignup fs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,9 @@ public class LoginActivity extends Activity implements AsyncLoginResponse {
         /* Facebook Login */
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("user_friends");
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        // Code belows remove facebook icon
+        // loginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         fs = new FacebookSignup(this);
         fs.delegate = this;
 
@@ -146,10 +148,6 @@ public class LoginActivity extends Activity implements AsyncLoginResponse {
             stringBuffer.append("Welcome " + profile.getName());
         }
         return stringBuffer.toString();
-    }
-
-    private void setProfileTextView() {
-        loginNameTxt.setText(constructWelcomeMessage(Profile.getCurrentProfile()));
     }
 
     @Override
