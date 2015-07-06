@@ -19,10 +19,14 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,6 +77,22 @@ public class LoginActivity extends Activity implements AsyncLoginResponse {
                 Log.v(MainActivity.TAG, "fblogin onSuccess, token: " + accessToken.getToken());
                 Profile profile = Profile.getCurrentProfile();
                 // loginNameTxt.setText(constructWelcomeMessage(profile));
+
+                GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject me, GraphResponse response) {
+                                if (response.getError() != null) {
+                                    // handle error
+                                    Log.e(MainActivity.TAG, "facebook graph error");
+                                } else {
+                                    String email = me.optString("email");
+                                    String id = me.optString("id");
+                                    // send email and id to your web server
+                                    Log.e(MainActivity.TAG, "facebook profile email: " + email + " id: " + id);
+                                }
+                            }
+                        }).executeAsync();
             }
 
             @Override
