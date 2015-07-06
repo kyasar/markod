@@ -34,7 +34,7 @@ import java.util.HashMap;
 
 public class LoginActivity extends Activity implements AsyncLoginResponse {
 
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public static String MDS_SERVER = "http://192.168.1.25:8000";
     private CallbackManager callbackManager;
     private LoginButton loginButton;
     private AccessTokenTracker mTokenTracker;

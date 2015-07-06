@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
+import com.dopamin.markod.sqlite.UserDatabaseHandler;
 
 import java.util.HashMap;
 
@@ -34,10 +35,15 @@ public class MainActivity extends Activity {
     private TextView loginNameTxt;
     private TextView marketNameTxt;
 
+    /* SQLite DB */
+    private UserDatabaseHandler db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = new UserDatabaseHandler(this);
 
         searchBtn = (Button) findViewById(R.id.search_button);
         detectiveBtn = (Button) findViewById(R.id.detective_button);
@@ -68,6 +74,14 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
+        // Reading all contacts
+        Log.d(TAG, "Reading User from DB..");
+        user = db.getUser();
+        if (user != null) {
+            Log.d(TAG, "User: " + user.getId());
+            setUserInfo();
+        }
     }
 
     @Override
@@ -88,9 +102,11 @@ public class MainActivity extends Activity {
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
         } else if (requestCode == USER_LOGIN_REQUESTCODE && resultCode == RESULT_OK) {
 
-            Log.v(TAG, "MainActivity: User is ready.");
-            loginNameTxt.setText(user.getFirstName()+ " " + user.getLastName() + " \n"
-                    + user.getPoints() + "\nsocial_id: " + user.getSocial_id() + " \nid: " + user.getId());
+            setUserInfo();
+
+            // Inserting Contacts
+            Log.d(TAG, "Inserting User ..");
+            db.addUser(user);
 
             Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
             startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
@@ -98,4 +114,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void setUserInfo() {
+        Log.v(TAG, "MainActivity: User is ready.");
+        loginNameTxt.setText(user.getFirstName()+ " " + user.getLastName() + " \n"
+                + user.getPoints() + "\nsocial_id: " + user.getSocial_id() + " \nid: " + user.getId());
+    }
 }

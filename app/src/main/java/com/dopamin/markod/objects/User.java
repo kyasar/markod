@@ -31,6 +31,19 @@ public class User {
         this.points = 0;
     }
 
+    public User(String firstName, String lastName, String email, int points, String id, String social_id, String userLoginType) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.points = points;
+        this.id = id;
+        this.social_id = social_id;
+        if (userLoginType.equalsIgnoreCase("facebook_user"))
+            this.userLoginType = UserLoginType.FACEBOOK_USER;
+        else
+            this.userLoginType = UserLoginType.LOCAL_USER;
+    }
+
     public User() {
         this.points = 0;
     }
