@@ -20,7 +20,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "userDB";
@@ -57,6 +57,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
+        Log.v(MainActivity.TAG, "Users table dropped.");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
 
         // Create tables again
@@ -101,9 +102,9 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
         Log.v(MainActivity.TAG, cursor.getString(0) + " " + cursor.getString(1) + " " + cursor.getString(2) + " " +
                 cursor.getString(3) + " " + cursor.getString(4) + " " + cursor.getString(5) + " " + cursor.getString(6));
 
-        return new User(cursor.getString(1), cursor.getString(2), cursor.getString(3),
-                Integer.parseInt(cursor.getString(6)), cursor.getString(0),
-                cursor.getString(5), cursor.getString(4));
+        return new User(cursor.getString(0), cursor.getString(1), cursor.getString(2),
+                cursor.getString(3), cursor.getString(4),
+                cursor.getString(5), Integer.parseInt(cursor.getString(6)));
     }
     /*
     // Updating single contact

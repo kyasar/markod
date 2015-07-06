@@ -31,17 +31,21 @@ public class User {
         this.points = 0;
     }
 
-    public User(String firstName, String lastName, String email, int points, String id, String social_id, String userLoginType) {
+    private UserLoginType convertToLoginType(String type) {
+        if (type.equalsIgnoreCase("facebook_user"))
+            return UserLoginType.FACEBOOK_USER;
+        else
+            return UserLoginType.LOCAL_USER;
+    }
+
+    public User(String id, String firstName, String lastName, String email, String userLoginType, String social_id, int points) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.points = points;
         this.id = id;
         this.social_id = social_id;
-        if (userLoginType.equalsIgnoreCase("facebook_user"))
-            this.userLoginType = UserLoginType.FACEBOOK_USER;
-        else
-            this.userLoginType = UserLoginType.LOCAL_USER;
+        this.userLoginType = convertToLoginType(userLoginType);
     }
 
     public User() {

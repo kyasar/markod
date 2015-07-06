@@ -116,7 +116,11 @@ public class MainActivity extends Activity {
 
     private void setUserInfo() {
         Log.v(TAG, "MainActivity: User is ready.");
-        loginNameTxt.setText(user.getFirstName()+ " " + user.getLastName() + " \n"
-                + user.getPoints() + "\nsocial_id: " + user.getSocial_id() + " \nid: " + user.getId());
+        loginNameTxt.setText( " full name: " + user.getFirstName()+ " " + user.getLastName()
+                + "\n email: " + user.getEmail()
+                + "\n points: " + user.getPoints()
+                + "\n social_type: " + user.getUserLoginType().toString()
+                + "\n social_id: " + user.getSocial_id()
+                + "\n id: " + user.getId());
     }
 }
