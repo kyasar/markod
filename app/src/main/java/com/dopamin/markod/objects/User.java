@@ -11,26 +11,6 @@ public class User {
     private String social_id;
     private UserLoginType userLoginType;
 
-    public User(String firstName, String lastName, String token, String id, UserLoginType userLoginType) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.token = token;
-        this.id = id;
-        this.userLoginType = userLoginType;
-        this.points = 0;
-    }
-
-    public User(String firstName, String lastName, String email, String username, String token, String id, UserLoginType userLoginType) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.username = username;
-        this.token = token;
-        this.id = id;
-        this.userLoginType = userLoginType;
-        this.points = 0;
-    }
-
     private UserLoginType convertToLoginType(String type) {
         if (type.equalsIgnoreCase("facebook_user"))
             return UserLoginType.FACEBOOK_USER;
