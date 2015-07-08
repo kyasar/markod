@@ -71,6 +71,7 @@
 
         <activity
             android:name=".LoginActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_login" >
         </activity>
     </application>

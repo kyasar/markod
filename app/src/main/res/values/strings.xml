@@ -28,4 +28,7 @@
     <!-- G+ button text -->
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
+
+    <!-- Style and Theme -->
+    <color name="markod_bg_color">#F5ECCE</color>
 </resources>
