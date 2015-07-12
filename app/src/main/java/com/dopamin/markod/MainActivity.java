@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
+    public static final boolean DEVELOPMENT = true;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     private Button searchBtn, detectiveBtn;
     /* Select market request for the Market Select Activity */
@@ -75,8 +76,9 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Reading all contacts
+        // Reading the user info from db
         Log.d(TAG, "Reading User from DB..");
+//        if (!MainActivity.DEVELOPMENT)
         user = db.getUser();
         if (user != null) {
             Log.d(TAG, "User: " + user.getId());

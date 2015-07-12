@@ -113,7 +113,6 @@ public class FacebookSignup extends AsyncTask<String, Integer, Boolean> {
             user.setId(jsonUser.getString("_id"));
             user.setPoints(Integer.parseInt(jsonUser.getString("points")));
             user.setSocial_id(jsonUser.getJSONObject("facebook").getString("id"));
-            user.setToken(jsonUser.getJSONObject("facebook").getString("token"));
             user.setUserLoginType(UserLoginType.FACEBOOK_USER);
         } catch (JSONException e) {
             e.printStackTrace();

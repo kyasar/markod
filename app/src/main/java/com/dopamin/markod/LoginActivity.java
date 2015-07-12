@@ -28,6 +28,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
@@ -45,6 +46,7 @@ import com.google.android.gms.plus.model.people.Person;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -52,7 +54,7 @@ import java.util.HashMap;
 public class LoginActivity extends Activity implements AsyncLoginResponse,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
-    public static String MDS_SERVER = "http://192.168.1.25:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
     private CallbackManager callbackManager;
     private LoginButton loginButton;
     private AccessTokenTracker mTokenTracker;
@@ -113,7 +115,7 @@ public class LoginActivity extends Activity implements AsyncLoginResponse,
             public void onSuccess(LoginResult loginResult) {
                 // App code
                 AccessToken accessToken = loginResult.getAccessToken();
-                Log.v(MainActivity.TAG, "fblogin onSuccess, token: " + accessToken.getToken());
+                Log.v(MainActivity.TAG, "fblogin onSuccess, token: " + accessToken.getToken() + "\n expires: " + accessToken.getExpires().getHours());
                 Profile profile = Profile.getCurrentProfile();
                 // loginNameTxt.setText(constructWelcomeMessage(profile));
 
@@ -129,6 +131,11 @@ public class LoginActivity extends Activity implements AsyncLoginResponse,
                                     String id = me.optString("id");
                                     // send email and id to your web server
                                     Log.e(MainActivity.TAG, "facebook profile email: " + email + " id: " + id);
+
+                                    new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
+                                            + me.optString("id") + "/picture?type=large");
+
+                                    updateUI(true);
                                 }
                             }
                         }).executeAsync();
@@ -257,7 +264,7 @@ public class LoginActivity extends Activity implements AsyncLoginResponse,
         } else {
             Intent output = new Intent();
             setResult(RESULT_OK, output);
-            finish();
+            //finish();
         }
     }
 
@@ -434,6 +441,7 @@ public class LoginActivity extends Activity implements AsyncLoginResponse,
         }
 
         protected void onPostExecute(Bitmap result) {
+            Log.v(MainActivity.TAG, "Setting profile Image..");
             bmImage.setImageBitmap(result);
         }
     }
