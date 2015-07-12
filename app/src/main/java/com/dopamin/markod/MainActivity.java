@@ -1,12 +1,20 @@
 package com.dopamin.markod;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
@@ -14,7 +22,7 @@ import com.dopamin.markod.sqlite.UserDatabaseHandler;
 
 import java.util.HashMap;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
     public static final boolean DEVELOPMENT = true;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
@@ -84,6 +92,9 @@ public class MainActivity extends Activity {
             Log.d(TAG, "User: " + user.getId());
             setUserInfo();
         }
+
+        // Enabling Up / Back navigation
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -118,11 +129,52 @@ public class MainActivity extends Activity {
 
     private void setUserInfo() {
         Log.v(TAG, "MainActivity: User is ready.");
-        loginNameTxt.setText( " full name: " + user.getFirstName()+ " " + user.getLastName()
+        loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
                 + "\n email: " + user.getEmail()
                 + "\n points: " + user.getPoints()
                 + "\n social_type: " + user.getUserLoginType().toString()
                 + "\n social_id: " + user.getSocial_id()
                 + "\n id: " + user.getId());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.v(MainActivity.TAG, "inflating Action bar view..");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actionbar_actions, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * On selecting action bar icons
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Take appropriate action for each action item click
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                // search action
+                Log.v(MainActivity.TAG, "SEARCH");
+                return true;
+            case R.id.action_location_found:
+                // location found
+                Log.v(MainActivity.TAG, "FOUND");
+                return true;
+            case R.id.action_refresh:
+                // refresh
+                Log.v(MainActivity.TAG, "REFRESH");
+                return true;
+            case R.id.action_help:
+                // help action
+                Log.v(MainActivity.TAG, "HELP");
+                return true;
+            case R.id.action_check_updates:
+                // check for updates action
+                Log.v(MainActivity.TAG, "UPDATE");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
