@@ -36,4 +36,5 @@
 
     <!-- Style and Theme -->
     <color name="markod_bg_color">#F5ECCE</color>
+    <string name="title_activity_base">BaseActivity</string>
 </resources>

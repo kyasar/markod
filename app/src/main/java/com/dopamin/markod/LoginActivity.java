@@ -51,7 +51,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 
-public class LoginActivity extends Activity implements AsyncLoginResponse,
+public class LoginActivity extends BaseActivity implements AsyncLoginResponse,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     public static String MDS_SERVER = "http://192.168.43.120:8000";
@@ -173,28 +173,9 @@ public class LoginActivity extends Activity implements AsyncLoginResponse,
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        // Enabling Up / Back navigation
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupTokenTracker() {

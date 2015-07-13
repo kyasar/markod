@@ -1,39 +1,27 @@
 package com.dopamin.markod;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.sqlite.UserDatabaseHandler;
 
-import java.util.HashMap;
-
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends BaseActivity {
 
     public static final boolean DEVELOPMENT = true;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     private Button searchBtn, detectiveBtn;
+
     /* Select market request for the Market Select Activity */
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
-    public static String MARKET_DETAILS_HASHMAP = "MARKET_DETAILS";
 
     /* User request for Login Activity */
     private int USER_LOGIN_REQUESTCODE = 2;
-    public static String USER_DETAILS = "USER_DETAILS";
 
     public static String TAG = "MDlog";
 
@@ -86,15 +74,12 @@ public class MainActivity extends ActionBarActivity {
 
         // Reading the user info from db
         Log.d(TAG, "Reading User from DB..");
-//        if (!MainActivity.DEVELOPMENT)
+        // if (!MainActivity.DEVELOPMENT)
         user = db.getUser();
         if (user != null) {
             Log.d(TAG, "User: " + user.getId());
             setUserInfo();
         }
-
-        // Enabling Up / Back navigation
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -135,46 +120,5 @@ public class MainActivity extends ActionBarActivity {
                 + "\n social_type: " + user.getUserLoginType().toString()
                 + "\n social_id: " + user.getSocial_id()
                 + "\n id: " + user.getId());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.v(MainActivity.TAG, "inflating Action bar view..");
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actionbar_actions, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * On selecting action bar icons
-     * */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Take appropriate action for each action item click
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                // search action
-                Log.v(MainActivity.TAG, "SEARCH");
-                return true;
-            case R.id.action_location_found:
-                // location found
-                Log.v(MainActivity.TAG, "FOUND");
-                return true;
-            case R.id.action_refresh:
-                // refresh
-                Log.v(MainActivity.TAG, "REFRESH");
-                return true;
-            case R.id.action_help:
-                // help action
-                Log.v(MainActivity.TAG, "HELP");
-                return true;
-            case R.id.action_check_updates:
-                // check for updates action
-                Log.v(MainActivity.TAG, "UPDATE");
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 }
