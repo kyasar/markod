@@ -1,12 +1,12 @@
 package com.dopamin.markod;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.dopamin.markod.authentication.AsyncLoginResponse;
 import com.dopamin.markod.authentication.FacebookSignup;
-import com.dopamin.markod.objects.User;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -28,7 +27,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
@@ -44,14 +42,10 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import org.json.JSONObject;
-
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
 
-
-public class LoginActivity extends BaseActivity implements AsyncLoginResponse,
+public class LoginActivity extends AppCompatActivity implements AsyncLoginResponse,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     public static String MDS_SERVER = "http://192.168.43.120:8000";
@@ -454,6 +448,36 @@ public class LoginActivity extends BaseActivity implements AsyncLoginResponse,
                             updateUI(false);
                         }
                     });
+        }
+    }
+
+    /* Action Bar */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.v(MainActivity.TAG, "inflating Action bar view..");
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_login, menu);
+        return true;
+    }
+
+    /**
+     * On selecting action bar icons
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v(MainActivity.TAG, "actionbar item: " + item.getItemId());
+        // Take appropriate action for each action item click
+        switch (item.getItemId()) {
+            case R.id.action_help:
+                // help action
+                Log.v(MainActivity.TAG, "HELP");
+                return true;
+            case R.id.action_settings:
+                // check for updates action
+                Log.v(MainActivity.TAG, "SETTINGS");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

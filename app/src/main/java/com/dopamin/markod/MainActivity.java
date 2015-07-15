@@ -2,7 +2,10 @@ package com.dopamin.markod;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,7 +14,7 @@ import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.sqlite.UserDatabaseHandler;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
 
     public static final boolean DEVELOPMENT = true;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
@@ -120,5 +123,42 @@ public class MainActivity extends BaseActivity {
                 + "\n social_type: " + user.getUserLoginType().toString()
                 + "\n social_id: " + user.getSocial_id()
                 + "\n id: " + user.getId());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.v(MainActivity.TAG, "inflating Action bar view..");
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    /**
+     * On selecting action bar icons
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v(MainActivity.TAG, "actionbar item: " + item.getItemId());
+        // Take appropriate action for each action item click
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                // search action
+                Log.v(MainActivity.TAG, "SEARCH");
+                return true;
+            case R.id.action_refresh:
+                // refresh
+                Log.v(MainActivity.TAG, "REFRESH");
+                return true;
+            case R.id.action_help:
+                // help action
+                Log.v(MainActivity.TAG, "HELP");
+                return true;
+            case R.id.action_settings:
+                // check for updates action
+                Log.v(MainActivity.TAG, "SETTINGS");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
