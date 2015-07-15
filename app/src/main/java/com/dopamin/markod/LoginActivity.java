@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -169,7 +170,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
 
         // Enabling Up / Back navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar ab = getSupportActionBar();
+        ab.setTitle(R.string.login_title);
+        ab.setDisplayShowTitleEnabled(true);
+        //ab.setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupTokenTracker() {

@@ -37,4 +37,6 @@
     <!-- Style and Theme -->
     <color name="markod_bg_color">#F5ECCE</color>
     <string name="title_activity_base">BaseActivity</string>
+    <string name="main_title">Welcome to Markod</string>
+    <string name="login_title">Please Login</string>
 </resources>

@@ -2,6 +2,7 @@ package com.dopamin.markod;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "User: " + user.getId());
             setUserInfo();
         }
+
+        ActionBar ab = getSupportActionBar();
+        ab.setTitle(R.string.main_title);
     }
 
     @Override
