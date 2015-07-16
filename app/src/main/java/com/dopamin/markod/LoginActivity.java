@@ -19,7 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dopamin.markod.authentication.AsyncLoginResponse;
-import com.dopamin.markod.authentication.FacebookSignup;
+import com.dopamin.markod.authentication.SignInUp;
+import com.dopamin.markod.objects.UserLoginType;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -49,12 +50,11 @@ import java.util.Arrays;
 public class LoginActivity extends AppCompatActivity implements AsyncLoginResponse,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
     private CallbackManager callbackManager;
     private LoginButton loginButton;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
-    private FacebookSignup fs;
+    private SignInUp signInUper;
 
     /**
      * A flag indicating that a PendingIntent is in progress and prevents us
@@ -89,10 +89,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-        // Code belows remove facebook icon
-        // loginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        fs = new FacebookSignup(this);
-        fs.delegate = this;
 
         /* These classes call your code when access token or profile changes happen */
         setupTokenTracker();
@@ -100,9 +96,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
 
         mTokenTracker.startTracking();
         mProfileTracker.startTracking();
-
-        /* This is dev code; gets current profile info even if app shuts down */
-        //setProfileTextView();
 
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -149,7 +142,9 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
             }
         });
 
+        /////////////////////
         /* Google+ Sign In */
+        /////////////////////
         btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
         btnSignOut = (Button) findViewById(R.id.btn_sign_out);
         btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
@@ -174,6 +169,9 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         ab.setTitle(R.string.login_title);
         ab.setDisplayShowTitleEnabled(true);
         //ab.setDisplayHomeAsUpEnabled(true);
+
+        signInUper = new SignInUp(this);
+        signInUper.delegate = this;
     }
 
     private void setupTokenTracker() {
@@ -198,8 +196,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                     Log.d(MainActivity.TAG, "Profile changed token: " + AccessToken.getCurrentAccessToken().getToken());
                     // loginNameTxt.setText(constructWelcomeMessage(currentProfile));
 
-                    fs.execute(currentProfile.getFirstName(), currentProfile.getLastName(), currentProfile.getMiddleName(),
-                            currentProfile.getId(), AccessToken.getCurrentAccessToken().getToken());
+                    signInUper.execute(currentProfile.getFirstName(),
+                            currentProfile.getLastName(),
+                            currentProfile.getMiddleName(),
+                            currentProfile.getId(),
+                            UserLoginType.FACEBOOK_USER.toString());
                 } else {
                     Log.d(MainActivity.TAG, "Profile gone.");
                 }
@@ -207,17 +208,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         };
     }
 
-    private String constructWelcomeMessage(Profile profile) {
-        StringBuffer stringBuffer = new StringBuffer();
-        if (profile != null) {
-            stringBuffer.append("Welcome " + profile.getName());
-        }
-        return stringBuffer.toString();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        /* Google+ SigIn Request Code */
         if (requestCode == RC_SIGN_IN) {
             if (resultCode != RESULT_OK) {
                 mSignInClicked = false;
