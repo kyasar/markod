@@ -1,6 +1,9 @@
 package com.dopamin.markod;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
@@ -44,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!isInternetAvailable()) //returns true if internet available
+        {
+            Toast.makeText(this, " No Internet Connection !! \n Check your Connection..", Toast.LENGTH_SHORT).show();
+            //TODO: Draw a new layout informing user that there is no connection.
+            return;
+        }
         setContentView(R.layout.activity_main);
 
         db = new UserDatabaseHandler(this);
@@ -167,4 +178,30 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public boolean isInternetAvailable()
+    {
+        NetworkInfo info = (NetworkInfo) ((ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (info == null)
+        {
+            Log.d(TAG,"no internet connection");
+            return false;
+        }
+        else
+        {
+            if(info.isConnected())
+            {
+                Log.d(TAG," internet connection available...");
+                return true;
+            }
+            else
+            {
+                Log.d(TAG," internet connection");
+                return true;
+            }
+        }
+    }
+
 }
