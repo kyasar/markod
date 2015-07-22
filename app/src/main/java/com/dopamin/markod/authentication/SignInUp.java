@@ -59,10 +59,16 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
         // set the connection timeout value to 10 seconds (10000 milliseconds)
         final HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-
         HttpClient client = new DefaultHttpClient(httpParams);
-        HttpPost post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/fb");
         JSONObject json = null;
+        HttpPost post;
+
+        if (type.equalsIgnoreCase(UserLoginType.FACEBOOK_USER.toString()) == true)
+            post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/fb");
+        else if (type.equalsIgnoreCase(UserLoginType.GOOGLE_USER.toString()))
+            post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/google");
+        else
+            post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/local");
 
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
         nameValuePairs.add(new BasicNameValuePair("email", email));
@@ -112,18 +118,31 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
             user.setEmail(jsonUser.getString("email"));
             user.setId(jsonUser.getString("_id"));
             user.setPoints(Integer.parseInt(jsonUser.getString("points")));
-            if (jsonUser.getJSONObject("facebook") != null) {
-                user.setSocial_id(jsonUser.getJSONObject("facebook").getString("id"));
-                user.setUserLoginType(UserLoginType.FACEBOOK_USER);
-            } else if (jsonUser.getJSONObject("google") != null) {
-                user.setSocial_id(jsonUser.getJSONObject("google").getString("id"));
-                user.setUserLoginType(UserLoginType.GOOGLE_USER);
-            } else {
-                user.setUserLoginType(UserLoginType.LOCAL_USER);
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        try {
+            user.setSocial_id(jsonUser.getJSONObject("facebook").getString("id"));
+            user.setUserLoginType(UserLoginType.FACEBOOK_USER);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+
+            try {
+                user.setSocial_id(jsonUser.getJSONObject("google").getString("id"));
+                user.setUserLoginType(UserLoginType.GOOGLE_USER);
+            } catch (JSONException e2) {
+                e2.printStackTrace();
+
+                try {
+                    user.setSocial_id(jsonUser.getJSONObject("local").getString("id"));
+                    user.setUserLoginType(UserLoginType.LOCAL_USER);
+                } catch (JSONException e3) {
+                    e3.printStackTrace();
+                }
+            }
+        }
+
         return user;
     }
 

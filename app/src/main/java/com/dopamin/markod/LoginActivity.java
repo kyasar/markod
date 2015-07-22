@@ -237,6 +237,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         } else {
             Intent output = new Intent();
             setResult(RESULT_OK, output);
+            Toast.makeText(this, "User signup or login: " + MainActivity.user.getSocial_id(), Toast.LENGTH_SHORT).show();
             //finish();
         }
     }
@@ -378,6 +379,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + PROFILE_PIC_SIZE;
+
+                signInUper.execute(currentPerson.getDisplayName(),
+                        "",
+                        Plus.AccountApi.getAccountName(mGoogleApiClient),
+                        currentPerson.getId(),
+                        UserLoginType.GOOGLE_USER.toString());
 
                 new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
 
