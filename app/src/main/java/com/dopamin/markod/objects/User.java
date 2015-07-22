@@ -1,5 +1,7 @@
 package com.dopamin.markod.objects;
 
+import android.graphics.Bitmap;
+
 public class User {
     private String firstName;
     private String lastName;
@@ -10,6 +12,7 @@ public class User {
     private String id;
     private String social_id;
     private UserLoginType userLoginType;
+    private Bitmap profilePhoto;
 
     private UserLoginType convertToLoginType(String type) {
         if (type.equalsIgnoreCase("facebook_user"))
@@ -102,5 +105,13 @@ public class User {
 
     public void setUserLoginType(UserLoginType userLoginType) {
         this.userLoginType = userLoginType;
+    }
+
+    public Bitmap getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(Bitmap profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 }
