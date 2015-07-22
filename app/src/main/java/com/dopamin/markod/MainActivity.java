@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     public static final boolean DEVELOPMENT = true;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public static String MDS_SERVER = "http://192.168.1.23:8000";
 
     private Button searchBtn, detectiveBtn;
 
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Reading the user info from db
         Log.d(TAG, "Reading User from DB..");
         // if (!MainActivity.DEVELOPMENT)
-        user = db.getUser();
+        //user = db.getUser();
         if (user != null) {
             Log.d(TAG, "User: " + user.getId());
             setUserInfo();
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
         else
         {
-            if(info.isConnected())
+            if (info.isConnected())
             {
                 Log.d(TAG," internet connection available...");
                 return true;
@@ -248,15 +248,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         mDemoSlider.setCustomAnimation(new DescriptionAnimation());
         mDemoSlider.setDuration(4000);
         mDemoSlider.addOnPageChangeListener(this);
-        /*ListView l = (ListView) findViewById(R.id.transformers);
-        l.setAdapter(new TransformerAdapter(this));
-        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mDemoSlider.setPresetTransformer(((TextView) view).getText().toString());
-                Toast.makeText(MainActivity.this, ((TextView) view).getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
     }
 
     @Override
