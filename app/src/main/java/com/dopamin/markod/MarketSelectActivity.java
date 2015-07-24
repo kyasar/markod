@@ -56,12 +56,9 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     private String selectedMarketName = null;
     protected AlertDialog.Builder builder;
     private ListAdapter adapter;
-    boolean fakeLocation = true;
-
-    private int PLACE_PICKER_REQUEST = 1;
+    boolean fakeLocation = false;
 
     List<HashMap<String, String>> placesList = null;
-
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
 
     @Override
