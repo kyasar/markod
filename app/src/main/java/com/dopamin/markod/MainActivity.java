@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         {
             Toast.makeText(this, " No Internet Connection !! \n Check your Connection..", Toast.LENGTH_SHORT).show();
             //TODO: Draw a new layout informing user that there is no connection.
-            return;
+            finish();
         }
         setContentView(R.layout.activity_main);
 
