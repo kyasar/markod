@@ -11,7 +11,7 @@
         android:layout_gravity="center"/>
 
     <Button
-        android:id="@+id/detective_button"
+        android:id="@+id/checkConn_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

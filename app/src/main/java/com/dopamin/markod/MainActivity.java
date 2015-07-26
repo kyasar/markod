@@ -11,9 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,11 +30,11 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener {
 
-    public static final boolean DEVELOPMENT = true;
+    public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static String MDS_SERVER = "http://192.168.1.23:8000";
 
-    private Button searchBtn, detectiveBtn;
+    private Button searchBtn, detectiveBtn, connCheckBtn;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
@@ -62,11 +60,21 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        internetConn = isInternetAvailable();
+
         if (!isInternetAvailable()) //returns true if internet available
         {
             Toast.makeText(this, " No Internet Connection !! \n Check your Connection..", Toast.LENGTH_SHORT).show();
             //TODO: Draw a new layout informing user that there is no connection.
             setContentView(R.layout.activity_main_noconn);
+            connCheckBtn = (Button) findViewById(R.id.checkConn_button);
+            connCheckBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    internetConn = isInternetAvailable();
+                }
+            });
             return;
         }
         setContentView(R.layout.activity_main);
