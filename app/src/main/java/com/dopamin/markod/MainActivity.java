@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         {
             Toast.makeText(this, " No Internet Connection !! \n Check your Connection..", Toast.LENGTH_SHORT).show();
             //TODO: Draw a new layout informing user that there is no connection.
-            finish();
+            setContentView(R.layout.activity_main_noconn);
+            return;
         }
         setContentView(R.layout.activity_main);
 
@@ -160,10 +161,14 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.v(MainActivity.TAG, "inflating Action bar view..");
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        if (isInternetAvailable()) {
+            Log.v(MainActivity.TAG, "inflating Action bar view..");
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
