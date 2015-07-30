@@ -55,27 +55,27 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
     }
 
     //String data = null;
-    private JSONObject sendHttpPost(String firstName, String lastName, String email, String id, String type) {
+    private JSONObject sendHttpPost(String firstName, String lastName,
+                                    String email, String id, String login_type) {
         // set the connection timeout value to 10 seconds (10000 milliseconds)
         final HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
         HttpClient client = new DefaultHttpClient(httpParams);
         JSONObject json = null;
-        HttpPost post;
-
-        if (type.equalsIgnoreCase(UserLoginType.FACEBOOK_USER.toString()) == true)
-            post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/fb");
-        else if (type.equalsIgnoreCase(UserLoginType.GOOGLE_USER.toString()))
-            post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/google");
-        else
-            post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/local");
-
+        HttpPost post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/social");
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+
+        if (login_type.equalsIgnoreCase(UserLoginType.FACEBOOK_USER.toString()))
+            nameValuePairs.add(new BasicNameValuePair("social", login_type));
+        else if (login_type.equalsIgnoreCase(UserLoginType.GOOGLE_USER.toString()))
+            nameValuePairs.add(new BasicNameValuePair("social", login_type));
+        else
+            nameValuePairs.add(new BasicNameValuePair("social", login_type));
+
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("firstName", firstName));
         nameValuePairs.add(new BasicNameValuePair("lastName", lastName));
         nameValuePairs.add(new BasicNameValuePair("id", id));
-        nameValuePairs.add(new BasicNameValuePair("type", type));
 
         /* UTF-8 charset encoding support */
         try {
@@ -94,6 +94,7 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
             Log.v(MainActivity.TAG, "JSON Respond: " + sb.toString());
             json = new JSONObject(sb.toString());
 
+            //TODO: Every request contains a status field?
             if (json.getString("status").equals("OK")) {
                 return json.getJSONObject("user");
             } else
@@ -155,9 +156,9 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
         String lastName  = args[1];
         String email = args[2];
         String id    = args[3];
-        String type    = args[4];
+        String social    = args[4];
 
-        jsonUser = sendHttpPost(firstName, lastName, email, id, type);
+        jsonUser = sendHttpPost(firstName, lastName, email, id, social);
         MainActivity.user = createUserObject(jsonUser);
 
         if (MainActivity.user != null)

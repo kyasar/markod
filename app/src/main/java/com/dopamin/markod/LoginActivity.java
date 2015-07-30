@@ -48,10 +48,12 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity implements AsyncLoginResponse,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     private CallbackManager callbackManager;
-    private LoginButton loginButton;
+    private LoginButton fbLoginButton;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
     private SignInUp signInUper;
@@ -66,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
 
     private ConnectionResult mConnectionResult;
 
-    private SignInButton btnSignIn;
+    private SignInButton gLoginButton;
     private Button btnSignOut, btnRevokeAccess;
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail;
@@ -87,8 +89,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
 
         /* Facebook Login */
         callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        fbLoginButton = (LoginButton) findViewById(R.id.login_button);
+        fbLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
 
         /* These classes call your code when access token or profile changes happen */
         setupTokenTracker();
@@ -98,12 +100,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         mProfileTracker.startTracking();
 
         // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
                 AccessToken accessToken = loginResult.getAccessToken();
-                Log.v(MainActivity.TAG, "fblogin onSuccess, token: " + accessToken.getToken() + "\n expires: " + accessToken.getExpires().getHours());
+                Log.v(MainActivity.TAG, "fblogin onSuccess, token: " + accessToken.getToken()
+                        + "\n expires: " + accessToken.getExpires().getHours());
                 Profile profile = Profile.getCurrentProfile();
                 // loginNameTxt.setText(constructWelcomeMessage(profile));
 
@@ -119,6 +122,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                                     String id = me.optString("id");
                                     // send email and id to your web server
                                     Log.e(MainActivity.TAG, "facebook profile email: " + email + " id: " + id);
+                                    txtEmail.setText(email);
 
                                     new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
                                             + me.optString("id") + "/picture?type=large");
@@ -145,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         /////////////////////
         /* Google+ Sign In */
         /////////////////////
-        btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+        gLoginButton = (SignInButton) findViewById(R.id.btn_sign_in);
         btnSignOut = (Button) findViewById(R.id.btn_sign_out);
         btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
         imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
@@ -154,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
         llProfileLayout = (LinearLayout) findViewById(R.id.llProfile);
 
         // Button click listeners
-        btnSignIn.setOnClickListener(this);
+        gLoginButton.setOnClickListener(this);
         btnSignOut.setOnClickListener(this);
         btnRevokeAccess.setOnClickListener(this);
 
@@ -181,6 +185,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                 if (currentAccessToken != null)
                     Log.d(MainActivity.TAG, "Token changed new token: " + currentAccessToken.getToken());
                 else {
+                    updateUI(false);
                     Log.d(MainActivity.TAG, "Logout request.");
                 }
             }
@@ -195,6 +200,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                     Log.d(MainActivity.TAG, "Profile changed new name: " + currentProfile.getName());
                     Log.d(MainActivity.TAG, "Profile changed token: " + AccessToken.getCurrentAccessToken().getToken());
                     // loginNameTxt.setText(constructWelcomeMessage(currentProfile));
+                    txtName.setText(currentProfile.getName());
 
                     signInUper.execute(currentProfile.getFirstName(),
                             currentProfile.getLastName(),
@@ -230,6 +236,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
 
     @Override
     public void processFinish(boolean res) {
+        // Create new async task for reuse
+        signInUper = new SignInUp(this);
+        signInUper.delegate = this;
+
         Log.v(MainActivity.TAG, "Login process finished. Return to main activity. res: " + res);
         if (res == false) {
             //TODO: Instead of toast message, an info dialog can be shown for details
@@ -281,11 +291,17 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                 break;
             case R.id.btn_sign_out:
                 // Signout button clicked
-                signOutFromGplus();
+                if (MainActivity.user.getUserLoginType() == UserLoginType.GOOGLE_USER)
+                    signOutFromGplus();
+                else if (MainActivity.user.getUserLoginType() == UserLoginType.FACEBOOK_USER)
+                    Log.v(MainActivity.TAG, "Sign out from Facebook");
                 break;
             case R.id.btn_revoke_access:
                 // Revoke access button clicked
-                revokeGplusAccess();
+                if (MainActivity.user.getUserLoginType() == UserLoginType.GOOGLE_USER)
+                    revokeGplusAccess();
+                else if (MainActivity.user.getUserLoginType() == UserLoginType.FACEBOOK_USER)
+                    Log.v(MainActivity.TAG, "Revoke access Facebook");
                 break;
         }
     }
@@ -316,13 +332,23 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
      * */
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
-            btnSignIn.setVisibility(View.GONE);
-            btnSignOut.setVisibility(View.VISIBLE);
-            btnRevokeAccess.setVisibility(View.VISIBLE);
+            // Make non-visible Login buttons
+            gLoginButton.setVisibility(View.GONE);
+            fbLoginButton.setVisibility(View.GONE);
+
+            // Make visible associative logout buttons
+            if (MainActivity.user.getUserLoginType() == UserLoginType.FACEBOOK_USER)
+                fbLoginButton.setVisibility(View.VISIBLE);
+            if (MainActivity.user.getUserLoginType() == UserLoginType.GOOGLE_USER) {
+                gLoginButton.setVisibility(View.GONE);
+                //btnSignOut.setVisibility(View.VISIBLE);
+                btnRevokeAccess.setVisibility(View.VISIBLE);
+            }
             llProfileLayout.setVisibility(View.VISIBLE);
         } else {
-            btnSignIn.setVisibility(View.VISIBLE);
-            btnSignOut.setVisibility(View.GONE);
+            fbLoginButton.setVisibility(View.VISIBLE);
+            gLoginButton.setVisibility(View.VISIBLE);
+            //btnSignOut.setVisibility(View.GONE);
             btnRevokeAccess.setVisibility(View.GONE);
             llProfileLayout.setVisibility(View.GONE);
         }
