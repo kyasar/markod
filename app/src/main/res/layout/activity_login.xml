@@ -45,10 +45,10 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textSize="20sp"
-        facebook:com_facebook_login_text="Facebook"
-        facebook:com_facebook_logout_text="Facebook" />
+        facebook:com_facebook_login_text="Facebook Login"
+        facebook:com_facebook_logout_text="Facebook Logout" />
 
-    <com.google.android.gms.common.SignInButton
+    <!-- <com.google.android.gms.common.SignInButton
         android:id="@+id/btn_sign_in"
         android:paddingTop="10dp"
         android:layout_width="fill_parent"
@@ -68,7 +68,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/btn_revoke_access"
-        android:visibility="gone" />
+        android:visibility="gone" /> -->
 
     <LinearLayout
         android:id="@+id/llProfile"
