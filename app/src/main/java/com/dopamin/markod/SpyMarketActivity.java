@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.dopamin.markod.objects.Product;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -44,7 +45,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	public static int PRICE_DIALOG_FRAGMENT_SUCC_CODE = 1;
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
 	private int total = 0;
-	private Product product;
+	private Product product = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		builder = new AlertDialog.Builder(this);
 		
 		if (savedInstanceState != null) {
-			//product = (Product) savedInstanceState.getParcelable("product");
-			//Log.v(MarketSelectActivity.TAG, "Restoring product: " + product.getName());
 			productList = (List<HashMap<String, String>>) savedInstanceState.getSerializable("productList");
 			Log.v(MarketSelectActivity.TAG, "Restoring LIST.. size: " + productList.size());
 			 
@@ -120,16 +119,16 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 					//product = new Product("Product_" + (++total), scanContent);
 					getProductInfo(scanContent, MainActivity.MDS_TOKEN);
 					//Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() + "  barcode: " + product.getBarcode());
-					showAlertDialog("Product_" + total);
+					//showAlertDialog(product.getName());
 				}
 			}
 		}
 	}
 	
-	private void showAlertDialog(String title) {
+	private void showAlertDialog(Product p) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			//FragmentManager fm = getSupportFragmentManager();
-			PriceDialogFragment alertDialog = PriceDialogFragment.newInstance(title);
+			PriceDialogFragment alertDialog = PriceDialogFragment.newInstance(p.getName());
 			
 			ft.add(alertDialog, "fragment_alert");
 			ft.commitAllowingStateLoss();
@@ -141,7 +140,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			if (test) {
 				product = new Product("Noname" + (++total), "0123456789", "");
 				Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() + "  barcode: " + product.getBarcode());
-				showAlertDialog("Product_" + total);
+				showAlertDialog(product);
 			} else {
 				// Scan Bar Code
 				IntentIntegrator scanIntegrator = new IntentIntegrator(this);
@@ -159,7 +158,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	public void onUserSelectValue(int code, String value) {
 		// TODO Auto-generated method stub
 		if (code == PRICE_DIALOG_FRAGMENT_SUCC_CODE) {
-			Toast.makeText(this, "Entered price for product_" + total + " : " + value, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Entered price for " + product.getName() + " price: " + value, Toast.LENGTH_SHORT).show();
 			product.setPrice(value);
 			addProductToList(product);
 		} else {
@@ -216,11 +215,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
 		Log.v(MainActivity.TAG, "Product info query: " + sb.toString());
 
-		// Creating a new non-ui thread task to download Google place json data
-		ProductInfoTask task = new ProductInfoTask();
-
-		// Invokes the "doInBackground()" method of the class PlaceTask
-		task.execute(sb.toString());
+		new ProductInfoTask().execute(sb.toString());
 	}
 
 	/** A class, to download Google Places */
@@ -256,7 +251,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	private class ParserTask extends AsyncTask<String, Integer, Product> {
 
 		JSONObject jObject;
-		Product product = null;
+		//Product product = null;
 
 		// Invoked by execute() method of this object
 		@Override
@@ -272,6 +267,11 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 				Log.d("Exception", e.toString());
 			}
 			return product;
+		}
+
+		@Override
+		protected void onPostExecute(Product product) {
+			showAlertDialog(product);
 		}
 	}
 }
