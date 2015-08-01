@@ -63,15 +63,9 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
         HttpClient client = new DefaultHttpClient(httpParams);
         JSONObject json = null;
         HttpPost post = new HttpPost(MainActivity.MDS_SERVER + "/mds/signup/social");
+
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-
-        if (login_type.equalsIgnoreCase(UserLoginType.FACEBOOK_USER.toString()))
-            nameValuePairs.add(new BasicNameValuePair("social", login_type));
-        else if (login_type.equalsIgnoreCase(UserLoginType.GOOGLE_USER.toString()))
-            nameValuePairs.add(new BasicNameValuePair("social", login_type));
-        else
-            nameValuePairs.add(new BasicNameValuePair("social", login_type));
-
+        nameValuePairs.add(new BasicNameValuePair("social", login_type));
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("firstName", firstName));
         nameValuePairs.add(new BasicNameValuePair("lastName", lastName));
@@ -124,24 +118,16 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
         }
 
         try {
-            user.setSocial_id(jsonUser.getJSONObject("facebook").getString("id"));
-            user.setUserLoginType(UserLoginType.FACEBOOK_USER);
+            user.setSocial_id(jsonUser.getJSONObject("social").getString("id"));
+            if (jsonUser.getString("loginType").equals(UserLoginType.FACEBOOK_USER) ) {
+                user.setUserLoginType(UserLoginType.FACEBOOK_USER);
+            } else if (jsonUser.getString("loginType").equals(UserLoginType.FACEBOOK_USER) ) {
+                user.setUserLoginType(UserLoginType.GOOGLE_USER);
+            } else {
+                user.setUserLoginType(UserLoginType.LOCAL_USER);
+            }
         } catch (JSONException e1) {
             e1.printStackTrace();
-
-            try {
-                user.setSocial_id(jsonUser.getJSONObject("google").getString("id"));
-                user.setUserLoginType(UserLoginType.GOOGLE_USER);
-            } catch (JSONException e2) {
-                e2.printStackTrace();
-
-                try {
-                    user.setSocial_id(jsonUser.getJSONObject("local").getString("id"));
-                    user.setUserLoginType(UserLoginType.LOCAL_USER);
-                } catch (JSONException e3) {
-                    e3.printStackTrace();
-                }
-            }
         }
 
         return user;
@@ -154,9 +140,9 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
         JSONObject jsonUser;
         String firstName = args[0];
         String lastName  = args[1];
-        String email = args[2];
-        String id    = args[3];
-        String social    = args[4];
+        String email  = args[2];
+        String id     = args[3];
+        String social = args[4];
 
         jsonUser = sendHttpPost(firstName, lastName, email, id, social);
         MainActivity.user = createUserObject(jsonUser);

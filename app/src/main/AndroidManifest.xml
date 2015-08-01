@@ -60,14 +60,13 @@
         <activity
             android:name=".MarketSelectActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/title_activity_market_select"
-            android:parentActivityName=".MainActivity" >
+            android:label="@string/title_activity_market_select" >
         </activity>
         <activity android:name=".PlaceDetailsActivity" />
         <activity
             android:name=".SpyMarketActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:label="@string/title_activity_spymarket" >
         </activity>
 
         <uses-library android:name="com.google.android.maps" />
