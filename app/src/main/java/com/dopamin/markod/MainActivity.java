@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener {
 
+    public static final String MDS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7Il9pZCI6IjU1YmQxMTkxYzkwOTdjYzAzNTVmNGRmMyIsImZpcnN0TmFtZSI6Im11c3RhZmEga2VtYWwiLCJsYXN0TmFtZSI6Inlhc2FyIiwiZW1haWwiOiJta3lAZ21haWwuY29tIiwibG9naW5UeXBlIjoiRkFDRUJPT0tfVVNFUiIsIl9fdiI6MCwic29jaWFsIjp7ImlkIjoiNDQ0NCJ9LCJzaWduRGF0ZSI6IjIwMTUtMDgtMDFUMTg6MzY6MDEuMzAwWiIsInBvaW50cyI6MH0sImlhdCI6MTQzODQ2MTE2NiwiZXhwIjoxNDM4NDYyOTY2fQ.j9tnCJVrLTNeJvAAireNx_ck3flobjQnRcmZkwlexWM";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static String MDS_SERVER = "http://192.168.1.20:8000";
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.d(TAG, "Reading User from DB..");
         // if (!MainActivity.DEVELOPMENT)
         // user = db.getUser();
-        // user = createMockUser();
+        user = createMockUser();
         if (user != null) {
             Log.d(TAG, "User: " + user.getId());
             setUserInfo();

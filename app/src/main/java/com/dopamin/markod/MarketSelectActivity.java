@@ -235,7 +235,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             br.close();
 
         } catch (Exception e) {
-            Log.d("Exception while downloading url", e.toString());
+            Log.v(MainActivity.TAG, "Exception while downloading url");
         } finally {
             iStream.close();
             urlConnection.disconnect();

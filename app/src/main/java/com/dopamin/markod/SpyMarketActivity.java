@@ -1,6 +1,12 @@
 package com.dopamin.markod;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +16,8 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import android.app.AlertDialog;
-import android.support.v4.app.FragmentTransaction; 
+import android.os.AsyncTask;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,6 +29,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
@@ -108,8 +117,9 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 					Log.v(MarketSelectActivity.TAG, "scanContent: " + scanContent);
 					// String scanFormat = scanningResult.getFormatName();
 	
-					product = new Product("Product_" + (++total), scanContent);
-					Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() + "  barcode: " + product.getBarcode());
+					//product = new Product("Product_" + (++total), scanContent);
+					getProductInfo(scanContent, MainActivity.MDS_TOKEN);
+					//Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() + "  barcode: " + product.getBarcode());
 					showAlertDialog("Product_" + total);
 				}
 			}
@@ -155,6 +165,113 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		} else {
 			Toast.makeText(this, "Product is discarded !!", Toast.LENGTH_SHORT).show();
 			total--;
+		}
+	}
+
+	/** A method to download json data from url */
+	private String downloadUrl(String strUrl) throws IOException {
+		String data = "";
+		InputStream iStream = null;
+		HttpURLConnection urlConnection = null;
+
+		try {
+			URL url = new URL(strUrl);
+
+			// Creating an http connection to communicate with url
+			urlConnection = (HttpURLConnection) url.openConnection();
+
+			// Connecting to url
+			urlConnection.connect();
+
+			// Reading data from url
+			iStream = urlConnection.getInputStream();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+			StringBuffer sb  = new StringBuffer();
+
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+			data = sb.toString();
+
+			//Log.v(TAG, "RES: " + data);
+			br.close();
+
+		} catch (Exception e) {
+			Log.v(MainActivity.TAG, "Exception while downloading url");
+		} finally {
+			iStream.close();
+			urlConnection.disconnect();
+		}
+
+		return data;
+	}
+
+	public void getProductInfo(String barcode, String token) {
+		StringBuilder sb = new StringBuilder(MainActivity.MDS_SERVER + "/mds/api/products/");
+		sb.append(barcode + "/");
+		sb.append("?token=" + token);
+
+		Log.v(MainActivity.TAG, "Product info query: " + sb.toString());
+
+		// Creating a new non-ui thread task to download Google place json data
+		ProductInfoTask task = new ProductInfoTask();
+
+		// Invokes the "doInBackground()" method of the class PlaceTask
+		task.execute(sb.toString());
+	}
+
+	/** A class, to download Google Places */
+	private class ProductInfoTask extends AsyncTask<String, Integer, String> {
+
+		String data = null;
+
+		// Invoked by execute() method of this object
+		// Does not affect main activity
+		@Override
+		protected String doInBackground(String... url) {
+			try {
+				data = downloadUrl(url[0]);
+			} catch (Exception e){
+				Log.d("Background Task", e.toString());
+			}
+			return data;
+		}
+
+		// Executed after the complete execution of doInBackground() method
+		// This method is executed in Main Activity
+		@Override
+		protected void onPostExecute(String result) {
+			ParserTask parserTask = new ParserTask();
+
+			// Start parsing the Google places in JSON format
+			// Invokes the "doInBackground()" method of the class ParseTask
+			parserTask.execute(result);
+		}
+	}
+
+	/** A class to parse the Google Places in JSON format */
+	private class ParserTask extends AsyncTask<String, Integer, Product> {
+
+		JSONObject jObject;
+		Product product = null;
+
+		// Invoked by execute() method of this object
+		@Override
+		protected Product doInBackground(String... jsonData) {
+
+			try {
+				jObject = new JSONObject(jsonData[0]);
+				product = new Product(jObject.getString("name"), jObject.getString("barcodeNumber"));
+				Log.v(MainActivity.TAG, "Product Info: " + product.getName() + " " + product.getBarcode());
+				/** Getting the parsed data as a List construct */
+
+			} catch (Exception e) {
+				Log.d("Exception", e.toString());
+			}
+			return product;
 		}
 	}
 }
