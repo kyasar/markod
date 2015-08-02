@@ -126,12 +126,15 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	}
 	
 	private void showAlertDialog(Product p) {
+		if (p != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			//FragmentManager fm = getSupportFragmentManager();
 			PriceDialogFragment alertDialog = PriceDialogFragment.newInstance(p.getName());
-			
 			ft.add(alertDialog, "fragment_alert");
 			ft.commitAllowingStateLoss();
+		} else {
+			//TODO: Product not found warning, maybe a dialog
+			Toast.makeText(this, "Product is not found !! We are Sorry :(", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -209,6 +212,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	}
 
 	public void getProductInfo(String barcode, String token) {
+		// Clear previous scanned product info
+		product = null;
 		StringBuilder sb = new StringBuilder(MainActivity.MDS_SERVER + "/mds/api/products/");
 		sb.append(barcode + "/");
 		sb.append("?token=" + token);
