@@ -22,7 +22,6 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
-import com.dopamin.markod.objects.UserLoginType;
 import com.dopamin.markod.sqlite.UserDatabaseHandler;
 
 import java.util.HashMap;
@@ -288,6 +287,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     public User createMockUser() {
         return new User("0123456789", "Mock", "Mockish", "mock@mock.com",
-                UserLoginType.LOCAL_USER.toString(), "3333a3333", 0);
+                "FACEBOOK", "3333a3333", 0);
     }
 }
