@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
@@ -51,6 +52,8 @@ import com.google.android.gms.plus.model.people.Person;
 import org.json.JSONObject;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements AsyncLoginResponse,
         GoogleApiClient.ConnectionCallbacks,
@@ -84,9 +87,36 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
 
-    String url = MainActivity.MDS_SERVER + "/mds/api/test";
+    private Map<String,String> params = new HashMap<String, String>();
 
+    String url = MainActivity.MDS_SERVER + "/mds/signup/social";
 
+    final GsonRequest gsonRequest = new GsonRequest(Request.Method.POST, url, User.class,
+            null, params, new Response.Listener<User>() {
+
+        @Override
+        public void onResponse(User user) {
+            if (user != null) {
+                System.out.println("First name: " + user.getFirstName());
+                System.out.println("Last name : " + user.getLastName());
+                System.out.println("ID        : " + user.get_id());
+                System.out.println("Login Type: " + user.getLoginType());
+                System.out.println("Email     : " + user.getEmail());
+                System.out.println("Points    : " + user.getPoints());
+                System.out.println("Social ID : " + user.getSocial_id());
+
+                Toast.makeText(getApplicationContext(), "Login success User: " + user.getFirstName(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }, new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            if(volleyError != null) {
+                Log.e("MainActivity", volleyError.getMessage());
+                Toast.makeText(getApplicationContext(), "Login failed !!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +164,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                                     String email = me.optString("email");
                                     String id = me.optString("id");
                                     // send email and id to your web server
-                                    Log.e(MainActivity.TAG, "facebook profile email: " + email + " id: " + id);
+                                    Log.e(MainActivity.TAG, "facebook profile email: " + email + " id: " + id+ " "
+                                            + me.optString("name"));
                                     txtEmail.setText(email);
 
                                     new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
@@ -185,51 +216,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
 
         signInUper = new SignInUp(this);
         signInUper.delegate = this;
-
-        final GsonRequest gsonRequest = new GsonRequest(url, User.class, null, new Response.Listener<User>() {
-
-            @Override
-            public void onResponse(User user) {
-                System.out.println("First name: " + user.getFirstName() );
-                System.out.println("Last name : " + user.getLastName() );
-                System.out.println("ID        : " + user.get_id() );
-                System.out.println("Login Type: " + user.getLoginType() );
-                System.out.println("Email     : " + user.getEmail() );
-                System.out.println("Points    : " + user.getPoints() );
-                System.out.println("Social ID : " + user.getSocial_id() );
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                if(volleyError != null) Log.e("MainActivity", volleyError.getMessage());
-            }
-        });
-
-        /*JsonObjectRequest jsonRequest = new JsonObjectRequest
-                (Request.Method.GET, url, (String) null, new Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // the response is already constructed as a JSONObject!
-                        try {
-                            Log.v(MainActivity.TAG, "RESPONSE: " + response.toString());
-
-                            System.out.println("First name: " + response.getString("firstName"));
-                            System.out.println("Last name : " + response.getString("lastName"));
-                            System.out.println("ID        : " + response.getString("_id"));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }); */
-
-        Volley.newRequestQueue(this).add(gsonRequest);
     }
 
     private void setupTokenTracker() {
@@ -256,11 +242,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
                     // loginNameTxt.setText(constructWelcomeMessage(currentProfile));
                     txtName.setText(currentProfile.getName());
 
-                    signInUper.execute(currentProfile.getFirstName(),
-                            currentProfile.getLastName(),
-                            currentProfile.getMiddleName(),
-                            currentProfile.getId(),
-                            UserLoginType.FACEBOOK_USER.toString());
+                    params.put("firstName", currentProfile.getFirstName());
+                    params.put("lastName", currentProfile.getLastName());
+                    params.put("social_id", currentProfile.getId());
+                    params.put("loginType", "FACEBOOK");
+
+                    Volley.newRequestQueue(getApplication()).add(gsonRequest);
                 } else {
                     Log.d(MainActivity.TAG, "Profile gone.");
                 }
