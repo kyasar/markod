@@ -52,8 +52,8 @@ public class GsonRequest<T> extends Request<T> {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             JSONObject obj = new JSONObject(json);
             if (obj.getString("status").equalsIgnoreCase("OK")) {
-                Log.v(MainActivity.TAG, "User login/signup is SUCCESS !");
-                return Response.success(gson.fromJson(obj.getJSONObject("user").toString(), clazz),
+                Log.v(MainActivity.TAG, "Request is SUCCESS !!");
+                return Response.success(gson.fromJson(obj.getJSONObject(clazz.getSimpleName()).toString(), clazz),
                         HttpHeaderParser.parseCacheHeaders(response));
             } else {
                 return Response.error(new VolleyError("Failed or Unexpected response message !!"));
