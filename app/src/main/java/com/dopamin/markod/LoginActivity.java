@@ -143,8 +143,8 @@ public class LoginActivity extends AppCompatActivity implements
 
                                     // clear parameters list and then add params
                                     params.clear();
-                                    params.put("firstName", me.optString("name"));
-                                    //params.put("lastName", me.optString("name"));
+                                    params.put("firstName", me.optString("first_name"));
+                                    params.put("lastName", me.optString("last_name"));
                                     params.put("social_id", me.optString("id"));
                                     params.put("loginType", "FACEBOOK");
                                     params.put("email", email);
