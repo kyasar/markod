@@ -18,9 +18,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.authentication.AsyncLoginResponse;
 import com.dopamin.markod.authentication.SignInUp;
+import com.dopamin.markod.objects.User;
 import com.dopamin.markod.objects.UserLoginType;
+import com.dopamin.markod.request.GsonRequest;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -78,6 +83,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
     private static final int PROFILE_PIC_SIZE = 400;
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
+
+    String url = MainActivity.MDS_SERVER + "/mds/api/test";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +185,51 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
 
         signInUper = new SignInUp(this);
         signInUper.delegate = this;
+
+        final GsonRequest gsonRequest = new GsonRequest(url, User.class, null, new Response.Listener<User>() {
+
+            @Override
+            public void onResponse(User user) {
+                System.out.println("First name: " + user.getFirstName() );
+                System.out.println("Last name : " + user.getLastName() );
+                System.out.println("ID        : " + user.get_id() );
+                System.out.println("Login Type: " + user.getLoginType() );
+                System.out.println("Email     : " + user.getEmail() );
+                System.out.println("Points    : " + user.getPoints() );
+                System.out.println("Social ID : " + user.getSocial_id() );
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                if(volleyError != null) Log.e("MainActivity", volleyError.getMessage());
+            }
+        });
+
+        /*JsonObjectRequest jsonRequest = new JsonObjectRequest
+                (Request.Method.GET, url, (String) null, new Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // the response is already constructed as a JSONObject!
+                        try {
+                            Log.v(MainActivity.TAG, "RESPONSE: " + response.toString());
+
+                            System.out.println("First name: " + response.getString("firstName"));
+                            System.out.println("Last name : " + response.getString("lastName"));
+                            System.out.println("ID        : " + response.getString("_id"));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }); */
+
+        Volley.newRequestQueue(this).add(gsonRequest);
     }
 
     private void setupTokenTracker() {
@@ -343,8 +397,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncLoginRespon
             fbLoginButton.setVisibility(View.GONE);
 
             // Make visible associative logout buttons
-            if (MainActivity.user.getUserLoginType() == UserLoginType.FACEBOOK_USER)
-                fbLoginButton.setVisibility(View.VISIBLE);
+            //if (MainActivity.user.getUserLoginType() == UserLoginType.FACEBOOK_USER)
+             //   fbLoginButton.setVisibility(View.VISIBLE);
             /*if (MainActivity.user.getUserLoginType() == UserLoginType.GOOGLE_USER) {
                 gLoginButton.setVisibility(View.GONE);
                 btnSignOut.setVisibility(View.VISIBLE);

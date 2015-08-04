@@ -73,11 +73,11 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, user.getId());
+        //values.put(KEY_ID, user.getId());
         values.put(KEY_FIRST_NAME, user.getFirstName());
         values.put(KEY_LAST_NAME, user.getLastName());
         values.put(KEY_EMAIL, user.getEmail());
-        values.put(KEY_LOGIN_TYPE, user.getUserLoginType().toString()); // be careful, string casting
+        //values.put(KEY_LOGIN_TYPE, user.getUserLoginType().toString()); // be careful, string casting
         values.put(KEY_SOCIAL_ID, user.getSocial_id());
         values.put(KEY_POINTS, user.getPoints());
 

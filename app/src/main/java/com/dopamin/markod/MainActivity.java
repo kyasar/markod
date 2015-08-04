@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.20:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
     private Button searchBtn, detectiveBtn, connCheckBtn;
 
@@ -116,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.d(TAG, "Reading User from DB..");
         // if (!MainActivity.DEVELOPMENT)
         // user = db.getUser();
-        user = createMockUser();
+        //user = createMockUser();
         if (user != null) {
-            Log.d(TAG, "User: " + user.getId());
+            //Log.d(TAG, "User: " + user.getId());
             setUserInfo();
         }
 
@@ -163,9 +163,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
                 + "\n email: " + user.getEmail()
                 + "\n points: " + user.getPoints()
-                + "\n social_type: " + user.getUserLoginType().toString()
-                + "\n social_id: " + user.getSocial_id()
-                + "\n id: " + user.getId());
+                //+ "\n social_type: " + user.getUserLoginType().toString()
+                + "\n social_id: " + user.getSocial_id());
+                //+ "\n id: " + user.getId());
     }
 
     @Override

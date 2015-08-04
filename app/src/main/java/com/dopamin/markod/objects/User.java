@@ -3,32 +3,25 @@ package com.dopamin.markod.objects;
 import android.graphics.Bitmap;
 
 public class User {
+    private String _id;
     private String firstName;
     private String lastName;
     private String email;
     private String username;
     private int points;
-    private String token;
-    private String id;
     private String social_id;
-    private UserLoginType userLoginType;
+    private String loginType;
     private Bitmap profilePhoto;
 
-    private UserLoginType convertToLoginType(String type) {
-        if (type.equalsIgnoreCase("facebook_user"))
-            return UserLoginType.FACEBOOK_USER;
-        else
-            return UserLoginType.LOCAL_USER;
-    }
-
-    public User(String id, String firstName, String lastName, String email, String userLoginType, String social_id, int points) {
+    public User(String id, String firstName, String lastName, String email,
+                String loginType, String social_id, int points) {
+        this._id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.points = points;
-        this.id = id;
         this.social_id = social_id;
-        this.userLoginType = convertToLoginType(userLoginType);
+        this.loginType = loginType;
     }
 
     public User() {
@@ -75,22 +68,6 @@ public class User {
         this.points = points;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getSocial_id() {
         return social_id;
     }
@@ -99,19 +76,27 @@ public class User {
         this.social_id = social_id;
     }
 
-    public UserLoginType getUserLoginType() {
-        return userLoginType;
-    }
-
-    public void setUserLoginType(UserLoginType userLoginType) {
-        this.userLoginType = userLoginType;
-    }
-
     public Bitmap getProfilePhoto() {
         return profilePhoto;
     }
 
     public void setProfilePhoto(Bitmap profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
     }
 }

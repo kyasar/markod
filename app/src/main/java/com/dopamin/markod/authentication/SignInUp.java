@@ -111,13 +111,13 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
             user.setFirstName(jsonUser.getString("firstName"));
             user.setLastName(jsonUser.getString("lastName"));
             user.setEmail(jsonUser.getString("email"));
-            user.setId(jsonUser.getString("_id"));
+            //user.setId(jsonUser.getString("_id"));
             user.setPoints(Integer.parseInt(jsonUser.getString("points")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        try {
+        /*try {
             user.setSocial_id(jsonUser.getJSONObject("social").getString("id"));
             if (jsonUser.getString("loginType").equals(UserLoginType.FACEBOOK_USER) ) {
                 user.setUserLoginType(UserLoginType.FACEBOOK_USER);
@@ -128,7 +128,7 @@ public class SignInUp extends AsyncTask<String, Integer, Boolean> {
             }
         } catch (JSONException e1) {
             e1.printStackTrace();
-        }
+        }*/
 
         return user;
     }
