@@ -53,7 +53,7 @@ public class GsonRequest<T> extends Request<T> {
             JSONObject obj = new JSONObject(json);
             if (obj.getString("status").equalsIgnoreCase("OK")) {
                 Log.v(MainActivity.TAG, "Request is SUCCESS !!");
-                return Response.success(gson.fromJson(obj.getJSONObject(clazz.getSimpleName()).toString(), clazz),
+                return Response.success(gson.fromJson(obj.getJSONObject(clazz.getSimpleName().toLowerCase()).toString(), clazz),
                         HttpHeaderParser.parseCacheHeaders(response));
             } else {
                 return Response.error(new VolleyError("Failed or Unexpected response message !!"));

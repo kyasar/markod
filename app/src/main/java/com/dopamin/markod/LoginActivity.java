@@ -141,6 +141,12 @@ public class LoginActivity extends AppCompatActivity implements
                                     String id = me.optString("id");
                                     String fullName = me.optString("name");
 
+                                    // clear parameters list and then add params
+                                    params.clear();
+                                    params.put("firstName", me.optString("name"));
+                                    //params.put("lastName", me.optString("name"));
+                                    params.put("social_id", me.optString("id"));
+                                    params.put("loginType", "FACEBOOK");
                                     params.put("email", email);
 
                                     // send email and id to your web server
@@ -149,10 +155,10 @@ public class LoginActivity extends AppCompatActivity implements
 
                                     new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
                                             + me.optString("id") + "/picture?type=large");
-                                }
 
-                                // After adding email to parameters, send the POST login/signup request
-                                Volley.newRequestQueue(getApplication()).add(gsonRequest);
+                                    // After adding email to parameters, send the POST login/signup request
+                                    Volley.newRequestQueue(getApplication()).add(gsonRequest);
+                                }
                             }
                         }).executeAsync();
             }
@@ -197,13 +203,6 @@ public class LoginActivity extends AppCompatActivity implements
                 if (currentProfile != null) {
                     Log.d(MainActivity.TAG, "Profile changed new name: " + currentProfile.getName());
                     Log.d(MainActivity.TAG, "Profile changed token: " + AccessToken.getCurrentAccessToken().getToken());
-
-                    // clear parameters list and then add params
-                    params.clear();
-                    params.put("firstName", currentProfile.getFirstName());
-                    params.put("lastName", currentProfile.getLastName());
-                    params.put("social_id", currentProfile.getId());
-                    params.put("loginType", "FACEBOOK");
                 } else {
                     Log.d(MainActivity.TAG, "Profile gone.");
                 }
