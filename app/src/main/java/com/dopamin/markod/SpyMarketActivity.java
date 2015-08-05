@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.request.GsonRequest;
+import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -33,7 +34,7 @@ import android.widget.Toast;
 
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
-	private Button scanBtn;
+	private Button scanBtn, sendBtn;
 	private ListView products_lv;
 	private List <HashMap<String, String>> productList = new ArrayList <HashMap<String,String>> ();
 	private ListAdapter adapter;
@@ -56,9 +57,11 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		Log.v(MarketSelectActivity.TAG, "onCreate Spy Market Activity.");
 		
 		scanBtn = (Button)findViewById(R.id.scan_button);
+		sendBtn = (Button)findViewById(R.id.send_button);
 		products_lv = (ListView) findViewById(R.id.productList);
 		
 		scanBtn.setOnClickListener(this);
+		sendBtn.setOnClickListener(this);
 		builder = new AlertDialog.Builder(this);
 		
 		if (savedInstanceState != null) {
@@ -179,17 +182,26 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.scan_button) {
-			if (test) {
-				product = new Product("Noname" + (++total), "0123456789", "");
-				Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() +
-						", barcode: " + product.getBarcode());
-				showAlertDialog(product);
-			} else {
-				// Scan Bar Code
-				IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-				scanIntegrator.initiateScan();
-			}
+		switch(v.getId()) {
+			case R.id.scan_button:
+				if (test) {
+					product = new Product("Noname" + (++total), "0123456789", "");
+					Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() +
+							", barcode: " + product.getBarcode());
+					showAlertDialog(product);
+				} else {
+					// Scan Bar Code
+					IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+					scanIntegrator.initiateScan();
+				}
+				break;
+			case R.id.send_button:
+				MainActivity.market.setProducts(this.productList);
+				Gson gson = new Gson();
+				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(MainActivity.market));
+				break;
+			default:
+				break;
 		}
 	}
 	

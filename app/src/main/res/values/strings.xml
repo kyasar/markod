@@ -42,4 +42,5 @@
     <string name="noconn_tryagain">No Interntet Connection!! Try again later..</string>
     <string name="noconn_tryagain_btn">Check Connection</string>
     <string name="title_activity_spymarket">SpyMarket</string>
+    <string name="send">Send</string>
 </resources>
