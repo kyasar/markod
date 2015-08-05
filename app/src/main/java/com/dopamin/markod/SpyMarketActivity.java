@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.objects.Product;
@@ -131,15 +134,29 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 								}
 							}, new Response.ErrorListener() {
 								@Override
-								public void onErrorResponse(VolleyError volleyError) {
-									if(volleyError != null) {
-										Log.e(MainActivity.TAG, volleyError.getMessage());
-										Toast.makeText(getApplicationContext(),
-												"Product is not found !!", Toast.LENGTH_SHORT).show();
+								public void onErrorResponse(VolleyError error) {
+									if(error != null) {
+										if (error instanceof ServerError) {
+											Log.e(MainActivity.TAG, error.getMessage());
+											Toast.makeText(getApplicationContext(),
+													"Server error !!", Toast.LENGTH_SHORT).show();
+										} else if (error instanceof NetworkError) {
+											Log.e(MainActivity.TAG, error.getMessage());
+											Toast.makeText(getApplicationContext(),
+													"Network error !!", Toast.LENGTH_SHORT).show();
+										} else {
+											Log.e(MainActivity.TAG, error.getMessage());
+											Toast.makeText(getApplicationContext(),
+													"Product is not found !!", Toast.LENGTH_SHORT).show();
+										}
 									}
 								}
 					});
 
+					/* Retry policy default timeout was 2500ms, now 3 * 5000 */
+					gsonRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+							3, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+							DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 					Volley.newRequestQueue(getApplication()).add(gsonRequest);
 				}
 			}
