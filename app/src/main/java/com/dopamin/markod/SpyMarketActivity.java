@@ -1,23 +1,20 @@
 package com.dopamin.markod;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.objects.Product;
+import com.dopamin.markod.request.GsonRequest;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import android.app.AlertDialog;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,8 +27,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
-import org.json.JSONObject;
 
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
@@ -46,7 +41,10 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
 	private int total = 0;
 	private Product product = null;
-	
+
+	/* API url to retrieve info about a product with its unique BarCode number */
+	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,7 +74,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	private int isProductAlreadyAdded(Product p) {
 		for (int i = 0; i < productList.size(); i++) {
 			if (productList.get(i).get("barcode").matches(p.getBarcode())) {
-				Log.v(MarketSelectActivity.TAG, "The product " + p.getBarcode() + " is already added. Just updating the price.");
+				Log.v(MarketSelectActivity.TAG, "The product " + p.getBarcode()
+						+ " is already added. Just updating the price.");
 				return i;
 			}
 		}
@@ -115,25 +114,49 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 				if (scanContent != null) { 
 					Log.v(MarketSelectActivity.TAG, "scanContent: " + scanContent);
 					// String scanFormat = scanningResult.getFormatName();
-	
-					//product = new Product("Product_" + (++total), scanContent);
-					getProductInfo(scanContent, MainActivity.MDS_TOKEN);
-					//Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() + "  barcode: " + product.getBarcode());
-					//showAlertDialog(product.getName());
+					String uniqueProductURL = productURL + scanContent + "?token=" + MainActivity.MDS_TOKEN;
+
+					GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, uniqueProductURL,
+							Product.class, new Response.Listener<Product>() {
+								@Override
+								public void onResponse(Product p) {
+									if (p != null) {
+										System.out.println("Product name : " + p.getName());
+										System.out.println("Barcode no   : " + p.getBarcode());
+
+										// Set main product to use in other code parts
+										product = p;
+										showAlertDialog(product);
+									}
+								}
+							}, new Response.ErrorListener() {
+								@Override
+								public void onErrorResponse(VolleyError volleyError) {
+									if(volleyError != null) {
+										Log.e(MainActivity.TAG, volleyError.getMessage());
+										Toast.makeText(getApplicationContext(),
+												"Product is not found !!", Toast.LENGTH_SHORT).show();
+									}
+								}
+					});
+
+					Volley.newRequestQueue(getApplication()).add(gsonRequest);
 				}
 			}
 		}
 	}
 	
 	private void showAlertDialog(Product p) {
-		if (p != null) {
+		if (p != null) { // Do I really need to check again?
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			PriceDialogFragment alertDialog = PriceDialogFragment.newInstance(p.getName());
 			ft.add(alertDialog, "fragment_alert");
+			// prevent data loss from screen rotates
 			ft.commitAllowingStateLoss();
 		} else {
 			//TODO: Product not found warning, maybe a dialog
 			Toast.makeText(this, "Product is not found !! We are Sorry :(", Toast.LENGTH_SHORT).show();
+			Log.e(MainActivity.TAG, "Product (" + p.getBarcode()  + ") is not found !!");
 		}
 	}
 
@@ -142,7 +165,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		if (v.getId() == R.id.scan_button) {
 			if (test) {
 				product = new Product("Noname" + (++total), "0123456789", "");
-				Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() + "  barcode: " + product.getBarcode());
+				Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() +
+						", barcode: " + product.getBarcode());
 				showAlertDialog(product);
 			} else {
 				// Scan Bar Code
@@ -158,6 +182,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		 savedState.putSerializable("productList", (Serializable) productList);
 	}
 
+	/* Price Fragment Dialog Select Button Listener */
 	public void onUserSelectValue(int code, String value) {
 		// TODO Auto-generated method stub
 		if (code == PRICE_DIALOG_FRAGMENT_SUCC_CODE) {
@@ -167,116 +192,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		} else {
 			Toast.makeText(this, "Product is discarded !!", Toast.LENGTH_SHORT).show();
 			total--;
-		}
-	}
-
-	/** A method to download json data from url */
-	private String downloadUrl(String strUrl) throws IOException {
-		String data = "";
-		InputStream iStream = null;
-		HttpURLConnection urlConnection = null;
-
-		try {
-			URL url = new URL(strUrl);
-
-			// Creating an http connection to communicate with url
-			urlConnection = (HttpURLConnection) url.openConnection();
-
-			// Connecting to url
-			urlConnection.connect();
-
-			// Reading data from url
-			iStream = urlConnection.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-			StringBuffer sb  = new StringBuffer();
-
-			String line = "";
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-			data = sb.toString();
-
-			//Log.v(TAG, "RES: " + data);
-			br.close();
-
-		} catch (Exception e) {
-			Log.v(MainActivity.TAG, "Exception while downloading url");
-		} finally {
-			iStream.close();
-			urlConnection.disconnect();
-		}
-
-		return data;
-	}
-
-	public void getProductInfo(String barcode, String token) {
-		// Clear previous scanned product info
-		product = null;
-		StringBuilder sb = new StringBuilder(MainActivity.MDS_SERVER + "/mds/api/products/");
-		sb.append(barcode + "/");
-		sb.append("?token=" + token);
-
-		Log.v(MainActivity.TAG, "Product info query: " + sb.toString());
-
-		new ProductInfoTask().execute(sb.toString());
-	}
-
-	/** A class, to download Google Places */
-	private class ProductInfoTask extends AsyncTask<String, Integer, String> {
-
-		String data = null;
-
-		// Invoked by execute() method of this object
-		// Does not affect main activity
-		@Override
-		protected String doInBackground(String... url) {
-			try {
-				data = downloadUrl(url[0]);
-			} catch (Exception e){
-				Log.d("Background Task", e.toString());
-			}
-			return data;
-		}
-
-		// Executed after the complete execution of doInBackground() method
-		// This method is executed in Main Activity
-		@Override
-		protected void onPostExecute(String result) {
-			ParserTask parserTask = new ParserTask();
-
-			// Start parsing the Google places in JSON format
-			// Invokes the "doInBackground()" method of the class ParseTask
-			parserTask.execute(result);
-		}
-	}
-
-	/** A class to parse the Google Places in JSON format */
-	private class ParserTask extends AsyncTask<String, Integer, Product> {
-
-		JSONObject jObject;
-		//Product product = null;
-
-		// Invoked by execute() method of this object
-		@Override
-		protected Product doInBackground(String... jsonData) {
-
-			try {
-				jObject = new JSONObject(jsonData[0]);
-				product = new Product(jObject.getString("name"), jObject.getString("barcodeNumber"));
-				Log.v(MainActivity.TAG, "Product Info: " + product.getName() + " " + product.getBarcode());
-				/** Getting the parsed data as a List construct */
-
-			} catch (Exception e) {
-				Log.d("Exception", e.toString());
-			}
-			return product;
-		}
-
-		@Override
-		protected void onPostExecute(Product product) {
-			showAlertDialog(product);
 		}
 	}
 }

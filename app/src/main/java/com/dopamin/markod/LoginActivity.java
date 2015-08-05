@@ -58,7 +58,6 @@ public class LoginActivity extends AppCompatActivity implements
     private LinearLayout llProfileLayout;
     // Profile pic image size in pixels
     private static final int PROFILE_PIC_SIZE = 400;
-    // Google client to interact with Google API
 
     private Map<String,String> params = new HashMap<String, String>();
 
