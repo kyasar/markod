@@ -1,6 +1,5 @@
 package com.dopamin.markod.objects;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,32 +7,41 @@ import java.util.List;
  */
 public class Market {
 
-    private String place_name;
-    private String gmap_id;
+    private String name;
+    private String id;
+    private String provider;
     private String vicinity;
     private List products;
 
-    public Market(String place_name, String gmap_id, String vicinity) {
-        this.place_name = place_name;
-        this.gmap_id = gmap_id;
+    public Market(String place_name, String id, String provider, String vicinity) {
+        this.name = place_name;
+        this.id = id;
+        this.provider = provider;
         this.vicinity = vicinity;
-        this.products = new ArrayList<Product>();
     }
 
-    public String getPlace_name() {
-        return place_name;
+    public String getName() {
+        return this.name;
     }
 
-    public void setPlace_name(String place_name) {
-        this.place_name = place_name;
+    public void setName(String place_name) {
+        this.name = place_name;
     }
 
-    public String getGmap_id() {
-        return gmap_id;
+    public String getId() {
+        return this.id;
     }
 
-    public void setGmap_id(String gmap_id) {
-        this.gmap_id = gmap_id;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
     public String getVicinity() {

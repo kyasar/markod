@@ -128,6 +128,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
                     Intent output = new Intent();
                     MainActivity.market = new Market(hmPlace.get("place_name").toString(),
                             hmPlace.get("place_id").toString(),
+                            "GOOGLE_MAPS",
                             hmPlace.get("vicinity").toString());
                     setResult(RESULT_OK, output);
                     finish();

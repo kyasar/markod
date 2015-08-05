@@ -8,9 +8,11 @@ import java.util.List;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.request.GsonRequest;
@@ -32,6 +34,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
 	private Button scanBtn, sendBtn;
@@ -48,6 +52,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
 	/* API url to retrieve info about a product with its unique BarCode number */
 	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
+	String marketURL = MainActivity.MDS_SERVER + "/mds/api/market/" + "?token=" + MainActivity.MDS_TOKEN;;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +72,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		if (savedInstanceState != null) {
 			productList = (List<HashMap<String, String>>) savedInstanceState.getSerializable("productList");
 			Log.v(MarketSelectActivity.TAG, "Restoring LIST.. size: " + productList.size());
-			 
+
 			// list adapter
 			adapter = new SimpleAdapter(SpyMarketActivity.this, productList, 
 					R.layout.product_list_item, new String[] { "name", "barcode", "price"}, new int[] {
@@ -140,15 +145,15 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 								public void onErrorResponse(VolleyError error) {
 									if(error != null) {
 										if (error instanceof ServerError) {
-											Log.e(MainActivity.TAG, error.getMessage());
+											Log.e(MainActivity.TAG, "Server Failure.");
 											Toast.makeText(getApplicationContext(),
 													"Server error !!", Toast.LENGTH_SHORT).show();
 										} else if (error instanceof NetworkError) {
-											Log.e(MainActivity.TAG, error.getMessage());
+											Log.e(MainActivity.TAG, "Network Failure.");
 											Toast.makeText(getApplicationContext(),
 													"Network error !!", Toast.LENGTH_SHORT).show();
 										} else {
-											Log.e(MainActivity.TAG, error.getMessage());
+											Log.e(MainActivity.TAG, "Unknown Failure.");
 											Toast.makeText(getApplicationContext(),
 													"Product is not found !!", Toast.LENGTH_SHORT).show();
 										}
@@ -199,6 +204,21 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 				MainActivity.market.setProducts(this.productList);
 				Gson gson = new Gson();
 				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(MainActivity.market));
+
+				JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL,
+						gson.toJson(MainActivity.market), new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.i("volley", "response: " + response);
+					}
+				}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						Log.i("volley", "error: " + error);
+					}
+				});
+				Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+
 				break;
 			default:
 				break;
