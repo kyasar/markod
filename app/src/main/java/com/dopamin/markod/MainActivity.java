@@ -114,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Reading the user info from db
         Log.d(TAG, "Reading User from DB..");
         // if (!MainActivity.DEVELOPMENT)
-        // user = db.getUser();
-        user = createMockUser();
+        //user = db.getUser();
+        //user = createMockUser();
         if (user != null) {
             //Log.d(TAG, "User: " + user.getId());
             setUserInfo();
