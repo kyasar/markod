@@ -43,4 +43,6 @@
     <string name="noconn_tryagain_btn">Check Connection</string>
     <string name="title_activity_spymarket">SpyMarket</string>
     <string name="send">Send</string>
+    <string name="markets_progress">Loading</string>
+    <string name="markets_progress_message">Searching nearby markets.. Please Wait</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.dopamin.markod;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     private String selectedMarketName = null;
     protected AlertDialog.Builder builder;
     private ListAdapter adapter;
+    private ProgressDialog progressDialog;
     boolean fakeLocation = true;
 
     List<HashMap<String, String>> placesList = null;
@@ -73,6 +75,14 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         setContentView(R.layout.activity_market_select);
         lv = (ListView) findViewById(R.id.list);
 
+        /* Nearby Markets loading progress */
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(R.string.markets_progress);
+        progressDialog.setMessage(getResources().getString(R.string.markets_progress_message));
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        /* Google Maps API Location Manager */
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
@@ -200,6 +210,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         PlacesTask placesTask = new PlacesTask();
 
         // Invokes the "doInBackground()" method of the class PlaceTask
+        progressDialog.show();
         placesTask.execute(sb.toString());
         Log.v(TAG, "Places request sent.");
     }
@@ -288,6 +299,12 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             PlaceJSONParser placeJsonParser = new PlaceJSONParser();
 
             try {
+                Thread.sleep(5000, 0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            try {
                 jObject = new JSONObject(jsonData[0]);
 
                 /** Getting the parsed data as a List construct */
@@ -351,6 +368,9 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
             // Adding data into listview
             lv.setAdapter(adapter);
+
+            // Dismiss the progress dialog
+            progressDialog.dismiss();
         }
     }
 
