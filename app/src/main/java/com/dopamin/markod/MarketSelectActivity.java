@@ -299,12 +299,6 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             PlaceJSONParser placeJsonParser = new PlaceJSONParser();
 
             try {
-                Thread.sleep(5000, 0);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
                 jObject = new JSONObject(jsonData[0]);
 
                 /** Getting the parsed data as a List construct */
