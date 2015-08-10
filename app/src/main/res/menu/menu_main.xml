@@ -27,6 +27,12 @@
         app:showAsAction="always"
         android:title="More">
         <menu>
+            <!-- Profile -->
+            <item android:id="@+id/action_profile"
+                android:icon="@drawable/ic_action_about"
+                android:title="@string/action_profile"
+                app:showAsAction="never"/>
+
             <!-- Settings -->
             <item android:id="@+id/action_settings"
                 android:icon="@drawable/ic_action_settings"

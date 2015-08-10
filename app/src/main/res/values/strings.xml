@@ -46,4 +46,6 @@
     <string name="markets_progress">Loading</string>
     <string name="markets_progress_message">Searching nearby markets.. Please Wait</string>
     <string name="spymarket_progress_message">Sharing products.. Please Wait</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="action_profile">Profile</string>
 </resources>

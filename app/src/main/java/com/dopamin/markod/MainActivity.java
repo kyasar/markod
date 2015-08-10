@@ -203,6 +203,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 // check for updates action
                 Log.v(MainActivity.TAG, "SETTINGS");
                 return true;
+            case R.id.action_profile:
+                Log.v(MainActivity.TAG, "PROFILE");
+                Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
+                startActivity(intent);
+                Log.v(MainActivity.TAG, "Profile activity started.");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -288,5 +294,35 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public User createMockUser() {
         return new User("0123456789", "Mock", "Mockish", "mock@mock.com",
                 "FACEBOOK", "3333a3333", 0);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(MainActivity.TAG, this.toString() + " onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(MainActivity.TAG, this.toString() + " onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v(MainActivity.TAG, this.toString() + " onStop");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v(MainActivity.TAG, this.toString() + " onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v(MainActivity.TAG, this.toString() + " onDestroy");
     }
 }
