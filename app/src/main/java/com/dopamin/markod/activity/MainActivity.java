@@ -125,10 +125,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.v(TAG, "onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
 
         if (requestCode == SELECT_NEARBY_MARKET_REQUESTCODE && resultCode == RESULT_OK && data != null) {
-            //num1 = data.getIntExtra(Number1Code);
-            //num2 = data.getIntExtra(Number2Code);
 
             Log.v(TAG, "MainActivity: Market is ready");
+            loadMarket();
             marketNameTxt.setText(market.getName() + " \nid: " + market.getId() + " \n"
                     + market.getVicinity());
 
@@ -140,21 +139,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             Log.v(TAG, "Return to Main from Login screen..");
             setUserInfo();
 
-            //Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
-            //startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
-        }
-    }
-
-    private void setUserInfo() {
-        if (loadUser()) {
-            Log.v(TAG, "MainActivity: User is ready.");
-            this.menu.findItem(R.id.action_profile).setVisible(true);
-            loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
-                    + "\n email: " + user.getEmail()
-                    + "\n points: " + user.getPoints()
-                    + "\n social_type: " + user.getLoginType()
-                    + "\n social_id: " + user.getSocial_id()
-                    + "\n id: " + user.get_id());
+            Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
+            startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
         }
     }
 
@@ -328,17 +314,44 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.v(MainActivity.TAG, this.toString() + " onDestroy");
     }
 
+    private void setUserInfo() {
+        if (loadUser()) {
+            Log.v(TAG, "MainActivity: User is ready.");
+            if (this.menu != null)
+                this.menu.findItem(R.id.action_profile).setVisible(true);
+            loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
+                    + "\n email: " + user.getEmail()
+                    + "\n points: " + user.getPoints()
+                    + "\n social_type: " + user.getLoginType()
+                    + "\n social_id: " + user.getSocial_id()
+                    + "\n id: " + user.get_id());
+        }
+    }
+
     public boolean loadUser() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Gson gson = new Gson();
         String user_str = sp.getString("user", "");
         if( !user_str.equalsIgnoreCase("") ){
-            this.user = gson.fromJson(user_str, User.class);
+            user = gson.fromJson(user_str, User.class);
             Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
             return true;
         }
         return false;
     }
+
+    public boolean loadMarket() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String str = sp.getString("market", "");
+        if( !str.equalsIgnoreCase("") ){
+            this.market = gson.fromJson(str, Market.class);
+            Log.v(MainActivity.TAG, "Market (" + market.getName() + ") loaded from Shared.");
+            return true;
+        }
+        return false;
+    }
+
 
     public boolean saveUser(User user) {
         Gson gson = new Gson();
