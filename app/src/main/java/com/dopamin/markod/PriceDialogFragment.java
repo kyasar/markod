@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dopamin.markod.activity.MarketSelectActivity;
+import com.dopamin.markod.activity.SpyMarketActivity;
+
 
 public class PriceDialogFragment extends DialogFragment {
 

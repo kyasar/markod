@@ -1,4 +1,4 @@
-package com.dopamin.markod;
+package com.dopamin.markod.activity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.dopamin.markod.PriceDialogFragment;
+import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.request.GsonRequest;
 import com.google.gson.Gson;

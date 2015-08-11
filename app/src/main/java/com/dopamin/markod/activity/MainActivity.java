@@ -1,4 +1,4 @@
-package com.dopamin.markod;
+package com.dopamin.markod.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 import com.google.gson.Gson;
@@ -165,6 +166,15 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (user == null)
+            menu.findItem(R.id.action_profile).setVisible(false);
+        Log.v(MainActivity.TAG, "");
+        return true;
     }
 
     /**

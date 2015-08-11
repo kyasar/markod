@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="com.dopamin.markod.LoginActivity">
+    xmlns:tools="http://schemas.android.com/tools" tools:context="com.dopamin.markod.activity.LoginActivity">
     <!-- More -->
     <item
         android:id="@+id/a_More"

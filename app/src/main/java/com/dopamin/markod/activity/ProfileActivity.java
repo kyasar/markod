@@ -1,4 +1,4 @@
-package com.dopamin.markod;
+package com.dopamin.markod.activity;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
 
 public class ProfileActivity extends AppCompatActivity {

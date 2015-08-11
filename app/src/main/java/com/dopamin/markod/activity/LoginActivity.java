@@ -1,4 +1,4 @@
-package com.dopamin.markod;
+package com.dopamin.markod.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -24,7 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.dopamin.markod.objects.Market;
+import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
 import com.facebook.AccessToken;

@@ -47,7 +47,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" >
             <intent-filter>
@@ -57,13 +57,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MarketSelectActivity"
+            android:name=".activity.MarketSelectActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_market_select" >
         </activity>
-        <activity android:name=".PlaceDetailsActivity" />
+        <activity android:name=".activity.PlaceDetailsActivity" />
         <activity
-            android:name=".SpyMarketActivity"
+            android:name=".activity.SpyMarketActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_spymarket" >
         </activity>
@@ -71,10 +71,10 @@
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".activity.MainActivity" >
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -83,7 +83,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activity.ProfileActivity"
             android:label="@string/title_activity_profile" >
         </activity>
     </application>

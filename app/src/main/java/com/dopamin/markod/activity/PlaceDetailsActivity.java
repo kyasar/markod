@@ -1,4 +1,4 @@
-package com.dopamin.markod;
+package com.dopamin.markod.activity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +15,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
+
+import com.dopamin.markod.PlaceDetailsJSONParser;
+import com.dopamin.markod.R;
 
 public class PlaceDetailsActivity extends Activity {
 	WebView mWvPlaceDetails;
