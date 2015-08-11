@@ -55,7 +55,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
 	/* API url to retrieve info about a product with its unique BarCode number */
 	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
-	String marketURL = MainActivity.MDS_SERVER + "/mds/api/market/" + "?token=" + MainActivity.MDS_TOKEN;;
+	String marketURL = MainActivity.MDS_SERVER + "/mds/api/market/" + "?token=" + MainActivity.MDS_TOKEN;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -5,12 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 import com.dopamin.markod.PlaceJSONParser;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Market;
+import com.dopamin.markod.objects.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +36,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -138,10 +142,10 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
                 if (hmPlace != null) {
                     Intent output = new Intent();
-                    MainActivity.market = new Market(hmPlace.get("place_name").toString(),
+                    saveMarket(new Market(hmPlace.get("place_name").toString(),
                             hmPlace.get("place_id").toString(),
                             "GOOGLE_MAPS",
-                            hmPlace.get("vicinity").toString());
+                            hmPlace.get("vicinity").toString()));
                     setResult(RESULT_OK, output);
                     finish();
                 } else {
@@ -450,5 +454,14 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         super.onSaveInstanceState(savedState);
         Log.v(MainActivity.TAG, "onSaveInstanceState Spy Market Activity.");
         savedState.putSerializable("marketsList", (Serializable) placesList);
+    }
+
+    public boolean saveMarket(Market market) {
+        Gson gson = new Gson();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putString("market", gson.toJson(market));
+        Log.v(MainActivity.TAG, "Market saved into Shared.");
+        return edit.commit();
     }
 }

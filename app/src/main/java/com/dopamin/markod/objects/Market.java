@@ -1,11 +1,12 @@
 package com.dopamin.markod.objects;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by kadir on 05.07.2015.
  */
-public class Market {
+public class Market implements Serializable {
 
     private String name;
     private String id;
