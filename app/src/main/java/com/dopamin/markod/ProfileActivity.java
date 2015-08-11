@@ -19,6 +19,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail, txtPoints;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

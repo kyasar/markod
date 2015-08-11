@@ -2,9 +2,11 @@ package com.dopamin.markod;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,9 +24,8 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
-import com.dopamin.markod.sqlite.UserDatabaseHandler;
+import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
@@ -52,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private TextView loginNameTxt;
     private TextView marketNameTxt;
 
-    /* SQLite DB */
-    private UserDatabaseHandler db;
-
     private SliderLayout mDemoSlider;
 
     @Override
@@ -79,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             return;
         }
         setContentView(R.layout.activity_main);
-
-        db = new UserDatabaseHandler(this);
 
         searchBtn = (Button) findViewById(R.id.search_button);
         detectiveBtn = (Button) findViewById(R.id.detective_button);
@@ -112,15 +108,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             }
         });
 
-        // Reading the user info from db
-        Log.d(TAG, "Reading User from DB..");
-        // if (!MainActivity.DEVELOPMENT)
-        //user = db.getUser();
         //user = createMockUser();
-        if (user != null) {
-            //Log.d(TAG, "User: " + user.getId());
-            setUserInfo();
-        }
+        setUserInfo();
 
         ActionBar ab = getSupportActionBar();
         ab.setTitle(R.string.main_title);
@@ -144,28 +133,26 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             Intent intent = new Intent(getBaseContext(), SpyMarketActivity.class);
             startActivity(intent);
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
-        } else if (requestCode == USER_LOGIN_REQUESTCODE && resultCode == RESULT_OK) {
 
+        } else if (requestCode == USER_LOGIN_REQUESTCODE && resultCode == RESULT_OK) {
+            Log.v(TAG, "Return to Main from Login screen..");
             setUserInfo();
 
-            // Inserting Contacts
-            Log.d(TAG, "Inserting User ..");
-            db.addUser(user);
-
-            Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
-            startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
-            Log.v(TAG, "MarketSelectActivity is started. OK.");
+            //Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
+            //startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
         }
     }
 
     private void setUserInfo() {
-        Log.v(TAG, "MainActivity: User is ready.");
-        loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
-                + "\n email: " + user.getEmail()
-                + "\n points: " + user.getPoints()
-                //+ "\n social_type: " + user.getUserLoginType().toString()
-                + "\n social_id: " + user.getSocial_id());
-                //+ "\n id: " + user.getId());
+        if (loadUser()) {
+            Log.v(TAG, "MainActivity: User is ready.");
+            loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
+                    + "\n email: " + user.getEmail()
+                    + "\n points: " + user.getPoints()
+                    //+ "\n social_type: " + user.getUserLoginType().toString()
+                    + "\n social_id: " + user.getSocial_id());
+            //+ "\n id: " + user.getId());
+        }
     }
 
     @Override
@@ -207,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             case R.id.action_profile:
                 Log.v(MainActivity.TAG, "PROFILE");
                 Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
-                intent.putExtra("user", (Serializable) user);
+                intent.putExtra("user", user);
                 startActivity(intent);
                 Log.v(MainActivity.TAG, "Profile activity started.");
                 return true;
@@ -326,5 +313,25 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     protected void onDestroy() {
         super.onDestroy();
         Log.v(MainActivity.TAG, this.toString() + " onDestroy");
+    }
+
+    public boolean loadUser() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String user_str = sp.getString("user", "");
+        if( !user_str.equalsIgnoreCase("") ){
+            this.user = gson.fromJson(user_str, User.class);
+            Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean saveUser(User user) {
+        Gson gson = new Gson();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putString("user", gson.toJson(user));
+        return edit.commit();
     }
 }

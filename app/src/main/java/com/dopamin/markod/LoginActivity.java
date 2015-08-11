@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
 import com.facebook.AccessToken;
@@ -38,6 +39,7 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -50,6 +52,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity implements
         View.OnClickListener {
 
+    private static User user;
     private CallbackManager callbackManager;
     private LoginButton fbLoginButton;
     private AccessTokenTracker mTokenTracker;
@@ -76,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements
         @Override
         public void onResponse(User user) {
             if (user != null) {
+                LoginActivity.user = user;
                 System.out.println("First name: " + user.getFirstName());
                 System.out.println("Last name : " + user.getLastName());
                 System.out.println("ID        : " + user.get_id());
@@ -87,8 +91,8 @@ public class LoginActivity extends AppCompatActivity implements
                 Toast.makeText(getApplicationContext(), "Login success User: "
                         + user.getFirstName(), Toast.LENGTH_SHORT).show();
 
-                // OK, set User
-                MainActivity.user = user;
+                // OK, save User into Shared preference
+                saveUser(user);
                 updateUI(true);
             }
         }
@@ -247,12 +251,12 @@ public class LoginActivity extends AppCompatActivity implements
             fbLoginButton.setVisibility(View.GONE);
 
             // Make visible associative logout buttons
-            if (MainActivity.user.getLoginType().equals("FACEBOOK"))
+            if (user.getLoginType().equals("FACEBOOK"))
                 fbLoginButton.setVisibility(View.VISIBLE);
             llProfileLayout.setVisibility(View.VISIBLE);
 
-            txtName.setText(MainActivity.user.getFirstName() + " " + MainActivity.user.getLastName());
-            txtEmail.setText(MainActivity.user.getEmail());
+            txtName.setText(user.getFirstName() + " " + user.getLastName());
+            txtEmail.setText(user.getEmail());
         } else {
             fbLoginButton.setVisibility(View.VISIBLE);
             llProfileLayout.setVisibility(View.GONE);
@@ -295,7 +299,7 @@ public class LoginActivity extends AppCompatActivity implements
             byte[] b = baos.toByteArray();
 
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            Log.v(MainActivity.TAG, "Encoded profile image: " + encodedImage);
+            //Log.v(MainActivity.TAG, "Encoded profile image: " + encodedImage);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor edit = sharedPreferences.edit();
@@ -339,6 +343,17 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void loginCompleted() {
         progressDialog.dismiss();
+        Intent output = new Intent();
+        setResult(RESULT_OK, output);
         finish();
+    }
+
+    public boolean saveUser(User user) {
+        Gson gson = new Gson();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putString("user", gson.toJson(user));
+        Log.v(MainActivity.TAG, "User saved into Shared.");
+        return edit.commit();
     }
 }
