@@ -24,6 +24,7 @@ import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.sqlite.UserDatabaseHandler;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.d(TAG, "Reading User from DB..");
         // if (!MainActivity.DEVELOPMENT)
         //user = db.getUser();
-        user = createMockUser();
+        //user = createMockUser();
         if (user != null) {
             //Log.d(TAG, "User: " + user.getId());
             setUserInfo();
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             case R.id.action_profile:
                 Log.v(MainActivity.TAG, "PROFILE");
                 Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
+                intent.putExtra("user", (Serializable) user);
                 startActivity(intent);
                 Log.v(MainActivity.TAG, "Profile activity started.");
                 return true;
@@ -293,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     public User createMockUser() {
         return new User("0123456789", "Mock", "Mockish", "mock@mock.com",
-                "FACEBOOK", "3333a3333", 0);
+                "FACEBOOK", "3333a3333", 55);
     }
 
     @Override

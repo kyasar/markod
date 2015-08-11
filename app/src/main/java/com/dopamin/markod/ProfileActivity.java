@@ -1,19 +1,52 @@
 package com.dopamin.markod;
 
-import android.app.Activity;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.dopamin.markod.objects.User;
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private ImageView imgProfilePic;
+    private TextView txtName, txtEmail, txtPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onCreate");
+
+        Bundle bundle = getIntent().getExtras();
+        User user = (User) bundle.getSerializable("user");
+
+        txtName = (TextView) findViewById(R.id.txtName);
+        txtEmail = (TextView) findViewById(R.id.txtEmail);
+        txtPoints = (TextView) findViewById(R.id.txtPoints);
+        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
+
+        /* retrieve profile image for shared preference */
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String previouslyEncodedImage = sp.getString("profile_image", "");
+
+        if( !previouslyEncodedImage.equalsIgnoreCase("") ){
+            byte[] b = Base64.decode(previouslyEncodedImage, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+            imgProfilePic.setImageBitmap(bitmap);
+        }
+
+        txtName.setText(user.getFirstName() + " " + user.getLastName());
+        txtEmail.setText(user.getEmail());
+        txtPoints.setText("Points: " + user.getPoints());
     }
 
     @Override

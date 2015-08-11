@@ -1,12 +1,16 @@
 package com.dopamin.markod;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +40,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,6 +62,7 @@ public class LoginActivity extends AppCompatActivity implements
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail;
     private LinearLayout llProfileLayout;
+    private ProgressDialog progressDialog;
     // Profile pic image size in pixels
     private static final int PROFILE_PIC_SIZE = 400;
 
@@ -112,6 +119,12 @@ public class LoginActivity extends AppCompatActivity implements
         llProfileLayout = (LinearLayout) findViewById(R.id.llProfile);
         imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(R.string.markets_progress);
+        progressDialog.setMessage(getResources().getString(R.string.spymarket_progress_message));
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
         /* These classes call your code when access token or profile changes happen */
         setupTokenTracker();
         setupProfileTracker();
@@ -136,6 +149,8 @@ public class LoginActivity extends AppCompatActivity implements
                                     // handle error
                                     Log.e(MainActivity.TAG, "facebook graph error");
                                 } else {
+                                    progressDialog.show();
+
                                     String email = me.optString("email");
                                     String id = me.optString("id");
                                     String fullName = me.optString("name");
@@ -274,7 +289,21 @@ public class LoginActivity extends AppCompatActivity implements
 
         protected void onPostExecute(Bitmap result) {
             Log.v(MainActivity.TAG, "Setting profile Image..");
+            //Bitmap realImage = BitmapFactory.decodeStream(stream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            result.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] b = baos.toByteArray();
+
+            String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+            Log.v(MainActivity.TAG, "Encoded profile image: " + encodedImage);
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putString("profile_image", encodedImage);
+            edit.commit();
+
             bmImage.setImageBitmap(result);
+            loginCompleted();
         }
     }
 
@@ -306,5 +335,10 @@ public class LoginActivity extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void loginCompleted() {
+        progressDialog.dismiss();
+        finish();
     }
 }

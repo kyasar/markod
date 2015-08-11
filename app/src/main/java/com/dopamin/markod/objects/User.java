@@ -2,7 +2,9 @@ package com.dopamin.markod.objects;
 
 import android.graphics.Bitmap;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String _id;
     private String firstName;
     private String lastName;
