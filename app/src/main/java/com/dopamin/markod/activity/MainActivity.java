@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private TextView marketNameTxt;
 
     private SliderLayout mDemoSlider;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,12 +148,13 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private void setUserInfo() {
         if (loadUser()) {
             Log.v(TAG, "MainActivity: User is ready.");
+            this.menu.findItem(R.id.action_profile).setVisible(true);
             loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
                     + "\n email: " + user.getEmail()
                     + "\n points: " + user.getPoints()
-                    //+ "\n social_type: " + user.getUserLoginType().toString()
-                    + "\n social_id: " + user.getSocial_id());
-            //+ "\n id: " + user.getId());
+                    + "\n social_type: " + user.getLoginType()
+                    + "\n social_id: " + user.getSocial_id()
+                    + "\n id: " + user.get_id());
         }
     }
 
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             Log.v(MainActivity.TAG, "inflating Action bar view..");
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.menu_main, menu);
+            this.menu = menu;
             return true;
         } else {
             return false;
