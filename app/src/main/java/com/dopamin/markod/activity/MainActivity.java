@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                     + market.getVicinity());
 
             Intent intent = new Intent(getBaseContext(), SpyMarketActivity.class);
+            intent.putExtra("market", market);
             startActivity(intent);
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
 

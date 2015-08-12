@@ -15,8 +15,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.PriceDialogFragment;
 import com.dopamin.markod.R;
+import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.request.GsonRequest;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -52,6 +54,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
 	private int total = 0;
 	private Product product = null;
+	private Market market = null;
 
 	/* API url to retrieve info about a product with its unique BarCode number */
 	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
@@ -66,6 +69,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		
 		scanBtn = (Button)findViewById(R.id.scan_button);
 		sendBtn = (Button)findViewById(R.id.send_button);
+		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
 		
 		scanBtn.setOnClickListener(this);
@@ -90,6 +94,9 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
         progressDialog.setMessage(getResources().getString(R.string.spymarket_progress_message));
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+		Bundle bundle = getIntent().getExtras();
+		market = (Market) bundle.getSerializable("market");
 	}
 
     private void removeProductNames() {
@@ -130,12 +137,16 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			hmProduct.put("price", p.getPrice());
 			
 			productList.add(hmProduct);
+			total++;
+			sendBtn.setVisibility(View.VISIBLE);
 		}
 		refreshScannedListView();
 	}
 
     private void clearScannedList() {
         this.productList.clear();
+		sendBtn.setVisibility(View.GONE);
+		total = 0;
         refreshScannedListView();
     }
 	
@@ -228,16 +239,17 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 					scanIntegrator.initiateScan();
 				}
 				break;
+
 			case R.id.send_button:
                 progressDialog.show();
-				MainActivity.market.setProducts(this.productList);
+				market.setProducts(this.productList);
                 removeProductNames(); // Remove product names, they are not needed to keep in market
 
                 Gson gson = new Gson();
-				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(MainActivity.market));
+				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(market));
 
 				JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL,
-						gson.toJson(MainActivity.market), new Response.Listener<JSONObject>() {
+						gson.toJson(market), new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
 						Log.i("volley", "response: " + response);
@@ -251,9 +263,10 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
                         progressDialog.dismiss();
 					}
 				});
+				Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
 				Volley.newRequestQueue(getApplication()).add(jsObjRequest);
-
 				break;
+
 			default:
 				break;
 		}

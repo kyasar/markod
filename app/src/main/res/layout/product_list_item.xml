@@ -1,36 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
-    
-    <LinearLayout android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/markod_lv_item_color"
+    android:padding="8dp" >
+
+    <!-- Thumbnail Image -->
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:src="@drawable/ico_actionbar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="2dp" />
+
+    <!-- Product Name -->
+    <TextView
+        android:id="@+id/product_name"
         android:layout_width="wrap_content"
-    	android:layout_height="match_parent">
-     
-	    <TextView android:id="@+id/product_name"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:padding="10dip"
-	        android:textStyle="bold"
-	        android:textSize="24sp"/>
-	    
-	    <TextView android:id="@+id/product_barcode"
-	        android:layout_width="fill_parent"
-	        android:layout_weight="1"
-	        android:layout_height="0dp"
-	        android:padding="4dip"
-	        android:textSize="12sp"/>
-    
-    </LinearLayout>
-    
-    <TextView android:id="@+id/product_price"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:padding="10dip"
-        android:textStyle="bold"
-        android:textSize="48sp"
-        android:gravity="end" />
-    
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/thumbnail"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:layout_toLeftOf="@+id/product_price"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Barcode -->
+    <TextView
+        android:id="@+id/product_barcode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/product_name"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:textSize="12sp" />
+
+    <!-- Price -->
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textSize="48sp" />
+
+</RelativeLayout>

@@ -190,7 +190,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
             // list adapter
             adapter = new SimpleAdapter(MarketSelectActivity.this, placesList,
-                    R.layout.list_item, new String[] { "reference", "place_name", "vicinity"}, new int[] {
+                    R.layout.market_list_item, new String[] { "reference", "place_name", "vicinity"}, new int[] {
                     R.id.reference, R.id.place_name, R.id.place_address });
 
             lv.setAdapter(adapter);
@@ -363,7 +363,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
             // list adapter
             adapter = new SimpleAdapter(MarketSelectActivity.this, list,
-                    R.layout.list_item, new String[] { "reference", "place_name", "vicinity"}, new int[] {
+                    R.layout.market_list_item, new String[] { "reference", "place_name", "vicinity"}, new int[] {
                     R.id.reference, R.id.place_name, R.id.place_address });
 
             // Adding data into listview
