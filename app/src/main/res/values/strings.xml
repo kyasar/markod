@@ -54,4 +54,6 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="action_profile">Profile</string>
     <string name="select_this_market">Select this market for spying?</string>
+    <string name="txt_scan_button">Scan</string>
+    <string name="txt_send_button">Send</string>
 </resources>

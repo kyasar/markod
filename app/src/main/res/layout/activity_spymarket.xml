@@ -24,7 +24,7 @@
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
             android:paddingLeft="10dp"
-            android:textSize="36dp" />
+            android:textSize="32dp" />
 
     </LinearLayout>
 
@@ -81,10 +81,29 @@
                 app:cb_pressedRingWidth="8dip" />
 
             <TextView
+                android:id="@+id/tv_send_products"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="24dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:text="@string/txt_send_button" />
+
+            <TextView
                 android:visibility="invisible"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="24dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:text="@string/txt_scan_button" />
 
             <at.markushi.ui.CircleButton
                 android:id="@+id/scan_button"

@@ -50,7 +50,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	private Boolean test = false;
 	protected AlertDialog.Builder builder;
     private ProgressDialog progressDialog;
-	private TextView tv_spymarket_name, tv_spymarket_info;
+	private TextView tv_spymarket_name, tv_spymarket_info, tv_send;
 	
 	public static int PRICE_DIALOG_FRAGMENT_SUCC_CODE = 1;
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
@@ -71,6 +71,9 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		
 		scanBtn = findViewById(R.id.scan_button);
 		sendBtn = findViewById(R.id.send_button);
+		tv_send = (TextView) findViewById(R.id.tv_send_products);
+
+		tv_send.setVisibility(View.GONE);
 		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
 		tv_spymarket_name = (TextView) findViewById(R.id.spymarket_name);
@@ -143,6 +146,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			productList.add(hmProduct);
 			total++;
 			sendBtn.setVisibility(View.VISIBLE);
+			tv_send.setVisibility(View.VISIBLE);
 		}
 		tv_spymarket_info.setVisibility(View.GONE);
 		refreshScannedListView();
@@ -151,6 +155,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
     private void clearScannedList() {
         this.productList.clear();
 		sendBtn.setVisibility(View.GONE);
+		tv_send.setVisibility(View.GONE);
 		tv_spymarket_info.setVisibility(View.VISIBLE);
 		total = 0;
         refreshScannedListView();
