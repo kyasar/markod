@@ -90,8 +90,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
         /* sharing product declarations loading progress */
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(R.string.markets_progress);
-        progressDialog.setMessage(getResources().getString(R.string.spymarket_progress_message));
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
@@ -159,6 +157,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 				// we have a result
 				String scanContent = scanningResult.getContents();
 				if (scanContent != null) {
+					progressDialog.setTitle(getResources().getString(R.string.spymarket_product_title));
+					progressDialog.setMessage(getResources().getString(R.string.please_wait));
                     progressDialog.show();
 					Log.v(MarketSelectActivity.TAG, "scanContent: " + scanContent);
 					// String scanFormat = scanningResult.getFormatName();
@@ -241,6 +241,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 				break;
 
 			case R.id.send_button:
+				progressDialog.setTitle(getResources().getString(R.string.spymarket_sharing_title));
+				progressDialog.setMessage(getResources().getString(R.string.please_wait));
                 progressDialog.show();
 				market.setProducts(this.productList);
                 removeProductNames(); // Remove product names, they are not needed to keep in market

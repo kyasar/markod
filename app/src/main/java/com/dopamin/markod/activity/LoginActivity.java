@@ -124,8 +124,8 @@ public class LoginActivity extends AppCompatActivity implements
         imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(R.string.markets_progress);
-        progressDialog.setMessage(getResources().getString(R.string.spymarket_progress_message));
+        progressDialog.setTitle(R.string.dialog_login_title);
+        progressDialog.setMessage(getResources().getString(R.string.dialog_login_msg));
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 

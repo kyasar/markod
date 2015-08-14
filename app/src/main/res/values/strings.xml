@@ -44,9 +44,13 @@
     <string name="noconn_tryagain_btn">Check Connection</string>
     <string name="title_activity_spymarket">SpyMarket</string>
     <string name="send">Send</string>
+    <string name="dialog_login_title">Logging..</string>
+    <string name="dialog_login_msg">Please wait.. Logging into markod.com</string>
     <string name="markets_progress">Loading</string>
-    <string name="markets_progress_message">Searching nearby markets.. Please Wait</string>
-    <string name="spymarket_progress_message">Sharing products.. Please Wait</string>
+    <string name="markets_progress_message">Searching nearby markets..</string>
+    <string name="please_wait">Please wait..</string>
+    <string name="spymarket_sharing_title">Sharing products..</string>
+    <string name="spymarket_product_title">Searching product..</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="action_profile">Profile</string>
     <string name="select_this_market">Select this market for spying?</string>
