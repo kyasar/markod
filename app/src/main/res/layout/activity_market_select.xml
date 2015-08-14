@@ -17,7 +17,7 @@
         android:layout_weight="40"
         android:divider="@color/markod_bg_color"
         android:dividerHeight="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="4dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"

@@ -3,8 +3,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:state_focused="true"
-        android:drawable="@drawable/listview_selector_focused" />
+        android:state_selected="false"
+        android:state_pressed="false"
+        android:drawable="@color/markod_lv_item_color" />
 
     <item
         android:state_pressed="true"

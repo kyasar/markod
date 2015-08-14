@@ -12,15 +12,15 @@
     <TextView android:id="@+id/place_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dip"
-        android:textStyle="bold"
-        android:textSize="16dp"/>
+        android:padding="5dip"
+        android:textColor="@color/black"
+        android:textSize="24dp"/>
 
     <TextView android:id="@+id/place_address"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dip"
-        android:textStyle="bold"
+        android:padding="5dip"
+        android:textColor="@color/black"
         android:textSize="12dp"/>
 
 </LinearLayout>

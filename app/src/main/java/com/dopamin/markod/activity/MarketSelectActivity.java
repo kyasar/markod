@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.dopamin.markod.PlaceJSONParser;
 import com.dopamin.markod.R;
+import com.dopamin.markod.adapter.MarketListAdapter;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.User;
 import com.google.android.gms.common.ConnectionResult;
@@ -63,7 +64,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     private int PROXIMITY_RADIUS = 500;
     private String selectedMarketName = null;
     protected AlertDialog.Builder builder;
-    private ListAdapter adapter;
+    private MarketListAdapter adapter;
     private ProgressDialog progressDialog;
     boolean fakeLocation = true;
 
@@ -123,7 +124,6 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
 		/* Alert Dialog setting for Selecting the Market from listview */
         builder = new AlertDialog.Builder(this);
-        builder.setTitle("Spy Market");
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
@@ -178,7 +178,8 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
                 selectedMarketName = ((TextView) view.findViewById(R.id.place_name)).getText().toString();
                 Log.v(TAG, "Listview item is clicked (" + selectedMarketName + "). OK.");
 
-                builder.setMessage("Select " + selectedMarketName + " for spying?");
+                builder.setMessage(R.string.select_this_market);
+                builder.setTitle(selectedMarketName);
 
                 AlertDialog alert = builder.create();
                 alert.show();
@@ -190,10 +191,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             Log.v(MainActivity.TAG, "Restoring market LIST.. size: " + placesList.size());
 
             // list adapter
-            adapter = new SimpleAdapter(MarketSelectActivity.this, placesList,
-                    R.layout.market_list_item, new String[] { "reference", "place_name", "vicinity"}, new int[] {
-                    R.id.reference, R.id.place_name, R.id.place_address });
-
+            adapter = new MarketListAdapter(this, placesList);
             lv.setAdapter(adapter);
         }
 
@@ -363,9 +361,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             placesList = list;
 
             // list adapter
-            adapter = new SimpleAdapter(MarketSelectActivity.this, list,
-                    R.layout.market_list_item, new String[] { "reference", "place_name", "vicinity"}, new int[] {
-                    R.id.reference, R.id.place_name, R.id.place_address });
+            adapter = new MarketListAdapter(getApplicationContext(), placesList);
 
             // Adding data into listview
             lv.setAdapter(adapter);
