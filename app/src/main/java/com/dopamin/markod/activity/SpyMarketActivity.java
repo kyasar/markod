@@ -36,19 +36,21 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
-	private Button scanBtn, sendBtn;
+	private View scanBtn, sendBtn;
 	private ListView products_lv;
 	private List <HashMap<String, String>> productList = new ArrayList <HashMap<String,String>> ();
 	private ListAdapter adapter;
 	private Boolean test = false;
 	protected AlertDialog.Builder builder;
     private ProgressDialog progressDialog;
+	private TextView tv_spymarket_name, tv_spymarket_info;
 	
 	public static int PRICE_DIALOG_FRAGMENT_SUCC_CODE = 1;
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
@@ -67,10 +69,12 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		
 		Log.v(MarketSelectActivity.TAG, "onCreate Spy Market Activity.");
 		
-		scanBtn = (Button)findViewById(R.id.scan_button);
-		sendBtn = (Button)findViewById(R.id.send_button);
+		scanBtn = findViewById(R.id.scan_button);
+		sendBtn = findViewById(R.id.send_button);
 		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
+		tv_spymarket_name = (TextView) findViewById(R.id.spymarket_name);
+		tv_spymarket_info = (TextView) findViewById(R.id.spymarket_info);
 		
 		scanBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
@@ -95,6 +99,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
 		Bundle bundle = getIntent().getExtras();
 		market = (Market) bundle.getSerializable("market");
+
+		tv_spymarket_name.setText(market.getName());
 	}
 
     private void removeProductNames() {
@@ -138,12 +144,14 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			total++;
 			sendBtn.setVisibility(View.VISIBLE);
 		}
+		tv_spymarket_info.setVisibility(View.GONE);
 		refreshScannedListView();
 	}
 
     private void clearScannedList() {
         this.productList.clear();
 		sendBtn.setVisibility(View.GONE);
+		tv_spymarket_info.setVisibility(View.VISIBLE);
 		total = 0;
         refreshScannedListView();
     }

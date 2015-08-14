@@ -1,31 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#F44336"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:src="@drawable/ico_market"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/spymarket_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:textSize="36dp" />
+
+    </LinearLayout>
+
     <TextView
+        android:id="@+id/spymarket_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:textColor="@color/gray"
+        android:textStyle="italic"
+        android:textSize="16dp"
         android:text="@string/products_text" />
+
     <ListView
         android:id="@+id/productList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:divider="@color/markod_bg_color"
     	android:dividerHeight="4dp" />
 
-    <Button android:id="@+id/scan_button"
-      	android:layout_width="wrap_content"
-      	android:layout_height="wrap_content"
-      	android:text="@string/scan"
-      	android:layout_gravity="bottom" />
+    <at.markushi.ui.CircleButton
+        android:id="@+id/scan_button"
+        android:layout_width="72dip"
+        android:layout_height="72dip"
+        android:layout_gravity="end"
+        android:padding="10dp"
+        android:src="@drawable/ico_barcode_scan"
+        app:cb_color="@color/markod_bg_color"
+        app:cb_pressedRingWidth="8dip" />
 
-    <Button android:id="@+id/send_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/send"
-        android:layout_gravity="bottom" />
+    <at.markushi.ui.CircleButton
+        android:id="@+id/send_button"
+        android:layout_width="72dip"
+        android:layout_height="72dip"
+        android:layout_gravity="end"
+        android:padding="10dp"
+        android:src="@drawable/ico_send_products"
+        app:cb_color="@color/markod_bg_color"
+        app:cb_pressedRingWidth="8dip" />
+
 </LinearLayout>
