@@ -39,8 +39,8 @@ public class ProductListAdapter extends ArrayAdapter<HashMap<String, String>> {
 
         // Populate the data into the template view using the data object
         tvName.setText(product.get("name"));
-        tvBarcode.setText(product.get("price"));
-        tvPrice.setText(product.get("barcode"));
+        tvBarcode.setText(product.get("barcode"));
+        tvPrice.setText(product.get("price"));
 
         // Return the completed view to render on screen
         return convertView;

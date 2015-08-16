@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.PriceDialogFragment;
 import com.dopamin.markod.R;
+import com.dopamin.markod.adapter.ProductListAdapter;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.request.GsonRequest;
@@ -88,10 +89,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			Log.v(MarketSelectActivity.TAG, "Restoring LIST.. size: " + productList.size());
 
 			// list adapter
-			adapter = new SimpleAdapter(SpyMarketActivity.this, productList,
-					R.layout.product_list_item, new String[] { "name", "barcode", "price"}, new int[] {
-	                        R.id.product_name, R.id.product_barcode, R.id.product_price });
-	        
+			adapter = new ProductListAdapter(this, productList);
 			products_lv.setAdapter(adapter);
 		}
 
@@ -124,12 +122,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	}
 
     private void refreshScannedListView() {
-        adapter = new SimpleAdapter(SpyMarketActivity.this, productList,
-                R.layout.product_list_item, new String[] { "name", "barcode", "price"}, new int[] {
-                R.id.product_name, R.id.product_barcode, R.id.product_price });
-
-        // Adding data into listview
-        products_lv.setAdapter(adapter);
+		adapter = new ProductListAdapter(this, productList);
+		products_lv.setAdapter(adapter);
     }
 	
 	private void addProductToList(Product p) {
