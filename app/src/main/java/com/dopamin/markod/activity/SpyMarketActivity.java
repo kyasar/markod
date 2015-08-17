@@ -27,10 +27,8 @@ import com.google.zxing.integration.android.IntentResult;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;

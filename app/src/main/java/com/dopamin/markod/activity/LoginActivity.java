@@ -300,13 +300,7 @@ public class LoginActivity extends AppCompatActivity implements
             byte[] b = baos.toByteArray();
 
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            //Log.v(MainActivity.TAG, "Encoded profile image: " + encodedImage);
             LoginActivity.user.setEncodedProfilePhoto(encodedImage);
-
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putString("profile_image", encodedImage);
-            edit.commit();
 
             bmImage.setImageBitmap(result);
             loginCompleted();
@@ -344,7 +338,7 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void loginCompleted() {
-        Log.v(MainActivity.TAG, "Login Completed, saving user.. " + user.getEncodedProfilePhoto().length());
+        Log.v(MainActivity.TAG, "Login Completed, saving user.. ");
         saveUser(this.user);
         progressDialog.dismiss();
         Intent output = new Intent();

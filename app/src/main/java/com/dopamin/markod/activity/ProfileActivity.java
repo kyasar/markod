@@ -36,15 +36,9 @@ public class ProfileActivity extends AppCompatActivity {
         txtPoints = (TextView) findViewById(R.id.txtPoints);
         imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 
-        /* retrieve profile image for shared preference */
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String previouslyEncodedImage = sp.getString("profile_image", "");
-
-        if( !previouslyEncodedImage.equalsIgnoreCase("") ){
-            byte[] b = Base64.decode(previouslyEncodedImage, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-            imgProfilePic.setImageBitmap(bitmap);
-        }
+        byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+        imgProfilePic.setImageBitmap(bitmap);
 
         txtName.setText(user.getFirstName() + " " + user.getLastName());
         txtEmail.setText(user.getEmail());
