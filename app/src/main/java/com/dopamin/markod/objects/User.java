@@ -13,7 +13,8 @@ public class User implements Serializable {
     private int points;
     private String social_id;
     private String loginType;
-    private Bitmap profilePhoto;
+
+    private String encodedProfilePhoto;
 
     public User(String id, String firstName, String lastName, String email,
                 String loginType, String social_id, int points) {
@@ -78,12 +79,12 @@ public class User implements Serializable {
         this.social_id = social_id;
     }
 
-    public Bitmap getProfilePhoto() {
-        return profilePhoto;
+    public String getEncodedProfilePhoto() {
+        return encodedProfilePhoto;
     }
 
-    public void setProfilePhoto(Bitmap profilePhoto) {
-        this.profilePhoto = profilePhoto;
+    public void setEncodedProfilePhoto(String encodedProfilePhoto) {
+        this.encodedProfilePhoto = encodedProfilePhoto;
     }
 
     public String get_id() {

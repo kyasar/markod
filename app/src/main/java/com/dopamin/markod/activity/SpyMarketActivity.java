@@ -18,6 +18,7 @@ import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.ProductListAdapter;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
+import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.gson.Gson;
@@ -26,14 +27,20 @@ import com.google.zxing.integration.android.IntentResult;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -42,9 +49,12 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
 	private View scanBtn, sendBtn;
+	private TextView tv_points;
 	private ListView products_lv;
 	private List <HashMap<String, String>> productList = new ArrayList <HashMap<String,String>> ();
 	private ListAdapter adapter;
@@ -52,12 +62,14 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	protected AlertDialog.Builder builder;
     private ProgressDialog progressDialog;
 	private TextView tv_spymarket_name, tv_spymarket_info, tv_send;
+	private CircleImageView profileView;
 	
 	public static int PRICE_DIALOG_FRAGMENT_SUCC_CODE = 1;
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
 	private int total = 0;
 	private Product product = null;
 	private Market market = null;
+	private User user = null;
 
 	/* API url to retrieve info about a product with its unique BarCode number */
 	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
@@ -73,12 +85,14 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		scanBtn = findViewById(R.id.scan_button);
 		sendBtn = findViewById(R.id.send_button);
 		tv_send = (TextView) findViewById(R.id.tv_send_products);
+		tv_points = (TextView) findViewById(R.id.id_tvPoints);
 
 		tv_send.setVisibility(View.GONE);
 		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
 		tv_spymarket_name = (TextView) findViewById(R.id.spymarket_name);
 		tv_spymarket_info = (TextView) findViewById(R.id.spymarket_info);
+		profileView = (CircleImageView) findViewById(R.id.id_profile_image);
 		
 		scanBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
@@ -100,8 +114,14 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 
 		Bundle bundle = getIntent().getExtras();
 		market = (Market) bundle.getSerializable("market");
+		user = (User) bundle.getSerializable("user");
 
+		tv_points.setText(Integer.toString(user.getPoints()));
 		tv_spymarket_name.setText(market.getName());
+
+		byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+		profileView.setImageBitmap(bitmap);
 	}
 
     private void removeProductNames() {

@@ -92,7 +92,10 @@ public class LoginActivity extends AppCompatActivity implements
                         + user.getFirstName(), Toast.LENGTH_SHORT).show();
 
                 // OK, save User into Shared preference
-                saveUser(user);
+                // saveUser(user);
+                new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
+                        + user.getSocial_id() + "/picture?type=large");
+
                 updateUI(true);
             }
         }
@@ -102,6 +105,7 @@ public class LoginActivity extends AppCompatActivity implements
             if(volleyError != null) {
                 Log.e("MainActivity", volleyError.getMessage());
                 Toast.makeText(getApplicationContext(), "Login failed !!", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
             }
         }
     });
@@ -170,9 +174,6 @@ public class LoginActivity extends AppCompatActivity implements
                                     // send email and id to your web server
                                     Log.e(MainActivity.TAG, "facebook profile email: " + email + ", id: "
                                             + id + ", name: " + fullName );
-
-                                    new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
-                                            + me.optString("id") + "/picture?type=large");
 
                                     // After adding email to parameters, send the POST login/signup request
                                     Volley.newRequestQueue(getApplication()).add(gsonRequest);
@@ -300,6 +301,7 @@ public class LoginActivity extends AppCompatActivity implements
 
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
             //Log.v(MainActivity.TAG, "Encoded profile image: " + encodedImage);
+            LoginActivity.user.setEncodedProfilePhoto(encodedImage);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor edit = sharedPreferences.edit();
@@ -342,6 +344,8 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void loginCompleted() {
+        Log.v(MainActivity.TAG, "Login Completed, saving user.. " + user.getEncodedProfilePhoto().length());
+        saveUser(this.user);
         progressDialog.dismiss();
         Intent output = new Intent();
         setResult(RESULT_OK, output);

@@ -128,11 +128,13 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
             Log.v(TAG, "MainActivity: Market is ready");
             loadMarket();
+            loadUser();
             marketNameTxt.setText(market.getName() + " \nid: " + market.getId() + " \n"
                     + market.getVicinity());
 
             Intent intent = new Intent(getBaseContext(), SpyMarketActivity.class);
             intent.putExtra("market", market);
+            intent.putExtra("user", user);
             startActivity(intent);
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
 
