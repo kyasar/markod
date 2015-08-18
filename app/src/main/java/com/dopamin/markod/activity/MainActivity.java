@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.20:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
     private Button searchBtn, detectiveBtn, connCheckBtn;
 

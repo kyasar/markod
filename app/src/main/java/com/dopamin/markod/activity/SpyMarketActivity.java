@@ -20,10 +20,10 @@ import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -37,24 +37,19 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
 	
 	private View scanBtn, sendBtn;
 	private TextView tv_points;
 	private ListView products_lv;
-	private List <HashMap<String, String>> productList = new ArrayList <HashMap<String,String>> ();
+	private List <HashMap<String, String>> productList;
 	private ListAdapter adapter;
 	private Boolean test = false;
 	protected AlertDialog.Builder builder;
@@ -103,6 +98,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			// list adapter
 			adapter = new ProductListAdapter(this, productList);
 			products_lv.setAdapter(adapter);
+		} else {
+			productList = new ArrayList <HashMap<String,String>> ();
 		}
 
         /* sharing product declarations loading progress */
@@ -154,7 +151,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			hmProduct.put("name", p.getName());
 			hmProduct.put("barcode", p.getBarcode());
 			hmProduct.put("price", p.getPrice());
-			
+
 			productList.add(hmProduct);
 			total++;
 			sendBtn.setVisibility(View.VISIBLE);
