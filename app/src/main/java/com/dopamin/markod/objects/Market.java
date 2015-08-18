@@ -13,6 +13,7 @@ public class Market implements Serializable {
     private String provider;
     private String vicinity;
     private List products;
+    private String userID;  // Needed to detect which user declare the products for this market !!
 
     public Market(String place_name, String id, String provider, String vicinity) {
         this.name = place_name;
@@ -59,5 +60,13 @@ public class Market implements Serializable {
 
     public void setProducts(List products) {
         this.products = products;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

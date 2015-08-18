@@ -267,6 +267,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 				progressDialog.setMessage(getResources().getString(R.string.please_wait));
                 progressDialog.show();
 				market.setProducts(this.productList);
+				market.setUserID(user.get_id());
                 removeProductNames(); // Remove product names, they are not needed to keep in market
 
                 Gson gson = new Gson();
