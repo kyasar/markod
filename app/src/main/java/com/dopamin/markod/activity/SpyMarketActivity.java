@@ -42,6 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
@@ -280,6 +281,24 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 						Log.i("volley", "response: " + response);
                         clearScannedList();
                         progressDialog.dismiss();
+						try {
+							int earnings = 0;
+							if (response.get("status").toString().equals("OK")) {
+								earnings += Integer.parseInt(response.get("new_market").toString()) *
+										Integer.parseInt(response.get("coeff_nm").toString());
+								earnings += Integer.parseInt(response.get("new_products").toString()) *
+										Integer.parseInt(response.get("coeff_np").toString());
+								earnings += Integer.parseInt(response.get("products").toString()) *
+										Integer.parseInt(response.get("coeff_p").toString());
+
+								Log.v(MainActivity.TAG, "You earned " + earnings + " points.");
+								user.incPoints(earnings);
+							} else {
+								Log.v(MainActivity.TAG, "Unexpected error on server-side.");
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
 					}
 				}, new Response.ErrorListener() {
 					@Override

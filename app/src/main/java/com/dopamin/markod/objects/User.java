@@ -102,4 +102,8 @@ public class User implements Serializable {
     public void setLoginType(String loginType) {
         this.loginType = loginType;
     }
+
+    public void incPoints(int p) {
+        this.points += p;
+    }
 }
