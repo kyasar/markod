@@ -56,4 +56,9 @@
     <string name="select_this_market">Select this market for spying?</string>
     <string name="txt_scan_button">Scan</string>
     <string name="txt_send_button">Send</string>
+    <string name="total_points">Total Points</string>
+    <string name="new_market_points">New Market</string>
+    <string name="new_products_points">New Products</string>
+    <string name="update_product_points">Product Updates</string>
+    <string name="title_points_earned">Points You Earned !!</string>
 </resources>

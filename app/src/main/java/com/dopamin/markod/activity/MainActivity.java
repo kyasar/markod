@@ -354,13 +354,4 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
         return false;
     }
-
-
-    public boolean saveUser(User user) {
-        Gson gson = new Gson();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor edit = sp.edit();
-        edit.putString("user", gson.toJson(user));
-        return edit.commit();
-    }
 }

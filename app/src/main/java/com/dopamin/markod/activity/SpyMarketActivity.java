@@ -13,7 +13,8 @@ import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.dopamin.markod.PriceDialogFragment;
+import com.dopamin.markod.dialog.PointsDialogFragment;
+import com.dopamin.markod.dialog.PriceDialogFragment;
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.ProductListAdapter;
 import com.dopamin.markod.objects.Market;
@@ -27,8 +28,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -57,7 +60,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
     private ProgressDialog progressDialog;
 	private TextView tv_spymarket_name, tv_spymarket_info, tv_send;
 	private CircleImageView profileView;
-	
+
+	public static int POINTS_DIALOG_FRAGMENT_SUCC_CODE = 2;
 	public static int PRICE_DIALOG_FRAGMENT_SUCC_CODE = 1;
 	public static int PRICE_DIALOG_FRAGMENT_FAIL_CODE = 0;
 	private int total = 0;
@@ -247,6 +251,42 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		}
 	}
 
+	private void showPointsDialog(JSONObject response) {
+		int total = 0, new_products = 0, update_products = 0;
+		boolean new_market = false;
+
+		try {
+			if (response.get("status").toString().equals("OK")) {
+				// Only 1 market can be new
+				if (Integer.parseInt(response.get("new_market").toString()) > 0) {
+					new_market = true;
+					total += Integer.parseInt(response.get("coeff_nm").toString());
+				}
+
+				// new products declared in this market
+				new_products = Integer.parseInt(response.get("new_products").toString());
+				total += new_products *	Integer.parseInt(response.get("coeff_np").toString());
+
+				// products already declared in this market
+				update_products = Integer.parseInt(response.get("products").toString());
+				total +=  update_products *	Integer.parseInt(response.get("coeff_p").toString());
+
+				Log.v(MainActivity.TAG, "You earned " + total + " points.");
+				user.incPoints(total);
+			} else {
+				Log.v(MainActivity.TAG, "Unexpected error on server-side.");
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		PointsDialogFragment alertDialog = PointsDialogFragment.newInstance(getResources().getString(R.string.title_points_earned),
+				total, new_market, new_products, update_products);
+		ft.add(alertDialog, "fragment_alert");
+		ft.commitAllowingStateLoss();
+	}
+
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
@@ -281,24 +321,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 						Log.i("volley", "response: " + response);
                         clearScannedList();
                         progressDialog.dismiss();
-						try {
-							int earnings = 0;
-							if (response.get("status").toString().equals("OK")) {
-								earnings += Integer.parseInt(response.get("new_market").toString()) *
-										Integer.parseInt(response.get("coeff_nm").toString());
-								earnings += Integer.parseInt(response.get("new_products").toString()) *
-										Integer.parseInt(response.get("coeff_np").toString());
-								earnings += Integer.parseInt(response.get("products").toString()) *
-										Integer.parseInt(response.get("coeff_p").toString());
-
-								Log.v(MainActivity.TAG, "You earned " + earnings + " points.");
-								user.incPoints(earnings);
-							} else {
-								Log.v(MainActivity.TAG, "Unexpected error on server-side.");
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
+						showPointsDialog(response);
 					}
 				}, new Response.ErrorListener() {
 					@Override
@@ -329,9 +352,24 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			Toast.makeText(this, "Entered price for " + product.getName() + " price: " + value, Toast.LENGTH_SHORT).show();
 			product.setPrice(value);
 			addProductToList(product);
-		} else {
+		} else if (code == POINTS_DIALOG_FRAGMENT_SUCC_CODE) {
+			updateUserPointsUI();
+		} else if (code == PRICE_DIALOG_FRAGMENT_FAIL_CODE) {
 			Toast.makeText(this, "Product is discarded !!", Toast.LENGTH_SHORT).show();
 			total--;
 		}
+	}
+
+	public boolean saveUser(User user) {
+		Gson gson = new Gson();
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putString("user", gson.toJson(user));
+		return edit.commit();
+	}
+
+	public void updateUserPointsUI() {
+		tv_points.setText(Integer.toString(user.getPoints()));
+		saveUser(this.user);
 	}
 }
