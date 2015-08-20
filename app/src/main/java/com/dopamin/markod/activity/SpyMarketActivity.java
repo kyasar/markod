@@ -95,17 +95,9 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		scanBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
 		builder = new AlertDialog.Builder(this);
-		
-		if (savedInstanceState != null) {
-			productList = (List<HashMap<String, String>>) savedInstanceState.getSerializable("productList");
-			Log.v(MarketSelectActivity.TAG, "Restoring LIST.. size: " + productList.size());
 
-			// list adapter
-			adapter = new ProductListAdapter(this, productList);
-			products_lv.setAdapter(adapter);
-		} else {
-			productList = new ArrayList <HashMap<String,String>> ();
-		}
+		/* Product List TODO: Convert Hashmap to Product object */
+		productList = new ArrayList <HashMap<String,String>> ();
 
         /* sharing product declarations loading progress */
         progressDialog = new ProgressDialog(this);
@@ -337,12 +329,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			default:
 				break;
 		}
-	}
-	
-	public void onSaveInstanceState(Bundle savedState) {
-		 super.onSaveInstanceState(savedState);
-		 Log.v(MarketSelectActivity.TAG, "onSaveInstanceState Spy Market Activity.");
-		 savedState.putSerializable("productList", (Serializable) productList);
 	}
 
 	/* Price Fragment Dialog Select Button Listener */
