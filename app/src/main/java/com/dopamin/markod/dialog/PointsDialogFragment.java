@@ -47,6 +47,7 @@ public class PointsDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+		int ret = 0;
 		String title = getArguments().getString("title");
 		Builder builder = new Builder(getActivity());
 		builder.setTitle(title);
@@ -63,16 +64,24 @@ public class PointsDialogFragment extends DialogFragment {
 				+ " update: " + getArguments().getInt("update_products"));
 
 		tv_total.setText(getArguments().getInt("total") + " " + getResources().getString(R.string.total_points));
+
 		if (getArguments().getBoolean("new_market") == true) {
 			tv_newMarket.setText(R.string.new_market_points);
 		} else {
 			view.findViewById(R.id.tableRow2).setVisibility(View.GONE);
 		}
-		tv_new_products.setText(getArguments().getInt("new_products") + " "
-				+ getResources().getString(R.string.new_products_points));
 
-		tv_update_products.setText(getArguments().getInt("update_products") + " "
-				+ getResources().getString(R.string.update_product_points));
+		if ((ret = getArguments().getInt("new_products")) != 0) {
+			tv_new_products.setText(ret + " " + getResources().getString(R.string.new_products_points));
+		} else {
+			view.findViewById(R.id.tableRow3).setVisibility(View.GONE);
+		}
+
+		if ((ret = getArguments().getInt("update_products")) != 0) {
+			tv_update_products.setText(ret + " " + getResources().getString(R.string.update_products_points));
+		} else {
+			view.findViewById(R.id.tableRow4).setVisibility(View.GONE);
+		}
 
 		builder.setView(view);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

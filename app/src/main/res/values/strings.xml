@@ -59,6 +59,6 @@
     <string name="total_points">Total Points</string>
     <string name="new_market_points">New Market</string>
     <string name="new_products_points">New Products</string>
-    <string name="update_product_points">Product Updates</string>
+    <string name="update_products_points">Product Updates</string>
     <string name="title_points_earned">Points You Earned !!</string>
 </resources>
