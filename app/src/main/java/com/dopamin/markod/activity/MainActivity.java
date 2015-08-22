@@ -7,12 +7,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,13 +25,15 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.dopamin.markod.R;
+import com.dopamin.markod.adapter.ProductSearchAdapter;
 import com.dopamin.markod.objects.Market;
+import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
+public class MainActivity extends FragmentActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener {
 
     public static final String MDS_TOKEN = "test";
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     private TextView loginNameTxt;
     private TextView marketNameTxt;
+    private AutoCompleteTextView ac_tv_product_search;
 
     private SliderLayout mDemoSlider;
     private Menu menu;
@@ -110,13 +115,18 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             }
         });
 
-        //user = createMockUser();
-        setUserInfo();
-
-        ActionBar ab = getSupportActionBar();
-        ab.setTitle(R.string.main_title);
-
+        /* Load Location-based Ads */
         loadAdImages();
+
+        ac_tv_product_search = (AutoCompleteTextView) findViewById(R.id.id_ac_tv_productAutoSearch);
+        ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
+        ac_tv_product_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Product p = (Product) adapterView.getItemAtPosition(i);
+                Log.v(MainActivity.TAG, "Product searched: " + p.getName());
+            }
+        });
     }
 
     @Override
@@ -177,14 +187,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.v(MainActivity.TAG, "actionbar item: " + item.getItemId());
         // Take appropriate action for each action item click
         switch (item.getItemId()) {
-            case R.id.action_search:
-                // search action
-                Log.v(MainActivity.TAG, "SEARCH");
-                return true;
-            case R.id.action_refresh:
-                // refresh
-                Log.v(MainActivity.TAG, "REFRESH");
-                return true;
             case R.id.action_help:
                 // help action
                 Log.v(MainActivity.TAG, "HELP");
@@ -296,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     @Override
     protected void onResume() {
         super.onResume();
+        setUserInfo();
         Log.v(MainActivity.TAG, this.toString() + " onResume");
     }
 
