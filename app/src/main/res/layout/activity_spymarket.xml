@@ -9,7 +9,7 @@
         android:id="@+id/product_lv_item"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#D50000"
+        android:background="@color/red"
         android:orientation="horizontal" >
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="#FF6E40"
+            android:background="@color/orange"
             android:padding="3dp"
             android:orientation="vertical" >
 

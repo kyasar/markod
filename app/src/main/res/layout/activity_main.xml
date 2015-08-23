@@ -6,57 +6,37 @@
 
     <LinearLayout
         android:id="@+id/layout_main_top"
-        android:background="@color/markod_bg_color"
+        android:background="@color/red"
         android:padding="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <AutoCompleteTextView
-            android:background="@color/markod_bg_color"
+            android:background="@color/orange"
             android:padding="5dp"
             android:id="@+id/id_ac_tv_productAutoSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="24sp"
+            android:textColor="@color/white"
             android:hint="Enter Product name"
+            android:textColorHint="@color/white"
             android:layout_gravity="center_vertical"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="@color/gray"
+            android:textColor="@color/white"
             android:text="Search"/>
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/pb_loading_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|right"
-        android:visibility="gone"/>
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText android:id="@+id/search_text"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:hint="@string/search_hint" />
-
-        <Button android:id="@+id/search_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search" />
-    </LinearLayout>
 
     <Button
         android:id="@+id/detective_button"
