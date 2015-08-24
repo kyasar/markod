@@ -4,34 +4,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/layout_main_top"
+    <FrameLayout
         android:background="@color/red"
-        android:padding="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:padding="5dp">
 
         <AutoCompleteTextView
-            android:background="@color/orange"
-            android:padding="5dp"
             android:id="@+id/id_ac_tv_productAutoSearch"
-            android:layout_width="0dp"
+            android:padding="5dp"
+            android:singleLine="true"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="24sp"
             android:textColor="@color/white"
-            android:hint="Enter Product name"
+            android:textSize="24sp"
+            android:background="@color/orange"
+            android:hint="@string/hint_product_search"
             android:textColorHint="@color/white"
             android:layout_gravity="center_vertical"/>
+
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@color/gray"
-            android:textColor="@color/white"
-            android:text="Search"/>
-    </LinearLayout>
+            android:id="@+id/id_btn_delete"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/ic_action_cancel" />
+    </FrameLayout>
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"

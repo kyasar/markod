@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends FragmentActivity implements BaseSliderView.OnSliderClickListener,
@@ -41,7 +43,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static String MDS_SERVER = "http://192.168.43.120:8000";
 
-    private Button searchBtn, detectiveBtn, connCheckBtn;
+    private Button deleteBtn, detectiveBtn, connCheckBtn;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
@@ -85,18 +87,10 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         }
         setContentView(R.layout.activity_main);
 
-        searchBtn = (Button) findViewById(R.id.search_button);
+        deleteBtn = (Button) findViewById(R.id.id_btn_delete);
         detectiveBtn = (Button) findViewById(R.id.detective_button);
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
         marketNameTxt = (TextView) findViewById(R.id.market_name_text);
-
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Log.v(TAG, "Search Button clicked. OK.");
-            }
-        });
 
         detectiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +112,14 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         /* Load Location-based Ads */
         loadAdImages();
 
+        /* Search product cancel text button */
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ac_tv_product_search.setText("");
+            }
+        });
+
         ac_tv_product_search = (AutoCompleteTextView) findViewById(R.id.id_ac_tv_productAutoSearch);
         ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
         ac_tv_product_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -125,6 +127,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Product p = (Product) adapterView.getItemAtPosition(i);
                 Log.v(MainActivity.TAG, "Product searched: " + p.getName());
+                ac_tv_product_search.setText(p.getName());
             }
         });
     }
