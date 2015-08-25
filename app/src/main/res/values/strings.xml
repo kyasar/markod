@@ -61,5 +61,5 @@
     <string name="new_products_points">New Products</string>
     <string name="update_products_points">Product Updates</string>
     <string name="title_points_earned">Points You Earned !!</string>
-    <string name="hint_product_search"><i>product name..</i></string>
+    <string name="hint_product_search">product name..</string>
 </resources>

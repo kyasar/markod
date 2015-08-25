@@ -8,7 +8,7 @@
         android:background="@color/red"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:padding="2dp">
 
         <AutoCompleteTextView
             android:id="@+id/id_ac_tv_productAutoSearch"
@@ -17,7 +17,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="16sp"
             android:background="@color/orange"
             android:hint="@string/hint_product_search"
             android:textColorHint="@color/white"
@@ -25,8 +25,8 @@
 
         <Button
             android:id="@+id/id_btn_delete"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="end|center_vertical"
             android:background="@drawable/ic_action_cancel" />
     </FrameLayout>
