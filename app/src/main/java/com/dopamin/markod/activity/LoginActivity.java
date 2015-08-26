@@ -103,7 +103,8 @@ public class LoginActivity extends AppCompatActivity implements
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             if(volleyError != null) {
-                Log.e("MainActivity", volleyError.getMessage());
+                // TODO: this line cause to "println needs a message" error - fix it later for log.
+                //Log.e("MainActivity", volleyError.getMessage());
                 Toast.makeText(getApplicationContext(), "Login failed !!", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
