@@ -7,7 +7,7 @@
         android:id="@+id/mapfragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="50"
+        android:layout_weight="70"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
     <ListView
