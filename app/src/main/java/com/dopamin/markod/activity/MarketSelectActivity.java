@@ -14,11 +14,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -62,6 +65,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     protected AlertDialog.Builder builder;
     private MarketListAdapter adapter;
     private ProgressDialog progressDialog;
+    private EditText tv_marketFilter;
     boolean fakeLocation = true;
 
     List<HashMap<String, String>> placesList = null;
@@ -78,6 +82,25 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
         setContentView(R.layout.activity_market_select);
         lv = (ListView) findViewById(R.id.list);
+        tv_marketFilter = (EditText) findViewById(R.id.id_tv_marketFilter);
+
+        tv_marketFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.v(MainActivity.TAG, "Filtering markets: " + charSequence.toString());
+                adapter.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         /* Nearby Markets loading progress */
         progressDialog = new ProgressDialog(this);
