@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,22 +24,41 @@ import java.util.List;
 /**
  * Created by kadir on 14.08.2015.
  */
-public class MarketListAdapter extends ArrayAdapter<HashMap<String, String>> {
+public class MarketListAdapter extends BaseAdapter implements Filterable {
+    private List<HashMap<String, String>> orig_markets;
     private List<HashMap<String, String>> markets;
+    private List<HashMap<String, String>> filtered_markets;
+    private Context mContext;
 
     public MarketListAdapter(Context context, List<HashMap<String, String>> markets) {
-        super(context, 0, markets);
+        this.mContext = context;
+        this.orig_markets = markets;
         this.markets = markets;
+    }
+
+    @Override
+    public int getCount() {
+        return markets.size();
+    }
+
+    @Override
+    public HashMap<String, String> getItem(int index) {
+        return markets.get(index);
+    }
+
+    @Override
+    public long getItemId(int index) {
+        return index;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         // Check if an existing view is being reused, otherwise inflate the view
-        HashMap<String, String> market = getItem(position);
+        HashMap<String, String> market = (HashMap<String, String>) getItem(position);
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.market_list_item, parent, false);
+            convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_list_item, parent, false);
         }
 
         convertView.setBackgroundResource(R.drawable.listview_selector);
@@ -56,17 +77,18 @@ public class MarketListAdapter extends ArrayAdapter<HashMap<String, String>> {
 
     @Override
     public Filter getFilter() {
-        Filter filter = new Filter() {
+        return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
-                if (constraint != null) {
-                    Log.v(MainActivity.TAG, "Search string: " + constraint.toString() + " " + markets.size());
-                    List<HashMap<String, String>> filtered_markets = new ArrayList<HashMap<String, String>>();
-                    for (HashMap<String, String> p : markets) {
+                String filterString = constraint.toString().toLowerCase();
+                Log.v(MainActivity.TAG, "Filter string: " + filterString);
 
-                        if (p.get("place_name").toUpperCase().startsWith(constraint.toString().toUpperCase()))
-                            filtered_markets.add(p);
+                if (constraint != null) {
+                    filtered_markets = new ArrayList<HashMap<String, String>>();
+                    for (HashMap<String, String> m : orig_markets) {
+                        if (m.get("place_name").toLowerCase().startsWith(filterString))
+                            filtered_markets.add(m);
                     }
 
                     // Assign the data to the FilterResults
@@ -80,14 +102,14 @@ public class MarketListAdapter extends ArrayAdapter<HashMap<String, String>> {
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 Log.v(MainActivity.TAG, "publishResults");
                 if (results != null && results.count > 0) {
-                    Log.v(MainActivity.TAG, "publishResult OK.");
-                    markets = (List<HashMap<String, String>>) results.values;
+                    filtered_markets = (List<HashMap<String, String>>) results.values;
+                    markets = filtered_markets;
+                    Log.v(MainActivity.TAG, "publishResult OK. " + filtered_markets.size());
                     notifyDataSetChanged();
                 } else {
                     Log.v(MainActivity.TAG, "publishResult Invalid.");
                     notifyDataSetInvalidated();
                 }
             }};
-        return filter;
     }
 }

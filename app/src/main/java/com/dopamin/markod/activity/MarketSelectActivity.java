@@ -86,20 +86,17 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
         tv_marketFilter.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.v(MainActivity.TAG, "Filtering markets: " + charSequence.toString());
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.v(MainActivity.TAG, "Filtering markets: " + charSequence.toString()
+                        + "i: " + i + " i1: " + i1 + " i2: " + i2);
                 adapter.getFilter().filter(charSequence);
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) { }
         });
 
         /* Nearby Markets loading progress */
