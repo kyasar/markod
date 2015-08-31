@@ -59,6 +59,7 @@
         <activity
             android:name=".activity.MarketSelectActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
             android:label="@string/title_activity_market_select" >
         </activity>
         <activity android:name=".activity.PlaceDetailsActivity" />
