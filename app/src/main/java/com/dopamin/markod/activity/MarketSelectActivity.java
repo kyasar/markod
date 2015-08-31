@@ -376,6 +376,9 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             // list adapter
             adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
 
+            // This is needed to fill listview with first results
+            lv_markets.setAdapter(adapter);
+
             // Dismiss the progress dialog
             progressDialog.dismiss();
         }
