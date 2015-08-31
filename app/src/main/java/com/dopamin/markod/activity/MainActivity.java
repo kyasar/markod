@@ -26,7 +26,7 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.dopamin.markod.R;
-import com.dopamin.markod.adapter.ProductSearchAdapter;
+import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public static String MDS_SERVER = "http://192.168.1.22:8000";
 
     private Button deleteBtn, detectiveBtn, connCheckBtn;
 

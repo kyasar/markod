@@ -48,14 +48,13 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class MarketSelectActivity extends FragmentActivity implements LocationListener {
 
-    private ListView lv;
-    public static final String TAG = "MDlog";
     private LocationManager locationManager = null;
     private GoogleMap googleMap = null;
     private double latitude = 0;
@@ -65,10 +64,11 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     protected AlertDialog.Builder builder;
     private MarketListAdapter adapter;
     private ProgressDialog progressDialog;
+    private ListView lv_markets;
     private EditText tv_marketFilter;
     boolean fakeLocation = true;
 
-    List<HashMap<String, String>> placesList = null;
+    private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
 
     @Override
@@ -81,7 +81,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         }
 
         setContentView(R.layout.activity_market_select);
-        lv = (ListView) findViewById(R.id.list);
+        lv_markets = (ListView) findViewById(R.id.list);
         tv_marketFilter = (EditText) findViewById(R.id.id_tv_marketFilter);
 
         tv_marketFilter.addTextChangedListener(new TextWatcher() {
@@ -90,8 +90,6 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.v(MainActivity.TAG, "Filtering markets: " + charSequence.toString()
-                        + "i: " + i + " i1: " + i1 + " i2: " + i2);
                 adapter.getFilter().filter(charSequence);
             }
 
@@ -110,7 +108,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
-        Log.v(TAG, "Location Provider is " + bestProvider + " OK.");
+        Log.v(MainActivity.TAG, "Location Provider is " + bestProvider + " OK.");
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
@@ -121,14 +119,14 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         {
             googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment)).getMap();
             googleMap.setMyLocationEnabled(true);
-            Log.v(TAG, "Google Map frgament is OK.");
+            Log.v(MainActivity.TAG, "Google Map frgament is OK.");
         }
 
         googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
             @Override
             public void onInfoWindowClick(Marker arg0) {
-                Log.v(TAG, "onInfoWindowClick Listener is invoked.");
+                Log.v(MainActivity.TAG, "onInfoWindowClick Listener is invoked.");
                 Intent intent = new Intent(getBaseContext(), PlaceDetailsActivity.class);
                 String reference = mMarkerPlaceLink.get(arg0.getId());
                 intent.putExtra("reference", reference);
@@ -144,29 +142,26 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing but close the dialog
-                Log.v(TAG, "Market Selected.");
+                Log.v(MainActivity.TAG, "Market Selected.");
 
-                HashMap<String, String> hmPlace = null;
+                Market market = null;
 
-                for (int i=0; i < placesList.size(); i++) {
+                for (int i=0; i < nearbyMarkets.size(); i++) {
                     // Getting a place from the places list
-                    hmPlace = placesList.get(i);
+                    market = nearbyMarkets.get(i);
 
-                    if (hmPlace.get("place_name").equals(selectedMarketName)) {
+                    if (market.getName().equals(selectedMarketName)) {
                         break;
                     }
                 }
 
-                if (hmPlace != null) {
+                if (market != null) {
                     Intent output = new Intent();
-                    saveMarket(new Market(hmPlace.get("place_name").toString(),
-                            hmPlace.get("place_id").toString(),
-                            "GOOGLE_MAPS",
-                            hmPlace.get("vicinity").toString()));
+                    saveMarket(market);
                     setResult(RESULT_OK, output);
                     finish();
                 } else {
-                    Log.e(TAG, "Fatal Problem !! Selected Market not found in placeList.");
+                    Log.e(MainActivity.TAG, "Fatal Problem !! Selected Market not found in placeList.");
                 }
             }
         });
@@ -176,7 +171,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing
-                Log.v(TAG, "Market NOT Selected.");
+                Log.v(MainActivity.TAG, "Market NOT Selected.");
                 dialog.dismiss();
             }
         });
@@ -185,14 +180,14 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
          * ListItem click event
          * On selecting a listitem SinglePlaceActivity is launched
          * */
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // getting values from selected ListItem
                 selectedMarketName = ((TextView) view.findViewById(R.id.place_name)).getText().toString();
-                Log.v(TAG, "Listview item is clicked (" + selectedMarketName + "). OK.");
+                Log.v(MainActivity.TAG, "Listview item is clicked (" + selectedMarketName + "). OK.");
 
                 builder.setMessage(R.string.select_this_market);
                 builder.setTitle(selectedMarketName);
@@ -203,12 +198,12 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         });
 
         if (savedInstanceState != null) {
-            placesList = (List<HashMap<String, String>>) savedInstanceState.getSerializable("marketsList");
-            Log.v(MainActivity.TAG, "Restoring market LIST.. size: " + placesList.size());
+            nearbyMarkets = (List<Market>) savedInstanceState.getSerializable("nearbyMarkets");
+            Log.v(MainActivity.TAG, "Restoring market LIST.. size: " + nearbyMarkets.size());
 
             // list adapter
-            adapter = new MarketListAdapter(this, placesList);
-            lv.setAdapter(adapter);
+            adapter = new MarketListAdapter(this, nearbyMarkets);
+            lv_markets.setAdapter(adapter);
         }
 
         /* Search nearby markets and list them in Listview */
@@ -225,7 +220,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         sb.append("&sensor=true");
         sb.append("&key=" + MainActivity.GOOGLE_API_KEY);
 
-        Log.v(TAG, "GMAP query Rentence: " + sb.toString());
+        Log.v(MainActivity.TAG, "GMAP query Rentence: " + sb.toString());
 
         // Creating a new non-ui thread task to download Google place json data
         PlacesTask placesTask = new PlacesTask();
@@ -233,7 +228,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         // Invokes the "doInBackground()" method of the class PlaceTask
         progressDialog.show();
         placesTask.execute(sb.toString());
-        Log.v(TAG, "Places request sent.");
+        Log.v(MainActivity.TAG, "Places request sent.");
     }
 
     /** A method to download json data from url */
@@ -337,6 +332,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
             // Clears all the existing markers
             googleMap.clear();
+            nearbyMarkets = new ArrayList<Market>();
 
             for (int i = 0; i < list.size(); i++) {
 
@@ -358,6 +354,9 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
                 // Getting vicinity
                 String vicinity = hmPlace.get("vicinity");
 
+                Market m = new Market(name, hmPlace.get("place_id"), vicinity);
+                nearbyMarkets.add(m);
+
                 LatLng latLng = new LatLng(lat, lng);
 
                 // Setting the position for the marker
@@ -368,19 +367,14 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
                 markerOptions.title(name + " : " + vicinity);
 
                 // Placing a marker on the touched position
-                Marker m = googleMap.addMarker(markerOptions);
+                Marker marker = googleMap.addMarker(markerOptions);
 
                 // Linking Marker id and place reference
-                mMarkerPlaceLink.put(m.getId(), hmPlace.get("reference"));
+                mMarkerPlaceLink.put(marker.getId(), hmPlace.get("reference"));
             }
 
-            placesList = list;
-
             // list adapter
-            adapter = new MarketListAdapter(getApplicationContext(), placesList);
-
-            // Adding data into listview
-            lv.setAdapter(adapter);
+            adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
 
             // Dismiss the progress dialog
             progressDialog.dismiss();
@@ -466,7 +460,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
         Log.v(MainActivity.TAG, "onSaveInstanceState Spy Market Activity.");
-        savedState.putSerializable("marketsList", (Serializable) placesList);
+        savedState.putSerializable("nearbyMarkets", (Serializable) nearbyMarkets);
     }
 
     public boolean saveMarket(Market market) {

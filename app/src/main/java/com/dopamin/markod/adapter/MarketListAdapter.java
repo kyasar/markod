@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dopamin.markod.R;
 import com.dopamin.markod.activity.MainActivity;
+import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 
 import java.util.ArrayList;
@@ -25,12 +26,12 @@ import java.util.List;
  * Created by kadir on 14.08.2015.
  */
 public class MarketListAdapter extends BaseAdapter implements Filterable {
-    private List<HashMap<String, String>> orig_markets;
-    private List<HashMap<String, String>> markets;
-    private List<HashMap<String, String>> filtered_markets;
+    private List<Market> orig_markets;
+    private List<Market> markets;
+    private List<Market> filtered_markets;
     private Context mContext;
 
-    public MarketListAdapter(Context context, List<HashMap<String, String>> markets) {
+    public MarketListAdapter(Context context, List<Market> markets) {
         this.mContext = context;
         this.orig_markets = markets;
         this.markets = markets;
@@ -42,7 +43,7 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public HashMap<String, String> getItem(int index) {
+    public Market getItem(int index) {
         return markets.get(index);
     }
 
@@ -55,7 +56,7 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         // Check if an existing view is being reused, otherwise inflate the view
-        HashMap<String, String> market = (HashMap<String, String>) getItem(position);
+        Market market = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_list_item, parent, false);
@@ -68,8 +69,8 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
         TextView tvAddress = (TextView) convertView.findViewById(R.id.place_address);
 
         // Populate the data into the template view using the data object
-        tvName.setText(market.get("place_name"));
-        tvAddress.setText(market.get("vicinity"));
+        tvName.setText(market.getName());
+        tvAddress.setText(market.getVicinity());
 
         // Return the completed view to render on screen
         return convertView;
@@ -85,9 +86,9 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
                 Log.v(MainActivity.TAG, "Filter string: " + filterString);
 
                 if (constraint != null) {
-                    filtered_markets = new ArrayList<HashMap<String, String>>();
-                    for (HashMap<String, String> m : orig_markets) {
-                        if (m.get("place_name").toLowerCase().startsWith(filterString))
+                    filtered_markets = new ArrayList<Market>();
+                    for (Market m : orig_markets) {
+                        if (m.getName().toLowerCase().startsWith(filterString))
                             filtered_markets.add(m);
                     }
 
@@ -102,7 +103,7 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 Log.v(MainActivity.TAG, "publishResults");
                 if (results != null && results.count > 0) {
-                    filtered_markets = (List<HashMap<String, String>>) results.values;
+                    filtered_markets = (List<Market>) results.values;
                     markets = filtered_markets;
                     Log.v(MainActivity.TAG, "publishResult OK. " + filtered_markets.size());
                     notifyDataSetChanged();

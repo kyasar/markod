@@ -13,10 +13,9 @@ import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.dopamin.markod.dialog.PointsDialogFragment;
-import com.dopamin.markod.dialog.PriceDialogFragment;
+import com.dopamin.markod.dialog.*;
 import com.dopamin.markod.R;
-import com.dopamin.markod.adapter.ProductListAdapter;
+import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
@@ -24,7 +23,7 @@ import com.dopamin.markod.request.GsonRequest;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import de.hdodenhof.circleimageview.CircleImageView;
+import de.hdodenhof.circleimageview.*;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -78,7 +77,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_spymarket);
 		
-		Log.v(MarketSelectActivity.TAG, "onCreate Spy Market Activity.");
+		Log.v(MainActivity.TAG, "onCreate Spy Market Activity.");
 		
 		scanBtn = findViewById(R.id.scan_button);
 		sendBtn = findViewById(R.id.send_button);
@@ -125,7 +124,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	private int isProductAlreadyAdded(Product p) {
 		for (int i = 0; i < productList.size(); i++) {
 			if (productList.get(i).get("barcode").matches(p.getBarcode())) {
-				Log.v(MarketSelectActivity.TAG, "The product " + p.getBarcode()
+				Log.v(MainActivity.TAG, "The product " + p.getBarcode()
 						+ " is already added. Just updating the price.");
 				return i;
 			}
@@ -179,7 +178,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 					progressDialog.setTitle(getResources().getString(R.string.spymarket_product_title));
 					progressDialog.setMessage(getResources().getString(R.string.please_wait));
                     progressDialog.show();
-					Log.v(MarketSelectActivity.TAG, "scanContent: " + scanContent);
+					Log.v(MainActivity.TAG, "scanContent: " + scanContent);
 					// String scanFormat = scanningResult.getFormatName();
 					String uniqueProductURL = productURL + scanContent + "?token=" + MainActivity.MDS_TOKEN;
 
@@ -285,7 +284,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			case R.id.scan_button:
 				if (test) {
 					product = new Product("Noname" + (++total), "0123456789", "");
-					Log.v(MarketSelectActivity.TAG, "product created. name: " + product.getName() +
+					Log.v(MainActivity.TAG, "product created. name: " + product.getName() +
 							", barcode: " + product.getBarcode());
 					showAlertDialog(product);
 				} else {

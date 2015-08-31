@@ -15,10 +15,9 @@ public class Market implements Serializable {
     private List products;
     private String userID;  // Needed to detect which user declare the products for this market !!
 
-    public Market(String place_name, String id, String provider, String vicinity) {
+    public Market(String place_name, String id, String vicinity) {
         this.name = place_name;
         this.id = id;
-        this.provider = provider;
         this.vicinity = vicinity;
     }
 

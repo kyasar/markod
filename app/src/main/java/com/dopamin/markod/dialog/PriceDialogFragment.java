@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dopamin.markod.R;
+import com.dopamin.markod.activity.MainActivity;
 import com.dopamin.markod.activity.MarketSelectActivity;
 import com.dopamin.markod.activity.SpyMarketActivity;
 
@@ -47,7 +48,7 @@ public class PriceDialogFragment extends DialogFragment {
 		builder.setView(view);
 		builder.setMessage(R.string.setProductPrice);
 
-		Log.v(MarketSelectActivity.TAG, "onCreateDialog Fragment Dialog");
+		Log.v(MainActivity.TAG, "onCreateDialog Fragment Dialog");
 
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -59,7 +60,7 @@ public class PriceDialogFragment extends DialogFragment {
 					SpyMarketActivity activity = (SpyMarketActivity) getActivity();
 					activity.onUserSelectValue(SpyMarketActivity.PRICE_DIALOG_FRAGMENT_FAIL_CODE, null);
 				} else {
-					Log.v(MarketSelectActivity.TAG, "Price: "
+					Log.v(MainActivity.TAG, "Price: "
 							+ "." + npMain.getText().toString() + "."
 							+ "." + npCent.getText().toString() + ".  which: " + which);
 
@@ -78,7 +79,7 @@ public class PriceDialogFragment extends DialogFragment {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// Do nothing
-					Log.v(MarketSelectActivity.TAG,
+					Log.v(MainActivity.TAG,
 							"Price NOT Selected. which: " + which);
 					SpyMarketActivity activity = (SpyMarketActivity) getActivity();
 					activity.onUserSelectValue(0, null);	// product discarded
