@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 import com.dopamin.markod.PlaceJSONParser;
 import com.dopamin.markod.R;
-import com.dopamin.markod.adapter.MarketListAdapter;
+import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.request.PlacesResult;
 import com.dopamin.markod.request.PlacesTask;
@@ -228,6 +228,8 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
         // Creating a new non-ui thread task to download Google place json data
         PlacesTask placesTask = new PlacesTask();
+
+        // Result will be returned to this Activity
         placesTask.delegate = this;
 
         // Invokes the "doInBackground()" method of the class PlaceTask
@@ -332,5 +334,13 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
         lv_markets.setAdapter(adapter);
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void processMarkers(List<MarkerOptions> markerOptionsList) {
+        for(MarkerOptions mOptions : markerOptionsList) {
+            Marker marker = googleMap.addMarker(mOptions);
+            mMarkerPlaceLink.put(marker.getId(), "");
+        }
     }
 }

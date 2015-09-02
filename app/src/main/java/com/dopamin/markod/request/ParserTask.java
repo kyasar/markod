@@ -6,6 +6,7 @@ import android.util.Log;
 import com.dopamin.markod.PlaceJSONParser;
 import com.dopamin.markod.objects.Market;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONObject;
@@ -46,6 +47,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
         // Clears all the existing markers
         //googleMap.clear();
         List<Market> nearbyMarkets = new ArrayList<Market>();
+        List<MarkerOptions> markerOptionsList = new ArrayList<MarkerOptions>();
 
         for (int i = 0; i < list.size(); i++) {
 
@@ -79,6 +81,8 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
             //This will be displayed on taping the marker
             markerOptions.title(name + " : " + vicinity);
 
+            markerOptionsList.add(markerOptions);
+
             // Placing a marker on the touched position
             //Marker marker = googleMap.addMarker(markerOptions);
 
@@ -95,5 +99,6 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
         // Dismiss the progress dialog
         //progressDialog.dismiss();
         delegate.processPlaces(nearbyMarkets);
+        delegate.processMarkers(markerOptionsList);
     }
 }
