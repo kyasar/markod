@@ -14,11 +14,20 @@ public class Market implements Serializable {
     private String vicinity;
     private List products;
     private String userID;  // Needed to detect which user declare the products for this market !!
+    private String reference;
 
     public Market(String place_name, String id, String vicinity) {
         this.name = place_name;
         this.id = id;
         this.vicinity = vicinity;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getName() {
