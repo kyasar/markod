@@ -104,7 +104,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
 		Bundle bundle = getIntent().getExtras();
-		market = (Market) bundle.getSerializable("market");
+		market = (Market) bundle.getParcelable("market");
 		user = (User) bundle.getSerializable("user");
 
 		tv_points.setText(Integer.toString(user.getPoints()));

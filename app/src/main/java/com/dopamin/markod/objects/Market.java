@@ -1,22 +1,27 @@
 package com.dopamin.markod.objects;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.Serializable;
+import java.nio.BufferUnderflowException;
 import java.util.List;
 
 /**
  * Created by kadir on 05.07.2015.
  */
-public class Market implements Serializable {
+public class Market implements Parcelable {
 
     private String name;
     private String id;
     private String provider;
     private String vicinity;
-    private List products;
-    private String userID;  // Needed to detect which user declare the products for this market !!
     private String reference;
+    private String userID;  // Needed to detect which user declare the products for this market !!
+    private List products;
     private MarkerOptions markerOptions;
 
     public Market(String place_name, String id, String vicinity, String reference) {
@@ -24,6 +29,17 @@ public class Market implements Serializable {
         this.id = id;
         this.vicinity = vicinity;
         this.reference = reference;
+    }
+
+    public Market(Parcel parcel) {
+        this.name = parcel.readString();
+        this.id = parcel.readString();
+        this.provider = parcel.readString();
+        this.vicinity = parcel.readString();
+        this.reference = parcel.readString();
+        this.userID = parcel.readString();
+        this.products = parcel.readArrayList(null); // be careful, Product type is parcelable?
+        this.markerOptions = parcel.readParcelable(MarkerOptions.class.getClassLoader());
     }
 
     public MarkerOptions getMarkerOptions() {
@@ -89,4 +105,34 @@ public class Market implements Serializable {
     public void setUserID(String userID) {
         this.userID = userID;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(id);
+        parcel.writeString(provider);
+        parcel.writeString(vicinity);
+        parcel.writeString(reference);
+        parcel.writeString(userID);
+        parcel.writeList(products);
+        parcel.writeParcelable(markerOptions, i);
+    }
+
+    public static final Parcelable.Creator<Market> CREATOR = new Parcelable.Creator<Market>() {
+
+        @Override
+        public Market createFromParcel(Parcel parcel) {
+            return new Market(parcel);
+        }
+
+        @Override
+        public Market[] newArray(int i) {
+            return new Market[i];
+        }
+    };
 }
