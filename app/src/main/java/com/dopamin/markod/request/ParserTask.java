@@ -69,8 +69,9 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
             // Getting vicinity
             String vicinity = hmPlace.get("vicinity");
 
-            Market m = new Market(name, hmPlace.get("place_id"), vicinity);
-            nearbyMarkets.add(m);
+            String reference = hmPlace.get("reference");
+
+            Market m = new Market(name, hmPlace.get("place_id"), vicinity, reference);
 
             LatLng latLng = new LatLng(lat, lng);
 
@@ -80,25 +81,14 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
             // Setting the title for the marker.
             //This will be displayed on taping the marker
             markerOptions.title(name + " : " + vicinity);
+            m.setMarkerOptions(markerOptions);
 
-            markerOptionsList.add(markerOptions);
-
-            // Placing a marker on the touched position
-            //Marker marker = googleMap.addMarker(markerOptions);
-
-            // Linking Marker id and place reference
-            //mMarkerPlaceLink.put(marker.getId(), hmPlace.get("reference"));
+            nearbyMarkets.add(m);
         }
-
-        // list adapter
-        //adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
-
-        // This is needed to fill listview with first results
-        //lv_markets.setAdapter(adapter);
 
         // Dismiss the progress dialog
         //progressDialog.dismiss();
         delegate.processPlaces(nearbyMarkets);
-        delegate.processMarkers(markerOptionsList);
+        //delegate.processMarkers(markerOptionsList);
     }
 }

@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.22:8000";
+    public static String MDS_SERVER = "http://192.168.1.21:8000";
 
     private Button deleteBtn, detectiveBtn, connCheckBtn;
 

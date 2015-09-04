@@ -1,5 +1,7 @@
 package com.dopamin.markod.objects;
 
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,11 +17,21 @@ public class Market implements Serializable {
     private List products;
     private String userID;  // Needed to detect which user declare the products for this market !!
     private String reference;
+    private MarkerOptions markerOptions;
 
-    public Market(String place_name, String id, String vicinity) {
+    public Market(String place_name, String id, String vicinity, String reference) {
         this.name = place_name;
         this.id = id;
         this.vicinity = vicinity;
+        this.reference = reference;
+    }
+
+    public MarkerOptions getMarkerOptions() {
+        return markerOptions;
+    }
+
+    public void setMarkerOptions(MarkerOptions markerOptions) {
+        this.markerOptions = markerOptions;
     }
 
     public String getReference() {

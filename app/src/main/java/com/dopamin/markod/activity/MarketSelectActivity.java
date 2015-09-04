@@ -330,10 +330,17 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     }
 
     @Override
-    public void processPlaces(List<Market> nearbyMarkets) {
+    public void processPlaces(List<Market> markets) {
+        // set global places list before use it
+        nearbyMarkets = markets;
         adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
         lv_markets.setAdapter(adapter);
         progressDialog.dismiss();
+
+        for (Market m : nearbyMarkets) {
+            Marker marker = googleMap.addMarker(m.getMarkerOptions());
+            mMarkerPlaceLink.put(marker.getId(), m.getReference());
+        }
     }
 
     @Override
