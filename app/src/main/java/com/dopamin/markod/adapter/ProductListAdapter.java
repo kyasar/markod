@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dopamin.markod.R;
+import com.dopamin.markod.objects.Product;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +16,8 @@ import java.util.List;
 /**
  * Created by kadir on 14.08.2015.
  */
-public class ProductListAdapter extends ArrayAdapter<HashMap<String, String>> {
-    public ProductListAdapter(Context context, List<HashMap<String, String>> products) {
+public class ProductListAdapter extends ArrayAdapter<Product> {
+    public ProductListAdapter(Context context, List<Product> products) {
         super(context, 0, products);
     }
 
@@ -24,7 +25,7 @@ public class ProductListAdapter extends ArrayAdapter<HashMap<String, String>> {
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         // Check if an existing view is being reused, otherwise inflate the view
-        HashMap<String, String> product = getItem(position);
+        Product product = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.product_list_item , parent, false);
@@ -38,9 +39,9 @@ public class ProductListAdapter extends ArrayAdapter<HashMap<String, String>> {
         TextView tvPrice = (TextView) convertView.findViewById(R.id.product_price);
 
         // Populate the data into the template view using the data object
-        tvName.setText(product.get("name"));
-        tvBarcode.setText(product.get("barcode"));
-        tvPrice.setText(product.get("price"));
+        tvName.setText(product.getName());
+        tvBarcode.setText(product.getBarcode());
+        tvPrice.setText(product.getPrice());
 
         // Return the completed view to render on screen
         return convertView;

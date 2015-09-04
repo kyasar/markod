@@ -52,7 +52,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	private View scanBtn, sendBtn;
 	private TextView tv_points;
 	private ListView products_lv;
-	private List <HashMap<String, String>> productList;
+	private List <Product> productList;
 	private ListAdapter adapter;
 	private Boolean test = false;
 	protected AlertDialog.Builder builder;
@@ -96,7 +96,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		builder = new AlertDialog.Builder(this);
 
 		/* Product List TODO: Convert Hashmap to Product object */
-		productList = new ArrayList <HashMap<String,String>> ();
+		productList = new ArrayList <Product> ();
 
         /* sharing product declarations loading progress */
         progressDialog = new ProgressDialog(this);
@@ -104,8 +104,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
 		Bundle bundle = getIntent().getExtras();
-		market = (Market) bundle.getParcelable("market");
-		user = (User) bundle.getSerializable("user");
+		market = bundle.getParcelable("market");
+		user = bundle.getParcelable("user");
 
 		tv_points.setText(Integer.toString(user.getPoints()));
 		tv_spymarket_name.setText(market.getName());
@@ -114,16 +114,10 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
 		profileView.setImageBitmap(bitmap);
 	}
-
-    private void removeProductNames() {
-        for (int i = 0; i < productList.size(); i++) {
-            productList.get(i).remove("name");
-        }
-    }
 	
 	private int isProductAlreadyAdded(Product p) {
 		for (int i = 0; i < productList.size(); i++) {
-			if (productList.get(i).get("barcode").matches(p.getBarcode())) {
+			if (productList.get(i).getBarcode().matches(p.getBarcode())) {
 				Log.v(MainActivity.TAG, "The product " + p.getBarcode()
 						+ " is already added. Just updating the price.");
 				return i;
@@ -141,14 +135,9 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		int index = isProductAlreadyAdded(p);
 		
 		if (index != -1) {
-			productList.get(index).put("price", p.getPrice());
+			productList.get(index).setPrice(p.getPrice());
 		} else {
-			HashMap<String, String> hmProduct = new HashMap <String, String> ();
-			hmProduct.put("name", p.getName());
-			hmProduct.put("barcode", p.getBarcode());
-			hmProduct.put("price", p.getPrice());
-
-			productList.add(hmProduct);
+			productList.add(p);
 			total++;
 			sendBtn.setVisibility(View.VISIBLE);
 			tv_send.setVisibility(View.VISIBLE);
@@ -300,10 +289,9 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
                 progressDialog.show();
 				market.setProducts(this.productList);
 				market.setUserID(user.get_id());
-                removeProductNames(); // Remove product names, they are not needed to keep in market
 
                 Gson gson = new Gson();
-				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(market));
+				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(market.createJSON_AssocProducts()));
 
 				JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL,
 						gson.toJson(market), new Response.Listener<JSONObject>() {
