@@ -1,10 +1,12 @@
 package com.dopamin.markod.objects;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class User implements Parcelable {
     private String _id;
     private String firstName;
     private String lastName;
@@ -13,7 +15,6 @@ public class User implements Serializable {
     private int points;
     private String social_id;
     private String loginType;
-
     private String encodedProfilePhoto;
 
     public User(String id, String firstName, String lastName, String email,
@@ -29,6 +30,18 @@ public class User implements Serializable {
 
     public User() {
         this.points = 0;
+    }
+
+    public User(Parcel parcel) {
+        this._id = parcel.readString();
+        this.firstName = parcel.readString();
+        this.lastName = parcel.readString();
+        this.email = parcel.readString();
+        this.username = parcel.readString();
+        this.points = parcel.readInt();
+        this.social_id = parcel.readString();
+        this.loginType = parcel.readString();
+        this.encodedProfilePhoto = parcel.readString();
     }
 
     public String getFirstName() {
@@ -106,4 +119,35 @@ public class User implements Serializable {
     public void incPoints(int p) {
         this.points += p;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(_id);
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(email);
+        parcel.writeString(username);
+        parcel.writeInt(points);
+        parcel.writeString(social_id);
+        parcel.writeString(loginType);
+        parcel.writeString(encodedProfilePhoto);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+
+        @Override
+        public User createFromParcel(Parcel parcel) {
+            return new User(parcel);
+        }
+
+        @Override
+        public User[] newArray(int i) {
+            return new User[i];
+        }
+    };
 }

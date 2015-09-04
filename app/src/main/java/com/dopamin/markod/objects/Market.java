@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.Serializable;
 import java.nio.BufferUnderflowException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class Market implements Parcelable {
     private String vicinity;
     private String reference;
     private String userID;  // Needed to detect which user declare the products for this market !!
-    private List products;
+    private List<Product> products;
     private MarkerOptions markerOptions;
 
     public Market(String place_name, String id, String vicinity, String reference) {
@@ -29,6 +30,7 @@ public class Market implements Parcelable {
         this.id = id;
         this.vicinity = vicinity;
         this.reference = reference;
+        this.provider = "GOOGLE_MAPS";
     }
 
     public Market(Parcel parcel) {
@@ -90,11 +92,11 @@ public class Market implements Parcelable {
         this.vicinity = vicinity;
     }
 
-    public List getProducts() {
+    public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List products) {
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
 
@@ -135,4 +137,30 @@ public class Market implements Parcelable {
             return new Market[i];
         }
     };
+
+    private Market() {
+
+    }
+
+    public List<Product> removeNames(List<Product> products) {
+        List<Product> namelessList = new ArrayList<Product>();
+        for(Product p : products) {
+            Product stripped_product = new Product();
+            stripped_product.setBarcode(p.getBarcode());
+            stripped_product.setPrice(p.getPrice());
+            namelessList.add(stripped_product);
+        }
+        return namelessList;
+    }
+
+    public Market createJSON_AssocProducts() {
+        Market market = new Market();
+        market.setId(this.id);
+        market.setName(this.name);
+        market.setProvider(this.provider);
+        market.setVicinity(this.vicinity);
+        market.setProducts(removeNames(this.products));
+        market.setUserID(this.userID);
+        return market;
+    }
 }
