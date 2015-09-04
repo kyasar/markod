@@ -342,12 +342,4 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             mMarkerPlaceLink.put(marker.getId(), m.getReference());
         }
     }
-
-    @Override
-    public void processMarkers(List<MarkerOptions> markerOptionsList) {
-        for(MarkerOptions mOptions : markerOptionsList) {
-            Marker marker = googleMap.addMarker(mOptions);
-            mMarkerPlaceLink.put(marker.getId(), "");
-        }
-    }
 }

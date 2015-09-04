@@ -12,5 +12,4 @@ import java.util.List;
  */
 public interface PlacesResult {
     void processPlaces(List<Market> nearbyMarkets);
-    void processMarkers(List<MarkerOptions> markerOptions);
 }

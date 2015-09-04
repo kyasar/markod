@@ -44,15 +44,10 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
     @Override
     protected void onPostExecute(List<HashMap<String,String>> list) {
 
-        // Clears all the existing markers
-        //googleMap.clear();
         List<Market> nearbyMarkets = new ArrayList<Market>();
-        List<MarkerOptions> markerOptionsList = new ArrayList<MarkerOptions>();
+        String name, vicinity, reference;
 
         for (int i = 0; i < list.size(); i++) {
-
-            // Creating a marker
-            MarkerOptions markerOptions = new MarkerOptions();
 
             // Getting a place from the places list
             HashMap<String, String> hmPlace = list.get(i);
@@ -64,16 +59,20 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
             double lng = Double.parseDouble(hmPlace.get("lng"));
 
             // Getting name
-            String name = hmPlace.get("place_name");
+            name = hmPlace.get("place_name");
 
             // Getting vicinity
-            String vicinity = hmPlace.get("vicinity");
+            vicinity = hmPlace.get("vicinity");
 
-            String reference = hmPlace.get("reference");
+            // Getting reference to link
+            reference = hmPlace.get("reference");
 
             Market m = new Market(name, hmPlace.get("place_id"), vicinity, reference);
 
             LatLng latLng = new LatLng(lat, lng);
+
+            // Creating a marker
+            MarkerOptions markerOptions = new MarkerOptions();
 
             // Setting the position for the marker
             markerOptions.position(latLng);
@@ -87,8 +86,6 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
         }
 
         // Dismiss the progress dialog
-        //progressDialog.dismiss();
         delegate.processPlaces(nearbyMarkets);
-        //delegate.processMarkers(markerOptionsList);
     }
 }
