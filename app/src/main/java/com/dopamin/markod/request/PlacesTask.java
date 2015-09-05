@@ -6,6 +6,8 @@ import android.util.Log;
 import com.dopamin.markod.PlaceJSONParser;
 import com.dopamin.markod.activity.MainActivity;
 import com.dopamin.markod.objects.Market;
+import com.dopamin.markod.request.ParserTask;
+import com.dopamin.markod.request.PlacesResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;

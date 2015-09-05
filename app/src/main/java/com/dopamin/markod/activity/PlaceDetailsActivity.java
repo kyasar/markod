@@ -43,10 +43,10 @@ public class PlaceDetailsActivity extends Activity {
 		
 		
 		// Creating a new non-ui thread task to download Google place details 
-        PlacesTask placesTask = new PlacesTask();		        			        
+        PlacesTask placesTask = new PlacesTask();
         
 		// Invokes the "doInBackground()" method of the class PlaceTask
-        placesTask.execute(sb.toString());	
+        placesTask.execute(sb.toString());
 		
 	};
 	

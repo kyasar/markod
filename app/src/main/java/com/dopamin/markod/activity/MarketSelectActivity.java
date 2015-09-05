@@ -10,7 +10,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -25,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dopamin.markod.PlaceJSONParser;
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.objects.Market;
@@ -41,16 +39,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,7 +57,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     private ProgressDialog progressDialog;
     private ListView lv_markets;
     private EditText tv_marketFilter;
-    boolean fakeLocation = true;
+    boolean fakeLocation = false;
 
     private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
@@ -121,7 +110,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         {
             googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment)).getMap();
             googleMap.setMyLocationEnabled(true);
-            Log.v(MainActivity.TAG, "Google Map frgament is OK.");
+            Log.v(MainActivity.TAG, "Google Map fragment is OK.");
         }
 
         googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
