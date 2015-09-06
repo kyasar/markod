@@ -62,4 +62,7 @@
     <string name="update_products_points">Product Updates</string>
     <string name="title_points_earned">Points You Earned !!</string>
     <string name="hint_product_search">product name..</string>
+    <string name="str_searching_products">Searching products</string>
+    <string name="str_searching_products_nearby_markets">Products are being searched in nearby Markets</string>
+    <string name="str_search_results">Search Results</string>
 </resources>

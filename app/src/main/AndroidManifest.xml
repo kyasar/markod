@@ -36,6 +36,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <uses-library android:name="com.google.android.maps" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE" />
@@ -56,20 +59,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.MarketSelectActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
             android:label="@string/title_activity_market_select" >
         </activity>
-        <activity android:name=".activity.PlaceDetailsActivity" />
+
         <activity
             android:name=".activity.SpyMarketActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_spymarket" >
         </activity>
-
-        <uses-library android:name="com.google.android.maps" />
 
         <activity
             android:name=".activity.LoginActivity"
@@ -77,16 +79,29 @@
             android:label="@string/title_activity_login"
             android:parentActivityName=".activity.MainActivity" >
         </activity>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
+
         <activity
             android:name=".activity.ProfileActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_profile" >
         </activity>
+
+        <activity
+            android:name=".activity.SearchResultsActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".activity.MainActivity" >
+        </activity>
+
+        <activity android:name=".activity.PlaceDetailsActivity" />
+
     </application>
 
 </manifest>

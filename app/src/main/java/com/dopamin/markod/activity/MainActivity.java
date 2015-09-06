@@ -34,6 +34,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener {
@@ -128,6 +129,14 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
                 Product p = (Product) adapterView.getItemAtPosition(i);
                 Log.v(MainActivity.TAG, "Product searched: " + p.getName());
                 ac_tv_product_search.setText(p.getName());
+
+                ArrayList<Product> searchProductList = new ArrayList<Product>();
+                searchProductList.add(p);
+
+                Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+                intent.putParcelableArrayListExtra("searchProductList", searchProductList);
+                startActivity(intent);
+                Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
             }
         });
     }
