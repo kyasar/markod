@@ -26,9 +26,15 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
+import com.dopamin.markod.objects.ScanProductsRequest;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.PlacesResult;
 import com.dopamin.markod.request.PlacesTask;
@@ -42,6 +48,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -63,7 +73,7 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
     private List<Product> productSearchList;
     private ListView lv_markets;
     private FrameLayout view_map_fragment;
-    boolean fakeLocation = false;
+    boolean fakeLocation = true;
 
     private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
@@ -314,11 +324,39 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         nearbyMarkets = markets;
         adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
         lv_markets.setAdapter(adapter);
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
+        progressDialog.setMessage(getResources().getString(R.string.str_getting_best_prices));
 
         for (Market m : nearbyMarkets) {
             Marker marker = googleMap.addMarker(m.getMarkerOptions());
             mMarkerPlaceLink.put(marker.getId(), m.getReference());
         }
+
+        ScanProductsRequest scanRequest = new ScanProductsRequest();
+        scanRequest.setMarkets(nearbyMarkets);
+        scanRequest.setProducts(productSearchList);
+
+        Gson gson = new Gson();
+        Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(scanRequest));
+
+        /*JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL,
+                gson.toJson(market), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i("volley", "response: " + response);
+                clearScannedList();
+                progressDialog.dismiss();
+                showPointsDialog(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("volley", "error: " + error);
+                progressDialog.dismiss();
+            }
+        });
+        Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
+        Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+        */
     }
 }

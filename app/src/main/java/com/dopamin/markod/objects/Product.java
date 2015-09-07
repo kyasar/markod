@@ -83,4 +83,10 @@ public class Product implements Parcelable {
 			return new Product[i];
 		}
 	};
+
+	public Product createJSON_ScanProduct() {
+		Product product = new Product();
+		product.setBarcode(this.barcode);
+		return product;
+	}
 }

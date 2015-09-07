@@ -65,4 +65,5 @@
     <string name="str_searching_products">Searching products</string>
     <string name="str_searching_products_nearby_markets">Products are being searched in nearby Markets</string>
     <string name="str_search_results">Search Results</string>
+    <string name="str_getting_best_prices">Getting best prices..</string>
 </resources>

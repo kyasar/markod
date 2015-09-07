@@ -163,4 +163,10 @@ public class Market implements Parcelable {
         market.setUserID(this.userID);
         return market;
     }
+
+    public Market createJSON_ScanMarket() {
+        Market market = new Market();
+        market.setId(this.id);
+        return market;
+    }
 }
