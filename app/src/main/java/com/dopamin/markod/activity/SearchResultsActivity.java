@@ -54,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -77,6 +78,8 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
 
     private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
+
+    String scanURL = MainActivity.MDS_SERVER + "/mds/api/scan/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -318,12 +321,42 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         return edit.commit();
     }
 
+    private void eliminateMarkets(JSONArray scannedJSONMarkets) {
+        List<Market> filteredMarkets = new ArrayList<Market>();
+        Market market = null;
+
+        for (int i=0; i < scannedJSONMarkets.length(); i++) {
+            JSONObject m = null;
+            try {
+                m = scannedJSONMarkets.getJSONObject(i);
+                //Log.v(MainActivity.TAG, "Market (" + m.getString("id") + ") has products..");
+                for(int j=0; j < nearbyMarkets.size(); j++) {
+                    if (nearbyMarkets.get(j).getId().equalsIgnoreCase(m.getString("id"))) {
+                        market = nearbyMarkets.get(j);
+                        break;
+                    }
+                }
+
+                if (market != null) {
+                    filteredMarkets.add(market);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Market m : filteredMarkets) {
+            Log.v(MainActivity.TAG, "Market: " + m.getName() + " (" + m.getId() + ") has products..");
+        }
+
+        nearbyMarkets = filteredMarkets;
+    }
+
     @Override
     public void processPlaces(List<Market> markets) {
         // set global places list before use it
         nearbyMarkets = markets;
-        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
-        lv_markets.setAdapter(adapter);
+
         //progressDialog.dismiss();
         progressDialog.setMessage(getResources().getString(R.string.str_getting_best_prices));
 
@@ -339,14 +372,25 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         Gson gson = new Gson();
         Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(scanRequest));
 
-        /*JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL,
-                gson.toJson(market), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, scanURL,
+                gson.toJson(scanRequest), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("volley", "response: " + response);
-                clearScannedList();
+
+                try {
+                    if (response.get("status").toString().equalsIgnoreCase("OK")) {
+                        JSONArray jsonMarkets = (JSONArray) response.get("markets");
+                        eliminateMarkets(jsonMarkets);
+
+                        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
+                        lv_markets.setAdapter(adapter);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 progressDialog.dismiss();
-                showPointsDialog(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -355,8 +399,6 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
                 progressDialog.dismiss();
             }
         });
-        Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
         Volley.newRequestQueue(getApplication()).add(jsObjRequest);
-        */
     }
 }
