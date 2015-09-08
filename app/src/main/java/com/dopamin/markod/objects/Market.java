@@ -22,6 +22,7 @@ public class Market implements Parcelable {
     private String vicinity;
     private String reference;
     private String userID;  // Needed to detect which user declare the products for this market !!
+    private String totalPrice;
     private List<Product> products;
     private MarkerOptions markerOptions;
 

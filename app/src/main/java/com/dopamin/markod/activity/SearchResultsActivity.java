@@ -321,6 +321,24 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         return edit.commit();
     }
 
+    private List<Product> jsonArrayToProductList(JSONArray jsonProducts) {
+        List<Product> products = new ArrayList<Product>();
+        JSONObject jsonP = null;
+        Product p = null;
+
+        for (int i=0; i < jsonProducts.length(); i++) {
+            try {
+                jsonP = jsonProducts.getJSONObject(i);
+                p = new Product(null, jsonP.getString("barcode"), jsonP.getString("price"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            products.add(p);
+        }
+
+        return products;
+    }
+
     private void eliminateMarkets(JSONArray scannedJSONMarkets) {
         List<Market> filteredMarkets = new ArrayList<Market>();
         Market market = null;
@@ -329,10 +347,10 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
             JSONObject m = null;
             try {
                 m = scannedJSONMarkets.getJSONObject(i);
-                //Log.v(MainActivity.TAG, "Market (" + m.getString("id") + ") has products..");
                 for(int j=0; j < nearbyMarkets.size(); j++) {
                     if (nearbyMarkets.get(j).getId().equalsIgnoreCase(m.getString("id"))) {
                         market = nearbyMarkets.get(j);
+                        market.setProducts(jsonArrayToProductList(m.getJSONArray("products")));
                         break;
                     }
                 }
@@ -345,11 +363,22 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
             }
         }
 
+        // Set global markets - filtered
+        nearbyMarkets = filteredMarkets;
+
+        //DEBUG
         for (Market m : filteredMarkets) {
             Log.v(MainActivity.TAG, "Market: " + m.getName() + " (" + m.getId() + ") has products..");
+            for (int i=0; i < m.getProducts().size(); i++) {
+                Log.v(MainActivity.TAG, "   #" + i + " Product price: " + m.getProducts().get(i).getPrice());
+            }
         }
+    }
 
-        nearbyMarkets = filteredMarkets;
+    private void calculateProductListForEachMarket() {
+        for (Market m : nearbyMarkets) {
+
+        }
     }
 
     @Override
@@ -383,7 +412,7 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
                         JSONArray jsonMarkets = (JSONArray) response.get("markets");
                         eliminateMarkets(jsonMarkets);
 
-                        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
+                        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SCAN);
                         lv_markets.setAdapter(adapter);
                     }
                 } catch (JSONException e) {

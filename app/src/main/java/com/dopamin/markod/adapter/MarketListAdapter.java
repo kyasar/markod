@@ -26,15 +26,21 @@ import java.util.List;
  * Created by kadir on 14.08.2015.
  */
 public class MarketListAdapter extends BaseAdapter implements Filterable {
+    public enum LIST_TYPE {
+        MARKET_SELECT,
+        MARKET_SCAN,
+    }
     private List<Market> orig_markets;
     private List<Market> markets;
     private List<Market> filtered_markets;
     private Context mContext;
+    private LIST_TYPE list_type;
 
-    public MarketListAdapter(Context context, List<Market> markets) {
+    public MarketListAdapter(Context context, List<Market> markets, LIST_TYPE list_type) {
         this.mContext = context;
         this.orig_markets = markets;
         this.markets = markets;
+        this.list_type = list_type;
     }
 
     @Override
@@ -59,7 +65,14 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
         Market market = getItem(position);
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_list_item, parent, false);
+            switch (this.list_type) {
+                case MARKET_SELECT:
+                    convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_list_item, parent, false);
+                    break;
+                case MARKET_SCAN:
+                    convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_results_list_item, parent, false);
+                    break;
+            }
         }
 
         convertView.setBackgroundResource(R.drawable.listview_selector);
@@ -67,6 +80,10 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
         // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.place_name);
         TextView tvAddress = (TextView) convertView.findViewById(R.id.place_address);
+
+        if (list_type == LIST_TYPE.MARKET_SCAN) {
+            TextView tvPrice = (TextView) convertView.findViewById(R.id.total_price);
+        }
 
         // Populate the data into the template view using the data object
         tvName.setText(market.getName());

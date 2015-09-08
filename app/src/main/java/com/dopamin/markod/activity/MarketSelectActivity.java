@@ -193,7 +193,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
             Log.v(MainActivity.TAG, "Restoring market LIST.. size: " + nearbyMarkets.size());
 
             // list adapter
-            adapter = new MarketListAdapter(this, nearbyMarkets);
+            adapter = new MarketListAdapter(this, nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
             lv_markets.setAdapter(adapter);
         }
 
@@ -322,7 +322,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     public void processPlaces(List<Market> markets) {
         // set global places list before use it
         nearbyMarkets = markets;
-        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets);
+        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
         lv_markets.setAdapter(adapter);
         progressDialog.dismiss();
 
