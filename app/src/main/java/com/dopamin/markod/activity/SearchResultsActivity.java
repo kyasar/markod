@@ -370,7 +370,8 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         for (Market m : filteredMarkets) {
             Log.v(MainActivity.TAG, "Market: " + m.getName() + " (" + m.getId() + ") has products..");
             for (int i=0; i < m.getProducts().size(); i++) {
-                Log.v(MainActivity.TAG, "   #" + i + " Product price: " + m.getProducts().get(i).getPrice());
+                Log.v(MainActivity.TAG, "   #" + i + " Product price: "
+                        + m.getProducts().get(i).getpMain() + "." + m.getProducts().get(i).getpCent());
             }
         }
     }

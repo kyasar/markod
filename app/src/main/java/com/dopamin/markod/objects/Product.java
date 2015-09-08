@@ -11,6 +11,36 @@ public class Product implements Parcelable {
 	private String name;
 	private String barcode;
 	private String price;
+	private int pMain;
+	private int pCent;
+
+	public int getpMain() {
+		return pMain;
+	}
+
+	public void setpMain(int pMain) {
+		this.pMain = pMain;
+	}
+
+	public int getpCent() {
+		return pCent;
+	}
+
+	public void setpCent(int pCent) {
+		this.pCent = pCent;
+	}
+
+	private boolean priceParser() {
+		if (this.price != null) {
+			String[] pieces = this.price.split("\\.");
+			if (pieces.length == 2) {
+				this.pMain = Integer.parseInt(pieces[0]);
+				this.pCent = Integer.parseInt(pieces[1]);
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public String getName() {
 		return name;
@@ -32,8 +62,9 @@ public class Product implements Parcelable {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public boolean setPrice(String price) {
 		this.price = price;
+		return priceParser();
 	}
 
 	public Product(String name, String barcode, String price) {
@@ -41,6 +72,7 @@ public class Product implements Parcelable {
 		this.name = name;
 		this.barcode = barcode;
 		this.price = price;
+		priceParser();
 	}
 
 	public Product() {
@@ -57,6 +89,7 @@ public class Product implements Parcelable {
 		this.name = parcel.readString();
 		this.barcode = parcel.readString();
 		this.price = parcel.readString();
+		priceParser();
 	}
 
 	@Override
