@@ -48,13 +48,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -339,6 +343,20 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         return products;
     }
 
+    private void detectMissingProducts(Market market) {
+        // productSearchList contains user's list to search products
+        int i;
+        for (Product p : productSearchList) {
+            for (i=0; i < market.getProducts().size(); i++) {
+                if (market.getProducts().get(i).getBarcode().equalsIgnoreCase(p.getBarcode()))
+                    break;
+            }
+            if (i == market.getProducts().size()) {
+                market.incMissing();
+            }
+        }
+    }
+
     private void eliminateMarkets(JSONArray scannedJSONMarkets) {
         List<Market> filteredMarkets = new ArrayList<Market>();
         Market market = null;
@@ -352,6 +370,7 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
                         market = nearbyMarkets.get(j);
                         market.setProducts(jsonArrayToProductList(m.getJSONArray("products")));
                         market.calculateProductList();
+                        detectMissingProducts(market);
                         break;
                     }
                 }
@@ -367,20 +386,43 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         // Set global markets - filtered
         nearbyMarkets = filteredMarkets;
 
+        Collections.sort(nearbyMarkets, new Comparator() {
+
+            public int compare(Object o1, Object o2) {
+
+                Integer x1 = ((Market) o1).getMissing();
+                Integer x2 = ((Market) o2).getMissing();
+                int comp = x1.compareTo(x2);
+
+                if (comp != 0) {
+                    return comp;
+                } else {
+                    x1 = ((Market) o1).getpMain();
+                    x2 = ((Market) o2).getpMain();
+                    comp = x1.compareTo(x2);
+
+                    if (comp != 0) {
+                        return comp;
+                    } else {
+                        x1 = ((Market) o1).getpCent();
+                        x2 = ((Market) o2).getpCent();
+                        return x1.compareTo(x2);
+                    }
+                }
+            }
+        });
+
         //DEBUG
-        for (Market m : filteredMarkets) {
-            Log.v(MainActivity.TAG, "Market: " + m.getName() + " (" + m.getId() + ") has products..");
+        for (Market m : nearbyMarkets) {
+            Log.v(MainActivity.TAG, "Market: " + m.getName()
+                    + " (" + m.getId() + ") has products.. Missing: " + m.getMissing()
+                    + " Total Main: " + m.getpMain() + " Cent: " + m.getpCent());
             for (int i=0; i < m.getProducts().size(); i++) {
                 Log.v(MainActivity.TAG, "   #" + i + " Product price: "
                         + m.getProducts().get(i).getpMain() + "." + m.getProducts().get(i).getpCent());
             }
         }
-    }
 
-    private void calculateProductListForEachMarket() {
-        for (Market m : nearbyMarkets) {
-
-        }
     }
 
     @Override
@@ -400,7 +442,13 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
         scanRequest.setMarkets(nearbyMarkets);
         scanRequest.setProducts(productSearchList);
 
-        Gson gson = new Gson();
+        /* TODO: this part exclude some extra fields from JSON
+            We make these fields protected and static, but maybe in future it can be a problem
+            Be Careful !!
+         */
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithModifiers(Modifier.PROTECTED | Modifier.STATIC)
+                .create();
         Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(scanRequest));
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, scanURL,
