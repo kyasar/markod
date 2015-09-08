@@ -23,6 +23,9 @@ public class Market implements Parcelable {
     private String reference;
     private String userID;  // Needed to detect which user declare the products for this market !!
     private String totalPrice;
+    protected int pMain;
+    protected int pCent;
+    protected int missing;
     private List<Product> products;
     private MarkerOptions markerOptions;
 
@@ -43,6 +46,18 @@ public class Market implements Parcelable {
         this.userID = parcel.readString();
         this.products = parcel.readArrayList(null); // be careful, Product type is parcelable?
         this.markerOptions = parcel.readParcelable(MarkerOptions.class.getClassLoader());
+    }
+
+    public int getMissing() {
+        return missing;
+    }
+
+    public void setMissing(int missing) {
+        this.missing = missing;
+    }
+
+    public void incMissing() {
+        this.missing++;
     }
 
     public MarkerOptions getMarkerOptions() {
@@ -117,6 +132,22 @@ public class Market implements Parcelable {
         this.totalPrice = totalPrice;
     }
 
+    public int getpMain() {
+        return pMain;
+    }
+
+    public void setpMain(int pMain) {
+        this.pMain = pMain;
+    }
+
+    public int getpCent() {
+        return pCent;
+    }
+
+    public void setpCent(int pCent) {
+        this.pCent = pCent;
+    }
+
     public void calculateProductList() {
         int main, cent;
         main = cent = 0;
@@ -127,6 +158,8 @@ public class Market implements Parcelable {
         main += cent / 100;
         cent %= 100;
 
+        this.pCent = cent;
+        this.pMain = main;
         this.totalPrice = Integer.toString(main) + "." + Integer.toString(cent);
     }
 

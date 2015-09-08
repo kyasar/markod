@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Product implements Parcelable {
-	
+
 	private String name;
 	private String barcode;
 	private String price;
-	private int pMain;
-	private int pCent;
+	protected int pMain;
+	protected int pCent;
 
 	public int getpMain() {
 		return pMain;
