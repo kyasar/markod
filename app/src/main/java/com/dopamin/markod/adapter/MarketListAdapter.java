@@ -83,6 +83,7 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
 
         if (list_type == LIST_TYPE.MARKET_SCAN) {
             TextView tvPrice = (TextView) convertView.findViewById(R.id.total_price);
+            tvPrice.setText(market.getTotalPrice());
         }
 
         // Populate the data into the template view using the data object

@@ -351,6 +351,7 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
                     if (nearbyMarkets.get(j).getId().equalsIgnoreCase(m.getString("id"))) {
                         market = nearbyMarkets.get(j);
                         market.setProducts(jsonArrayToProductList(m.getJSONArray("products")));
+                        market.calculateProductList();
                         break;
                     }
                 }

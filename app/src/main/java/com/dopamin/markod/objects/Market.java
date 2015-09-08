@@ -109,6 +109,27 @@ public class Market implements Parcelable {
         this.userID = userID;
     }
 
+    public String getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(String totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void calculateProductList() {
+        int main, cent;
+        main = cent = 0;
+        for (Product p : this.products) {
+            main += p.getpMain();
+            cent += p.getpCent();
+        }
+        main += cent / 100;
+        cent %= 100;
+
+        this.totalPrice = Integer.toString(main) + "." + Integer.toString(cent);
+    }
+
     @Override
     public int describeContents() {
         return 0;
