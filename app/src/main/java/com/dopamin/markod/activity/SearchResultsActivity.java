@@ -422,7 +422,9 @@ public class SearchResultsActivity extends FragmentActivity
                 }
             }
         });
+    }
 
+    private void printMarkets() {
         //DEBUG
         for (Market m : nearbyMarkets) {
             Log.v(MainActivity.TAG, "Market: " + m.getName()
@@ -433,7 +435,6 @@ public class SearchResultsActivity extends FragmentActivity
                         + m.getProducts().get(i).getpMain() + "." + m.getProducts().get(i).getpCent());
             }
         }
-
     }
 
     @Override
@@ -472,6 +473,7 @@ public class SearchResultsActivity extends FragmentActivity
                     if (response.get("status").toString().equalsIgnoreCase("OK")) {
                         JSONArray jsonMarkets = (JSONArray) response.get("markets");
                         eliminateMarkets(jsonMarkets);
+                        printMarkets();
 
                         adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SCAN);
                         lv_markets.setAdapter(adapter);

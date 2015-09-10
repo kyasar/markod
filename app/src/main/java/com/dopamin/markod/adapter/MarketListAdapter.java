@@ -43,6 +43,11 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
         this.list_type = list_type;
     }
 
+    public static class ViewHolder {
+        public TextView tvMissing;
+        public int position;
+    }
+
     @Override
     public int getCount() {
         return markets.size();
@@ -59,20 +64,38 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 500;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         // Check if an existing view is being reused, otherwise inflate the view
-        Market market = getItem(position);
+        final Market market = getItem(position);
+        ViewHolder viewHolder = null;
 
         if (convertView == null) {
+            viewHolder = new ViewHolder();
+
             switch (this.list_type) {
                 case MARKET_SELECT:
                     convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_list_item, parent, false);
                     break;
                 case MARKET_SCAN:
                     convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_results_list_item, parent, false);
+                    viewHolder.tvMissing = (TextView) convertView.findViewById(R.id.missing);
+                    viewHolder.position = position;
                     break;
             }
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         convertView.setBackgroundResource(R.drawable.listview_selector);
@@ -83,7 +106,15 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
 
         if (list_type == LIST_TYPE.MARKET_SCAN) {
             TextView tvPrice = (TextView) convertView.findViewById(R.id.total_price);
+            //TextView tvMissing = (TextView) convertView.findViewById(R.id.missing);
+
             tvPrice.setText(market.getTotalPrice());
+
+            if (markets.get(viewHolder.position).getMissing() > 0) {
+                viewHolder.tvMissing.setText(markets.get(viewHolder.position).getMissing() + " "
+                        + this.mContext.getResources().getString(R.string.str_missing_products));
+                viewHolder.tvMissing.setVisibility(View.VISIBLE);
+            }
         }
 
         // Populate the data into the template view using the data object
