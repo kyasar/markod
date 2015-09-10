@@ -1,47 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/product_lv_item"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:background="@color/markod_lv_item_color"
-    android:padding="8dp" >
+    android:padding="8dp">
 
-    <!-- Product Name -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/total_price"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/place_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MArket NAme"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        android:layout_height="wrap_content">
 
-        <!-- Barcode -->
+        <!-- Product Name -->
+        <LinearLayout
+            android:id="@+id/place_details"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/total_price"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/place_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MArket NAme"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Barcode -->
+            <TextView
+                android:id="@+id/place_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:text="Market Address, Street, #No, 06800 Smthing Mooore"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Price -->
         <TextView
-            android:id="@+id/place_address"
+            android:id="@+id/total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dip"
-            android:text="Market Address, Street, #No, 06800 Smthing Mooore"
-            android:textSize="12sp" />
+            android:layout_alignParentRight="true"
+            android:text="56.70"
+            android:textColor="@color/black"
+            android:textSize="48sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/result_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Missing number of products"
+            android:textSize="24dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Extra Information here.."
+            android:textSize="24dp"/>
 
     </LinearLayout>
 
-    <!-- Price -->
-    <TextView
-        android:id="@+id/total_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="56.70"
-        android:textColor="@color/black"
-        android:textSize="48sp" />
-
-</RelativeLayout>
+</LinearLayout>

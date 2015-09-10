@@ -32,6 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.R;
+import com.dopamin.markod.animation.ExpandListviewAnimation;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.ScanProductsRequest;
@@ -63,7 +64,8 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class SearchResultsActivity extends FragmentActivity implements LocationListener, PlacesResult {
+public class SearchResultsActivity extends FragmentActivity
+        implements LocationListener, PlacesResult {
 
     private LocationManager locationManager = null;
     private GoogleMap googleMap = null;
@@ -96,6 +98,7 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
 
         setContentView(R.layout.activity_search_results);
         lv_markets = (ListView) findViewById(R.id.list);
+
         view_map_fragment = (FrameLayout) findViewById(R.id.id_fl_map);
         view_map_fragment.setVisibility(View.GONE);
 
@@ -183,11 +186,19 @@ public class SearchResultsActivity extends FragmentActivity implements LocationL
          * On selecting a listitem SinglePlaceActivity is launched
          * */
         lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Log.v(MainActivity.TAG, "Listview item is clicked.");
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // getting values from selected ListItem
+                selectedMarketName = ((TextView) view.findViewById(R.id.place_name)).getText().toString();
+                Log.v(MainActivity.TAG, "List-view item is clicked (" + selectedMarketName + "). OK.");
+
+                View toolbar = view.findViewById(R.id.result_details);
+
+                // Creating the expand animation for the item
+                ExpandListviewAnimation expandAni = new ExpandListviewAnimation(toolbar, 500);
+
+                // Start the animation on the toolbar
+                toolbar.startAnimation(expandAni);
             }
         });
 
