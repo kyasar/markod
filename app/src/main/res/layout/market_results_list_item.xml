@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <!-- Product Name -->
+        <!-- Place Details Layout -->
         <LinearLayout
             android:id="@+id/place_details"
             android:layout_width="fill_parent"
@@ -20,16 +20,19 @@
             android:layout_toLeftOf="@+id/total_price"
             android:layout_centerInParent="true"
             android:orientation="vertical">
+
+            <!-- Place Name -->
             <TextView
                 android:id="@+id/place_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
                 android:text="MArket NAme"
                 android:textColor="@color/black"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <!-- Barcode -->
+            <!-- Place Address -->
             <TextView
                 android:id="@+id/place_address"
                 android:layout_width="wrap_content"
@@ -38,20 +41,33 @@
                 android:text="Market Address, Street, #No, 06800 Smthing Mooore"
                 android:textSize="12sp" />
 
+            <!-- Missing info -->
+            <TextView
+                android:id="@+id/missing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:visibility="gone"
+                android:text="# of missing products"
+                android:textColor="@color/red"
+                android:textSize="12sp" />
+
         </LinearLayout>
 
-        <!-- Price -->
+        <!-- Total Price of Search Products in the Place -->
         <TextView
             android:id="@+id/total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingLeft="8dp"
             android:text="56.70"
             android:textColor="@color/black"
-            android:textSize="48sp" />
+            android:textSize="32sp" />
 
     </RelativeLayout>
 
+    <!-- Result Details Layout -->
     <LinearLayout
         android:id="@+id/result_details"
         android:layout_width="wrap_content"
