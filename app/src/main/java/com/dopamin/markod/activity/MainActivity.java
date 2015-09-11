@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -126,6 +127,10 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         ac_tv_product_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ac_tv_product_search.clearFocus();
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
+
                 Product p = (Product) adapterView.getItemAtPosition(i);
                 Log.v(MainActivity.TAG, "Product searched: " + p.getName());
                 ac_tv_product_search.setText(p.getName());
@@ -313,6 +318,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     protected void onResume() {
         super.onResume();
         setUserInfo();
+        ac_tv_product_search.setText("");
         Log.v(MainActivity.TAG, this.toString() + " onResume");
     }
 

@@ -521,9 +521,10 @@ public class SearchResultsActivity extends FragmentActivity
                 }
             }
 
+            /* Product in search list not found in this market */
             if (j >= market.getProducts().size()) {
                 // Log.v(MainActivity.TAG, "Product NOT Matches: " + productLocal.getBarcode());
-                // Name comes from local
+                // Name comes from local, overline and gray style for not found products
                 tvN.setText(productLocal.getName());
                 tvN.setPaintFlags(tvN.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 tvN.setTextColor(R.color.gray);
