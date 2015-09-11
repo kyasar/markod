@@ -1,7 +1,6 @@
 package com.dopamin.markod.activity;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,15 +14,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -52,14 +47,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -356,7 +349,7 @@ public class SearchResultsActivity extends FragmentActivity
         }
     }
 
-    private void eliminateMarkets(JSONArray scannedJSONMarkets) {
+    private void parseScanMarketsRespond(JSONArray scannedJSONMarkets) {
         List<Market> filteredMarkets = new ArrayList<Market>();
         Market market = null;
 
@@ -458,7 +451,7 @@ public class SearchResultsActivity extends FragmentActivity
                 try {
                     if (response.get("status").toString().equalsIgnoreCase("OK")) {
                         JSONArray jsonMarkets = (JSONArray) response.get("markets");
-                        eliminateMarkets(jsonMarkets);
+                        parseScanMarketsRespond(jsonMarkets);
                         printMarkets();
 
                         adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SCAN);
