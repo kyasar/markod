@@ -11,8 +11,8 @@ public class Product implements Parcelable {
 	private String name;
 	private String barcode;
 	private String price;
-	protected int pMain;
-	protected int pCent;
+	private Integer pMain;
+	private Integer pCent;
 
 	public int getpMain() {
 		return pMain;

@@ -446,9 +446,7 @@ public class SearchResultsActivity extends FragmentActivity
             We make these fields protected and static, but maybe in future it can be a problem
             Be Careful !!
          */
-        Gson gson = new GsonBuilder()
-                .excludeFieldsWithModifiers(Modifier.PROTECTED | Modifier.STATIC)
-                .create();
+        Gson gson = new Gson();
         Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(scanRequest));
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, scanURL,

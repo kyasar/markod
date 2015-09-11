@@ -23,9 +23,9 @@ public class Market implements Parcelable {
     private String reference;
     private String userID;  // Needed to detect which user declare the products for this market !!
     private String totalPrice;
-    protected int pMain;
-    protected int pCent;
-    protected int missing;
+    private Integer pMain;
+    private Integer pCent;
+    private Integer missing;
     private List<Product> products;
     private MarkerOptions markerOptions;
 
@@ -35,6 +35,7 @@ public class Market implements Parcelable {
         this.vicinity = vicinity;
         this.reference = reference;
         this.provider = "GOOGLE_MAPS";
+        this.missing = new Integer(0);
     }
 
     public Market(Parcel parcel) {
@@ -49,7 +50,7 @@ public class Market implements Parcelable {
     }
 
     public int getMissing() {
-        return missing;
+        return this.missing;
     }
 
     public void setMissing(int missing) {
@@ -57,6 +58,8 @@ public class Market implements Parcelable {
     }
 
     public void incMissing() {
+        if (this.missing == null)
+            this.missing = new Integer(0);
         this.missing++;
     }
 
@@ -158,8 +161,8 @@ public class Market implements Parcelable {
         main += cent / 100;
         cent %= 100;
 
-        this.pCent = cent;
-        this.pMain = main;
+        this.pCent = new Integer(cent);
+        this.pMain = new Integer(main);
         this.totalPrice = Integer.toString(main) + "." + Integer.toString(cent);
     }
 
