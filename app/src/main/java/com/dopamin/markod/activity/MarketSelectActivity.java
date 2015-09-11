@@ -57,7 +57,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     private ProgressDialog progressDialog;
     private ListView lv_markets;
     private EditText tv_marketFilter;
-    boolean fakeLocation = false;
+    boolean fakeLocation = true;
 
     private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();

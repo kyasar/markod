@@ -17,12 +17,14 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -65,7 +67,7 @@ import java.util.List;
 
 
 public class SearchResultsActivity extends FragmentActivity
-        implements LocationListener, PlacesResult {
+        implements LocationListener, PlacesResult, AdapterView.OnItemClickListener {
 
     private LocationManager locationManager = null;
     private GoogleMap googleMap = null;
@@ -183,24 +185,9 @@ public class SearchResultsActivity extends FragmentActivity
 
         /**
          * ListItem click event
-         * On selecting a listitem SinglePlaceActivity is launched
+         * On selecting a listitem Animation expand/collapse plays and product list details are viewed
          * */
-        lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // getting values from selected ListItem
-                selectedMarketName = ((TextView) view.findViewById(R.id.place_name)).getText().toString();
-                Log.v(MainActivity.TAG, "List-view item is clicked (" + selectedMarketName + "). OK.");
-
-                View toolbar = view.findViewById(R.id.result_details);
-
-                // Creating the expand animation for the item
-                ExpandListviewAnimation expandAni = new ExpandListviewAnimation(toolbar, 500);
-
-                // Start the animation on the toolbar
-                toolbar.startAnimation(expandAni);
-            }
-        });
+        lv_markets.setOnItemClickListener(this);
 
         Bundle bundle = getIntent().getExtras();
         productSearchList = getIntent().getParcelableArrayListExtra("searchProductList");
@@ -492,5 +479,61 @@ public class SearchResultsActivity extends FragmentActivity
             }
         });
         Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        // getting values from selected ListItem
+        Market market = (Market) adapterView.getAdapter().getItem(i);
+        Product product = null;
+        Log.v(MainActivity.TAG, "List-view item is clicked (" + market.getName() + "). OK.");
+
+        View toolbar = view.findViewById(R.id.result_details);
+
+        LinearLayout llPview = null; // (LinearLayout) view.findViewById(R.id.ll_product_price_iem);
+
+        for (Product p : market.getProducts()) {
+            TextView tvP, tvN = null;
+            Log.v(MainActivity.TAG, "Inflating product: " + p.getBarcode());
+
+            /* Search product in Product list and use info in local product list
+             * Because list from server just contains price and barcode, No name !! */
+            for (int k=0; k < productSearchList.size(); k++) {
+                product = productSearchList.get(k);
+                if (product.getBarcode().equalsIgnoreCase(p.getBarcode()))
+                    break;
+                else
+                    product = null;
+            }
+
+            if (product != null) {
+                Log.v(MainActivity.TAG, "Product matches: " + product.getName() + " " + p.getBarcode() + " " + p.getPrice());
+                //tvP = new TextView(this);
+                //tvP.setText(product.getName() + " " + p.getBarcode() + " " + p.getPrice());
+                //tvP.setTextColor(R.color.black);
+                //tvP.setTextSize(12);
+                //tvP.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+                //        LinearLayout.LayoutParams.WRAP_CONTENT));
+                //((LinearLayout) toolbar).addView(tvP);
+                llPview = (LinearLayout) getLayoutInflater().inflate(R.layout.product_price_item, null);
+
+                // Name comes from local
+                tvN = (TextView) llPview.findViewById(R.id.product_name);
+                tvN.setText(product.getName());
+
+                // Price comes from server
+                tvP = (TextView) llPview.findViewById(R.id.product_price);
+                tvP.setText(p.getPrice());
+
+                ((LinearLayout) toolbar).addView(llPview);
+            }
+        }
+
+        // Creating the expand animation for the item
+        ExpandListviewAnimation expandAni = new ExpandListviewAnimation(toolbar, 500);
+
+        // Start the animation on the toolbar
+        toolbar.startAnimation(expandAni);
+
     }
 }

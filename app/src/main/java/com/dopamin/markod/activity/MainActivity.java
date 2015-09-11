@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.23:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
     private Button deleteBtn, detectiveBtn, connCheckBtn;
 
@@ -133,6 +133,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
                 ArrayList<Product> searchProductList = new ArrayList<Product>();
                 searchProductList.add(p);
                 searchProductList.add(new Product("Urederm", "8699561460099"));
+                searchProductList.add(new Product("Eti Karam 80g", "8690526098043"));
 
                 Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
                 intent.putParcelableArrayListExtra("searchProductList", searchProductList);

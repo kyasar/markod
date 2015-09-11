@@ -70,22 +70,16 @@
     <!-- Result Details Layout -->
     <LinearLayout
         android:id="@+id/result_details"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Missing number of products"
-            android:textSize="24dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Extra Information here.."
-            android:textSize="24dp"/>
+            android:text="Product List"
+            android:textSize="20dp"/>
 
     </LinearLayout>
 

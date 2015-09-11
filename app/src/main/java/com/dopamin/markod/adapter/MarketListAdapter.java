@@ -44,6 +44,9 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
     }
 
     public static class ViewHolder {
+        public TextView tvName;
+        public TextView tvAddress;
+        public TextView tvPrice;
         public TextView tvMissing;
         public int position;
     }
@@ -89,10 +92,14 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
                     break;
                 case MARKET_SCAN:
                     convertView = LayoutInflater.from(this.mContext).inflate(R.layout.market_results_list_item, parent, false);
+                    viewHolder.tvPrice = (TextView) convertView.findViewById(R.id.total_price);
                     viewHolder.tvMissing = (TextView) convertView.findViewById(R.id.missing);
                     viewHolder.position = position;
                     break;
             }
+            viewHolder.tvName = (TextView) convertView.findViewById(R.id.place_name);
+            viewHolder.tvAddress = (TextView) convertView.findViewById(R.id.place_address);
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -100,15 +107,9 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
 
         convertView.setBackgroundResource(R.drawable.listview_selector);
 
-        // Lookup view for data population
-        TextView tvName = (TextView) convertView.findViewById(R.id.place_name);
-        TextView tvAddress = (TextView) convertView.findViewById(R.id.place_address);
 
         if (list_type == LIST_TYPE.MARKET_SCAN) {
-            TextView tvPrice = (TextView) convertView.findViewById(R.id.total_price);
-            //TextView tvMissing = (TextView) convertView.findViewById(R.id.missing);
-
-            tvPrice.setText(market.getTotalPrice());
+            viewHolder.tvPrice.setText(market.getTotalPrice());
 
             if (markets.get(viewHolder.position).getMissing() > 0) {
                 viewHolder.tvMissing.setText(markets.get(viewHolder.position).getMissing() + " "
@@ -118,8 +119,8 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
         }
 
         // Populate the data into the template view using the data object
-        tvName.setText(market.getName());
-        tvAddress.setText(market.getVicinity());
+        viewHolder.tvName.setText(market.getName());
+        viewHolder.tvAddress.setText(market.getVicinity());
 
         // Return the completed view to render on screen
         return convertView;
