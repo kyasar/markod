@@ -488,12 +488,13 @@ public class SearchResultsActivity extends FragmentActivity
         Product product = null;
         Log.v(MainActivity.TAG, "List-view item is clicked (" + market.getName() + "). OK.");
 
-        View toolbar = view.findViewById(R.id.result_details);
+        LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.result_details);
+        toolbar.removeAllViews();
 
+        TextView tvP = null, tvN = null;
         LinearLayout llPview = null; // (LinearLayout) view.findViewById(R.id.ll_product_price_iem);
 
         for (Product p : market.getProducts()) {
-            TextView tvP, tvN = null;
             Log.v(MainActivity.TAG, "Inflating product: " + p.getBarcode());
 
             /* Search product in Product list and use info in local product list
@@ -508,13 +509,6 @@ public class SearchResultsActivity extends FragmentActivity
 
             if (product != null) {
                 Log.v(MainActivity.TAG, "Product matches: " + product.getName() + " " + p.getBarcode() + " " + p.getPrice());
-                //tvP = new TextView(this);
-                //tvP.setText(product.getName() + " " + p.getBarcode() + " " + p.getPrice());
-                //tvP.setTextColor(R.color.black);
-                //tvP.setTextSize(12);
-                //tvP.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
-                //        LinearLayout.LayoutParams.WRAP_CONTENT));
-                //((LinearLayout) toolbar).addView(tvP);
                 llPview = (LinearLayout) getLayoutInflater().inflate(R.layout.product_price_item, null);
 
                 // Name comes from local
@@ -525,7 +519,7 @@ public class SearchResultsActivity extends FragmentActivity
                 tvP = (TextView) llPview.findViewById(R.id.product_price);
                 tvP.setText(p.getPrice());
 
-                ((LinearLayout) toolbar).addView(llPview);
+                toolbar.addView(llPview);
             }
         }
 
