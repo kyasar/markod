@@ -10,9 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:padding="5dip"
-        android:text="Eti Karam 80g"
         android:textColor="@color/black"
-        android:textSize="18dp"/>
+        android:textSize="18sp"/>
 
     <TextView android:id="@+id/product_price"
         android:layout_width="fill_parent"
@@ -20,8 +19,7 @@
         android:layout_gravity="center_vertical"
         android:gravity="end"
         android:padding="5dip"
-        android:text="89.77"
         android:textColor="@color/black"
-        android:textSize="18dp"/>
+        android:textSize="18sp"/>
 
 </LinearLayout>

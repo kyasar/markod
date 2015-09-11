@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -485,42 +486,50 @@ public class SearchResultsActivity extends FragmentActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         // getting values from selected ListItem
         Market market = (Market) adapterView.getAdapter().getItem(i);
-        Product product = null;
+        Product productServer;
+        LinearLayout llPview;
+        TextView tvP, tvN;
+        int j;
+
         Log.v(MainActivity.TAG, "List-view item is clicked (" + market.getName() + "). OK.");
 
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.result_details);
         toolbar.removeAllViews();
 
-        TextView tvP = null, tvN = null;
-        LinearLayout llPview = null; // (LinearLayout) view.findViewById(R.id.ll_product_price_iem);
+        /* Search product in Product list and use info in local product list
+         * Because list from server just contains price and barcode, No name !! */
+        for (Product productLocal :  productSearchList)
+        {
+            llPview = (LinearLayout) getLayoutInflater().inflate(R.layout.product_price_item, null);
+            tvN = (TextView) llPview.findViewById(R.id.product_name);
+            tvP = (TextView) llPview.findViewById(R.id.product_price);
 
-        for (Product p : market.getProducts()) {
-            Log.v(MainActivity.TAG, "Inflating product: " + p.getBarcode());
+            for (j = 0; j < market.getProducts().size(); j++)
+            {
+                productServer = market.getProducts().get(j);
 
-            /* Search product in Product list and use info in local product list
-             * Because list from server just contains price and barcode, No name !! */
-            for (int k=0; k < productSearchList.size(); k++) {
-                product = productSearchList.get(k);
-                if (product.getBarcode().equalsIgnoreCase(p.getBarcode()))
+                if (productLocal.getBarcode().equalsIgnoreCase(productServer.getBarcode())) {
+
+                    // Log.v(MainActivity.TAG, "Product Matches: " + productLocal.getBarcode() + " - " + productServer.getBarcode());
+                    // Name comes from local
+                    tvN.setText(productLocal.getName());
+
+                    // Price comes from server
+                    tvP.setText(productServer.getPrice());
+
                     break;
-                else
-                    product = null;
+                }
             }
 
-            if (product != null) {
-                Log.v(MainActivity.TAG, "Product matches: " + product.getName() + " " + p.getBarcode() + " " + p.getPrice());
-                llPview = (LinearLayout) getLayoutInflater().inflate(R.layout.product_price_item, null);
-
+            if (j >= market.getProducts().size()) {
+                // Log.v(MainActivity.TAG, "Product NOT Matches: " + productLocal.getBarcode());
                 // Name comes from local
-                tvN = (TextView) llPview.findViewById(R.id.product_name);
-                tvN.setText(product.getName());
-
-                // Price comes from server
-                tvP = (TextView) llPview.findViewById(R.id.product_price);
-                tvP.setText(p.getPrice());
-
-                toolbar.addView(llPview);
+                tvN.setText(productLocal.getName());
+                tvN.setPaintFlags(tvN.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                tvN.setTextColor(R.color.gray);
             }
+
+            toolbar.addView(llPview);
         }
 
         // Creating the expand animation for the item
@@ -528,6 +537,5 @@ public class SearchResultsActivity extends FragmentActivity
 
         // Start the animation on the toolbar
         toolbar.startAnimation(expandAni);
-
     }
 }
