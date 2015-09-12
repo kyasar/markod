@@ -4,6 +4,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/product_lv_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/red"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_centerInParent="true"
+            android:text="@string/str_app_name"
+            android:textColor="@color/white"
+            android:padding="10dp"
+            android:textSize="24dp" />
+    </RelativeLayout>
+
     <FrameLayout
         android:background="@color/red"
         android:layout_width="fill_parent"
@@ -36,16 +55,55 @@
         android:layout_width="match_parent"
         android:layout_height="200dp" />
 
-    <Button
-        android:id="@+id/detective_button"
+    <TableLayout
+        android:id="@+id/tableLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/detective" />
+        android:stretchColumns="1" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="10dip" >
+
+            <Button
+                android:id="@+id/detective_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                style="@style/btnStyleOrange"
+                android:text="@string/detective" />
+
+            <Button
+                android:id="@+id/campaign_photo_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                style="@style/btnStyleOrange"
+                android:text="@string/str_btn_markod" />
+
+            <Button
+                android:id="@+id/campaigns_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                style="@style/btnStyleOrange"
+                android:text="@string/str_btn_campains" />
+        </TableRow>
+    </TableLayout>
 
     <TextView android:id="@+id/login_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=".." />
+
     <TextView android:id="@+id/market_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -67,4 +67,8 @@
     <string name="str_search_results">Search Results</string>
     <string name="str_getting_best_prices">Getting best prices..</string>
     <string name="str_missing_products">Missing products !</string>
+    <string name="str_btn_zap">Markod</string>
+    <string name="str_btn_markod">Markodit</string>
+    <string name="str_btn_campains">Scan</string>
+    <string name="str_app_name">Markod</string>
 </resources>
