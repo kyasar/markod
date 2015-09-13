@@ -17,7 +17,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +49,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static String MDS_SERVER = "http://192.168.1.23:8000";
 
-    private Button deleteBtn, detectiveBtn, connCheckBtn;
+    private Button deleteBtn, detectiveBtn, connCheckBtn, backBtn;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
@@ -61,6 +65,9 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
     private TextView loginNameTxt;
     private TextView marketNameTxt;
+    private ImageView searchImageBtn;
+    private LinearLayout searchFrameLayout;
+    private RelativeLayout mainTopLayout;
     private AutoCompleteTextView ac_tv_product_search;
 
     private SliderLayout mDemoSlider;
@@ -89,10 +96,14 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         }
         setContentView(R.layout.activity_main);
 
+        backBtn = (Button) findViewById(R.id.id_btn_back);
         deleteBtn = (Button) findViewById(R.id.id_btn_delete);
         detectiveBtn = (Button) findViewById(R.id.detective_button);
+        searchImageBtn = (ImageView) findViewById(R.id.search_image_btn);
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
         marketNameTxt = (TextView) findViewById(R.id.market_name_text);
+        searchFrameLayout = (LinearLayout) findViewById(R.id.search_frame);
+        mainTopLayout = (RelativeLayout) findViewById(R.id.main_top_layout);
 
         detectiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +129,27 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ac_tv_product_search.setText("");
+                Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
+                if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
+                    changeToMainView();
+                }
+                else {
+                    ac_tv_product_search.setText("");
+                }
+            }
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeToMainView();
+            }
+        });
+
+        searchImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeToSearchView();
             }
         });
 
@@ -129,7 +160,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // Hide keyboard on autocomplete item click
                 ac_tv_product_search.clearFocus();
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
 
                 Product p = (Product) adapterView.getItemAtPosition(i);
@@ -145,6 +176,13 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
                 intent.putParcelableArrayListExtra("searchProductList", searchProductList);
                 startActivity(intent);
                 Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
+            }
+        });
+
+        ac_tv_product_search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                Log.v(MainActivity.TAG, "On focus: " + b);
             }
         });
     }
@@ -320,6 +358,8 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         super.onResume();
         setUserInfo();
         ac_tv_product_search.setText("");
+        searchFrameLayout.setVisibility(View.GONE);
+        mainTopLayout.setVisibility(View.VISIBLE);
         Log.v(MainActivity.TAG, this.toString() + " onResume");
     }
 
@@ -377,5 +417,23 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             return true;
         }
         return false;
+    }
+
+    private void changeToSearchView() {
+        searchFrameLayout.setVisibility(View.VISIBLE);
+        mainTopLayout.setVisibility(View.GONE);
+        ac_tv_product_search.requestFocus();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void changeToMainView() {
+        searchFrameLayout.setVisibility(View.GONE);
+        mainTopLayout.setVisibility(View.VISIBLE);
+        ac_tv_product_search.clearFocus();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
     }
 }
