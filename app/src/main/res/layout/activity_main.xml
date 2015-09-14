@@ -46,8 +46,8 @@
 
                 <Button
                     android:id="@+id/id_btn_delete"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="end|center_vertical"
                     android:background="@drawable/ic_action_cancel" />
             </FrameLayout>
@@ -70,7 +70,7 @@
                 android:textSize="24dp" />
 
             <ImageView
-                android:id="@+id/search_image_btn"
+                android:id="@+id/id_search_image_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -78,8 +78,16 @@
         </RelativeLayout>
     </LinearLayout>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="5dip"
+        android:background="@drawable/drop_shadow"
+        >
+    </View>
+
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
+        android:padding="2dp"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
 
@@ -96,34 +104,56 @@
             android:padding="10dip" >
 
             <Button
-                android:id="@+id/detective_button"
+                android:id="@+id/id_btn_spy_market"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
                 style="@style/btnStyleOrange"
-                android:text="@string/detective" />
+                android:drawableTop="@drawable/ico_detective"
+                android:text="@string/str_btn_spy_market" />
 
             <Button
-                android:id="@+id/campaign_photo_button"
+                android:id="@+id/id_btn_campaign"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 style="@style/btnStyleOrange"
-                android:text="@string/str_btn_markod" />
+                android:drawableTop="@drawable/ico_detective"
+                android:text="@string/str_btn_campaign" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="10dip" >
 
             <Button
-                android:id="@+id/campaigns_button"
+                android:id="@+id/id_btn_declare_product"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 style="@style/btnStyleOrange"
-                android:text="@string/str_btn_campains" />
+                android:drawableTop="@drawable/ico_detective"
+                android:text="@string/str_btn_declare_product" />
+
+            <Button
+                android:id="@+id/id_btn_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                style="@style/btnStyleOrange"
+                android:drawableTop="@drawable/ico_detective"
+                android:text="@string/str_btn_profile" />
         </TableRow>
     </TableLayout>
 
