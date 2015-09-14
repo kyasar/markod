@@ -81,9 +81,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="5dip"
-        android:background="@drawable/drop_shadow"
-        >
-    </View>
+        android:background="@drawable/drop_shadow" />
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
