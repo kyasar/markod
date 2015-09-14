@@ -71,4 +71,8 @@
     <string name="str_btn_markod">Markodit</string>
     <string name="str_btn_campains">Scan</string>
     <string name="str_app_name">Markod</string>
+    <string name="str_btn_spy_market">Spy Market</string>
+    <string name="str_btn_campaign">Share Campaign</string>
+    <string name="str_btn_declare_product">Add Product</string>
+    <string name="str_btn_profile">Profile</string>
 </resources>

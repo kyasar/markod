@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,10 +16,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,17 +36,18 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends FragmentActivity implements BaseSliderView.OnSliderClickListener,
-        ViewPagerEx.OnPageChangeListener {
+        ViewPagerEx.OnPageChangeListener,
+        View.OnClickListener {
 
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.23:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
-    private Button deleteBtn, detectiveBtn, connCheckBtn, backBtn;
+    private Button btn_delete_searchTxt, btn_spy_market, btn_checkIntConn, btn_backMain,
+                    btn_profile, btn_campaign, btn_declare_product;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
@@ -65,7 +63,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
     private TextView loginNameTxt;
     private TextView marketNameTxt;
-    private ImageView searchImageBtn;
+    private ImageView btn_searchImage;
     private LinearLayout searchFrameLayout;
     private RelativeLayout mainTopLayout;
     private AutoCompleteTextView ac_tv_product_search;
@@ -84,8 +82,8 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             Toast.makeText(this, " No Internet Connection !! \n Check your Connection..", Toast.LENGTH_SHORT).show();
             //TODO: Draw a new layout informing user that there is no connection.
             setContentView(R.layout.activity_main_noconn);
-            connCheckBtn = (Button) findViewById(R.id.checkConn_button);
-            connCheckBtn.setOnClickListener(new View.OnClickListener() {
+            btn_checkIntConn = (Button) findViewById(R.id.checkConn_button);
+            btn_checkIntConn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
@@ -96,62 +94,38 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         }
         setContentView(R.layout.activity_main);
 
-        backBtn = (Button) findViewById(R.id.id_btn_back);
-        deleteBtn = (Button) findViewById(R.id.id_btn_delete);
-        detectiveBtn = (Button) findViewById(R.id.detective_button);
-        searchImageBtn = (ImageView) findViewById(R.id.search_image_btn);
+        // Main actionbar layout Search Image button
+        btn_searchImage = (ImageView) findViewById(R.id.id_search_image_btn);
+        btn_searchImage.setOnClickListener(this);
+
+        // Search frame layout Back and Delete text buttons
+        btn_backMain = (Button) findViewById(R.id.id_btn_back);
+        btn_backMain.setOnClickListener(this);
+
+        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
+        btn_delete_searchTxt.setOnClickListener(this);
+
+        // Main Menu buttons: Spy, Declare, Campaign and Profile
+        btn_spy_market = (Button) findViewById(R.id.id_btn_spy_market);
+        btn_spy_market.setOnClickListener(this);
+
+        btn_profile = (Button) findViewById(R.id.id_btn_profile);
+        btn_profile.setOnClickListener(this);
+
+        btn_campaign = (Button) findViewById(R.id.id_btn_campaign);
+        btn_campaign.setOnClickListener(this);
+
+        btn_declare_product = (Button) findViewById(R.id.id_btn_declare_product);
+        btn_declare_product.setOnClickListener(this);
+
+        // Layouts to change search state or main state
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
         marketNameTxt = (TextView) findViewById(R.id.market_name_text);
         searchFrameLayout = (LinearLayout) findViewById(R.id.search_frame);
         mainTopLayout = (RelativeLayout) findViewById(R.id.main_top_layout);
 
-        detectiveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-				/* Explicit intent for selecting a nearby market */
-                Log.v(TAG, "Detective Button clicked. OK.");
-                if (user == null) {
-                    Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                    startActivityForResult(intent, USER_LOGIN_REQUESTCODE);
-                    Log.v(TAG, "LoginActivity is started. OK.");
-                } else {
-                    Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
-                    startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
-                    Log.v(TAG, "MarketSelectActivity is started. OK.");
-                }
-            }
-        });
-
         /* Load Location-based Ads */
         loadAdImages();
-
-        /* Search product cancel text button */
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
-                if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
-                    changeToMainView();
-                }
-                else {
-                    ac_tv_product_search.setText("");
-                }
-            }
-        });
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeToMainView();
-            }
-        });
-
-        searchImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeToSearchView();
-            }
-        });
 
         ac_tv_product_search = (AutoCompleteTextView) findViewById(R.id.id_ac_tv_productAutoSearch);
         ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
@@ -435,5 +409,41 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onClick(View view) {
+        // getId() returns this view's identifier.
+        if (view.getId() == R.id.id_btn_spy_market) {
+            /* Explicit intent for selecting a nearby market */
+            Log.v(TAG, "Detective Button clicked. OK.");
+            if (user == null) {
+                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                startActivityForResult(intent, USER_LOGIN_REQUESTCODE);
+                Log.v(TAG, "LoginActivity is started. OK.");
+            } else {
+                Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
+                startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
+                Log.v(TAG, "MarketSelectActivity is started. OK.");
+            }
+        } else if(view.getId() == R.id.id_btn_profile) {
+            Log.v(TAG, "Profile Btn is clicked.");
+        } else if (view.getId() == R.id.id_btn_delete) {
+            Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
+            if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
+                changeToMainView();
+            }
+            else {
+                ac_tv_product_search.setText("");
+            }
+        } else if (view.getId() == R.id.id_btn_back) {
+            changeToMainView();
+        } else if (view.getId() == R.id.id_search_image_btn) {
+            changeToSearchView();
+        } else if (view.getId() == R.id.id_btn_campaign) {
+            Log.v(TAG, "Campaign Btn is clicked.");
+        } else if (view.getId() == R.id.id_btn_declare_product) {
+            Log.v(TAG, "Declare Product Btn is clicked.");
+        }
     }
 }
