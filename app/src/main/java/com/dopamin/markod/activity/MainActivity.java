@@ -444,6 +444,17 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             Log.v(TAG, "Campaign Btn is clicked.");
         } else if (view.getId() == R.id.id_btn_declare_product) {
             Log.v(TAG, "Declare Product Btn is clicked.");
+
+            if (user == null) {
+                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                startActivityForResult(intent, USER_LOGIN_REQUESTCODE);
+                Log.v(TAG, "LoginActivity is started. OK.");
+            } else {
+                Intent intent = new Intent(getBaseContext(), AddProductActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+                Log.v(TAG, "AddProductActivity is started. OK.");
+            }
         }
     }
 }

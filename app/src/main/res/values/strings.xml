@@ -75,4 +75,10 @@
     <string name="str_btn_campaign">Share Campaign</string>
     <string name="str_btn_declare_product">Add Product</string>
     <string name="str_btn_profile">Profile</string>
+    <string name="title_activity_add_product">Add Product</string>
+    <string name="str_mock_barcode">XXX-XXXXX-XXXX-X</string>
+    <string name="str_btn_sendProduct">Send</string>
+    <string name="str_hint_productDesc">Enter description of product</string>
+    <string name="str_take_photo_please">Take a photo of the product</string>
+    <string name="str_send_product_please_wait">Sending product info..</string>
 </resources>

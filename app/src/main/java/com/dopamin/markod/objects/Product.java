@@ -1,5 +1,6 @@
 package com.dopamin.markod.objects;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,6 +14,8 @@ public class Product implements Parcelable {
 	private String price;
 	private Integer pMain;
 	private Integer pCent;
+	private String encodedPhoto;
+	private String userID;
 
 	public int getpMain() {
 		return pMain;
@@ -40,6 +43,22 @@ public class Product implements Parcelable {
 			}
 		}
 		return false;
+	}
+
+	public String getEncodedPhoto() {
+		return encodedPhoto;
+	}
+
+	public void setEncodedPhoto(String encodedPhoto) {
+		this.encodedPhoto = encodedPhoto;
+	}
+
+	public String getUserID() {
+		return userID;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
 	}
 
 	public String getName() {
@@ -120,6 +139,15 @@ public class Product implements Parcelable {
 	public Product createJSON_ScanProduct() {
 		Product product = new Product();
 		product.setBarcode(this.barcode);
+		return product;
+	}
+
+	public Product createJSON_DeclareProduct(User user) {
+		Product product = new Product();
+		product.setBarcode(this.barcode);
+		product.setName(this.name);
+		product.setEncodedPhoto(this.encodedPhoto);
+		product.setUserID(user.get_id());
 		return product;
 	}
 }
