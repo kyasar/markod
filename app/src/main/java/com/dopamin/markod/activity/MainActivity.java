@@ -44,16 +44,17 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public static String MDS_SERVER = "http://192.168.1.23:8000";
 
     private Button btn_delete_searchTxt, btn_spy_market, btn_checkIntConn, btn_backMain,
                     btn_profile, btn_campaign, btn_declare_product;
 
     /* Select market request for the Market Select Activity */
-    private int SELECT_NEARBY_MARKET_REQUESTCODE = 1;
+    private int SELECT_MARKET_REQUESTCODE = 1;
 
     /* User request for Login Activity */
-    private int USER_LOGIN_REQUESTCODE = 2;
+    private int LOGIN_FOR_SPY_REQUESTCODE = 2;
+    private int LOGIN_FOR_ADD_PRODUCT_REQUESTCODE = 3;
 
     public static String TAG = "MDlog";
 
@@ -166,8 +167,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
         Log.v(TAG, "onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
 
-        if (requestCode == SELECT_NEARBY_MARKET_REQUESTCODE && resultCode == RESULT_OK && data != null) {
-
+        if (requestCode == SELECT_MARKET_REQUESTCODE && resultCode == RESULT_OK && data != null) {
             Log.v(TAG, "MainActivity: Market is ready");
             loadMarket();
             loadUser();
@@ -180,12 +180,21 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             startActivity(intent);
             Log.v(TAG, "MainActivity: SpyMarketActivity is started. OK.");
 
-        } else if (requestCode == USER_LOGIN_REQUESTCODE && resultCode == RESULT_OK) {
+        } else if (requestCode == LOGIN_FOR_SPY_REQUESTCODE && resultCode == RESULT_OK) {
             Log.v(TAG, "Return to Main from Login screen..");
             setUserInfo();
 
             Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
-            startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
+            startActivityForResult(intent, SELECT_MARKET_REQUESTCODE);
+
+        } else if (requestCode == LOGIN_FOR_ADD_PRODUCT_REQUESTCODE && resultCode == RESULT_OK) {
+            Log.v(TAG, "Return to Main from Login screen..");
+            setUserInfo();
+
+            Intent intent = new Intent(getBaseContext(), AddProductActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
+            Log.v(TAG, "AddProductActivity is started. OK.");
         }
     }
 
@@ -419,11 +428,11 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             Log.v(TAG, "Detective Button clicked. OK.");
             if (user == null) {
                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                startActivityForResult(intent, USER_LOGIN_REQUESTCODE);
+                startActivityForResult(intent, LOGIN_FOR_SPY_REQUESTCODE);
                 Log.v(TAG, "LoginActivity is started. OK.");
             } else {
                 Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
-                startActivityForResult(intent, SELECT_NEARBY_MARKET_REQUESTCODE);
+                startActivityForResult(intent, SELECT_MARKET_REQUESTCODE);
                 Log.v(TAG, "MarketSelectActivity is started. OK.");
             }
         } else if(view.getId() == R.id.id_btn_profile) {
@@ -447,7 +456,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
             if (user == null) {
                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                startActivityForResult(intent, USER_LOGIN_REQUESTCODE);
+                startActivityForResult(intent, LOGIN_FOR_ADD_PRODUCT_REQUESTCODE);
                 Log.v(TAG, "LoginActivity is started. OK.");
             } else {
                 Intent intent = new Intent(getBaseContext(), AddProductActivity.class);
