@@ -100,7 +100,7 @@
             android:label="@string/title_activity_add_product" >
         </activity>
         <activity
-            android:name=".activity.SimpleScannerActivity"
+            android:name=".scanner.SimpleScannerActivity"
             android:label="@string/title_activity_simple_scanner" >
         </activity>
     </application>

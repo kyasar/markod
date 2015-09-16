@@ -1,4 +1,4 @@
-package com.dopamin.markod.activity;
+package com.dopamin.markod.scanner;
 
 
 import android.app.Activity;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.dopamin.markod.activity.MainActivity;
 
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
