@@ -44,7 +44,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public static String MDS_SERVER = "http://192.168.1.23:8000";
 
     private Button btn_delete_searchTxt, btn_spy_market, btn_checkIntConn, btn_backMain,
                     btn_profile, btn_campaign, btn_declare_product;
@@ -55,6 +55,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     /* User request for Login Activity */
     private int LOGIN_FOR_SPY_REQUESTCODE = 2;
     private int LOGIN_FOR_ADD_PRODUCT_REQUESTCODE = 3;
+    private int LOGIN_FOR_PROFILE_REQUESTCODE = 4;
 
     public static final int BARCODE_REQUEST = 1071;
     public static final int CAMERA_REQUEST = 1453;
@@ -190,7 +191,16 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
             startActivityForResult(intent, SELECT_MARKET_REQUESTCODE);
 
-        } else if (requestCode == LOGIN_FOR_ADD_PRODUCT_REQUESTCODE && resultCode == RESULT_OK) {
+        } else if (requestCode == LOGIN_FOR_PROFILE_REQUESTCODE && resultCode == RESULT_OK) {
+            Log.v(TAG, "Return to Main from Login screen..");
+            setUserInfo();
+
+            Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
+            Log.v(TAG, "ProfileActivity is started. OK.");
+        }
+        else if (requestCode == LOGIN_FOR_ADD_PRODUCT_REQUESTCODE && resultCode == RESULT_OK) {
             Log.v(TAG, "Return to Main from Login screen..");
             setUserInfo();
 
@@ -368,6 +378,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     }
 
     private void setUserInfo() {
+        this.loginNameTxt.setText("");
         if (loadUser()) {
             Log.v(TAG, "MainActivity: User is ready.");
             if (this.menu != null)
@@ -389,6 +400,8 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             user = gson.fromJson(user_str, User.class);
             Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
             return true;
+        } else {
+            user = null;
         }
         return false;
     }
@@ -440,6 +453,16 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             }
         } else if(view.getId() == R.id.id_btn_profile) {
             Log.v(TAG, "Profile Btn is clicked.");
+            if (user == null) {
+                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                startActivityForResult(intent, LOGIN_FOR_PROFILE_REQUESTCODE);
+                Log.v(TAG, "LoginActivity is started. OK.");
+            } else {
+                Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+                Log.v(TAG, "ProfileActivity is started. OK.");
+            }
         } else if (view.getId() == R.id.id_btn_delete) {
             Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
             if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {

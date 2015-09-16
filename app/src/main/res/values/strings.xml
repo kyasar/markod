@@ -36,6 +36,7 @@
 
     <!-- Style and Theme -->
     <color name="markod_bg_color">#EEEEEE</color>
+    <color name="open_gray">#E0E0E0</color>
     <color name="markod_lv_item_color">#FFFFFF</color>
     <string name="title_activity_base">BaseActivity</string>
     <string name="main_title">Welcome to Markod</string>
@@ -82,4 +83,5 @@
     <string name="str_take_photo_please">Take a photo of the product</string>
     <string name="str_send_product_please_wait">Sending product info..</string>
     <string name="title_activity_simple_scanner">SimpleScannerActivity</string>
+    <string name="str_title_profile">Profile</string>
 </resources>

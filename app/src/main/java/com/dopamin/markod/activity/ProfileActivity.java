@@ -1,5 +1,6 @@
 package com.dopamin.markod.activity;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,39 +11,64 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
+import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
+import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends Activity implements View.OnClickListener {
 
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail, txtPoints;
+    private Button btn_back;
+    private LoginButton fbLoginButton;
+    private ProfileTracker mProfileTracker;
+
     private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Facebook Sdk before UI
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_profile);
-        Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onCreate");
 
         Bundle bundle = getIntent().getExtras();
-        User user = (User) bundle.getSerializable("user");
+        user = bundle.getParcelable("user");
 
+        fbLoginButton = (LoginButton) findViewById(R.id.login_button);
         txtName = (TextView) findViewById(R.id.txtName);
         txtEmail = (TextView) findViewById(R.id.txtEmail);
         txtPoints = (TextView) findViewById(R.id.txtPoints);
-        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
+        imgProfilePic = (ImageView) findViewById(R.id.id_profile_image);
+        btn_back = (Button) findViewById(R.id.id_btn_back);
+        btn_back.setOnClickListener(this);
 
-        byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-        imgProfilePic.setImageBitmap(bitmap);
+        if (user.getEncodedProfilePhoto() != null) {
+            byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+            imgProfilePic.setImageBitmap(bitmap);
+        }
 
         txtName.setText(user.getFirstName() + " " + user.getLastName());
         txtEmail.setText(user.getEmail());
         txtPoints.setText("Points: " + user.getPoints());
+
+        if (user.getLoginType().equalsIgnoreCase("FACEBOOK")) {
+            fbLoginButton.setVisibility(View.VISIBLE);
+            setupProfileTracker();
+            mProfileTracker.startTracking();
+        }
     }
 
     @Override
@@ -95,5 +121,41 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onDestroy");
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.id_btn_back) {
+            Log.v(MainActivity.TAG, "Return back to Main menu..");
+            finish();
+        }
+    }
+
+    public boolean saveUser(User user) {
+        com.google.gson.Gson gson = new com.google.gson.Gson();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sp.edit();
+        if (user == null) {
+            edit.remove("user");
+            Log.v(MainActivity.TAG, "User removed.");
+        } else {
+            edit.putString("user", gson.toJson(user));
+            Log.v(MainActivity.TAG, "User saved into Shared.");
+        }
+        return edit.commit();
+    }
+
+    private void setupProfileTracker() {
+        mProfileTracker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                if (currentProfile == null) {
+                    Log.d(MainActivity.TAG, "Profile gone.");
+                    user = null;
+                    saveUser(user);
+                    finish();
+                }
+            }
+        };
     }
 }
