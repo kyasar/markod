@@ -32,6 +32,11 @@ import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.gson.Gson;
@@ -39,6 +44,8 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class AddProductActivity extends Activity implements View.OnClickListener, TextWatcher {
 
@@ -46,7 +53,7 @@ public class AddProductActivity extends Activity implements View.OnClickListener
     private TextView txt_scannedCode, txt_photoTake;
     private EditText etxt_productDesc;
     private Button btn_sendProduct, btn_back;
-    private ImageView iv_photo, iv_take_photo;
+    private ImageView iv_photo, iv_take_photo, iv_barcode;
     private Bitmap bitmapPhoto;
     private ProgressDialog progressDialog;
 
@@ -77,6 +84,7 @@ public class AddProductActivity extends Activity implements View.OnClickListener
         etxt_productDesc.addTextChangedListener(this);
 
         iv_photo = (ImageView) findViewById(R.id.id_photo);
+        iv_barcode = (ImageView) findViewById(R.id.id_img_barcode);
         iv_take_photo = (ImageView) findViewById(R.id.id_take_photo);
         iv_take_photo.setOnClickListener(this);
 
@@ -191,6 +199,15 @@ public class AddProductActivity extends Activity implements View.OnClickListener
                     etxt_productDesc.setFocusable(true);
                     etxt_productDesc.requestFocus();
 
+                    try {
+
+                        Bitmap bitmap = encodeAsBitmap(scanContent, BarcodeFormat.CODE_128, 200, 50);
+                        iv_barcode.setImageBitmap(bitmap);
+                        iv_barcode.setVisibility(View.VISIBLE);
+
+                    } catch (WriterException e) {
+                        e.printStackTrace();
+                    }
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(etxt_productDesc, InputMethodManager.SHOW_IMPLICIT);
                 }
@@ -244,5 +261,62 @@ public class AddProductActivity extends Activity implements View.OnClickListener
         etxt_productDesc.setVisibility(View.GONE);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etxt_productDesc.getWindowToken(), 0);
+    }
+
+    /**************************************************************
+     * getting from com.google.zxing.client.android.encode.QRCodeEncoder
+     *
+     * See the sites below
+     * http://code.google.com/p/zxing/
+     * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/EncodeActivity.java
+     * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java
+     */
+
+    private static final int WHITE = 0xFFFFFFFF;
+    private static final int BLACK = 0xFF000000;
+
+    Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
+        String contentsToEncode = contents;
+        if (contentsToEncode == null) {
+            return null;
+        }
+        Map<EncodeHintType, Object> hints = null;
+        String encoding = guessAppropriateEncoding(contentsToEncode);
+        if (encoding != null) {
+            hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        MultiFormatWriter writer = new MultiFormatWriter();
+        BitMatrix result;
+        try {
+            result = writer.encode(contentsToEncode, format, img_width, img_height, hints);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        int width = result.getWidth();
+        int height = result.getHeight();
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
+    private static String guessAppropriateEncoding(CharSequence contents) {
+        // Very crude at the moment
+        for (int i = 0; i < contents.length(); i++) {
+            if (contents.charAt(i) > 0xFF) {
+                return "UTF-8";
+            }
+        }
+        return null;
     }
 }

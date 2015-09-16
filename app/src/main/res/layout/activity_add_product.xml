@@ -122,4 +122,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
+    <ImageView
+        android:id="@+id/id_img_barcode"
+        android:visibility="gone"
+        android:background="@color/gray"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
