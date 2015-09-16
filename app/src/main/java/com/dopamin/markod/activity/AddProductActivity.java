@@ -196,7 +196,8 @@ public class AddProductActivity extends Activity implements View.OnClickListener
                 txt_photoTake.setVisibility(View.GONE);
                 iv_photo.setImageBitmap(bitmapPhoto);
             }
-        }  else if (requestCode == MainActivity.BARCODE_REQUEST && resultCode == Activity.RESULT_OK) {
+        }
+        else if (requestCode == MainActivity.BARCODE_REQUEST && resultCode == Activity.RESULT_OK) {
             Log.v(MainActivity.TAG, "Barcode scanning finished.");
             Bundle res = intent.getExtras();
             String barcode = res.getString("content");

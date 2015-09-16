@@ -20,13 +20,14 @@ import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
+import com.dopamin.markod.scanner.SimpleScannerActivity;
 import com.google.gson.Gson;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import de.hdodenhof.circleimageview.*;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,6 +40,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -155,64 +157,69 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
         refreshScannedListView();
     }
 	
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		
-		if (requestCode == IntentIntegrator.REQUEST_CODE) {
-			// retrieve scan result
-			IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-			if (scanningResult != null) {
-				// we have a result
-				String scanContent = scanningResult.getContents();
-				if (scanContent != null) {
-					progressDialog.setTitle(getResources().getString(R.string.spymarket_product_title));
-					progressDialog.setMessage(getResources().getString(R.string.please_wait));
-                    progressDialog.show();
-					Log.v(MainActivity.TAG, "scanContent: " + scanContent);
-					// String scanFormat = scanningResult.getFormatName();
-					String uniqueProductURL = productURL + scanContent + "?token=" + MainActivity.MDS_TOKEN;
+	public void onActivityResult(int requestCode, int resultCode, Intent intent)
+	{
+		if (requestCode == MainActivity.BARCODE_REQUEST && resultCode == Activity.RESULT_OK) {
+			Log.v(MainActivity.TAG, "Barcode scanning finished.");
+			Bundle res = intent.getExtras();
+			String barcode = res.getString("content");
+			String format = res.getString("format");
 
-					GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, uniqueProductURL,
-							Product.class, new Response.Listener<Product>() {
-								@Override
-								public void onResponse(Product p) {
-									if (p != null) {
-										System.out.println("Product name : " + p.getName());
-										System.out.println("Barcode no   : " + p.getBarcode());
+			Toast.makeText(this, "Contents = " + barcode +
+					", Format = " + format, Toast.LENGTH_SHORT).show();
 
-										// Set main product to use in other code parts
-										product = p;
-										showAlertDialog(product);
-                                        progressDialog.dismiss();
-									}
+			if (barcode != null) {
+				progressDialog.setTitle(getResources().getString(R.string.spymarket_product_title));
+				progressDialog.setMessage(getResources().getString(R.string.please_wait));
+				progressDialog.show();
+				// String scanFormat = scanningResult.getFormatName();
+				String uniqueProductURL = productURL + barcode + "?token=" + MainActivity.MDS_TOKEN;
+				Log.v(MainActivity.TAG, "productURL: " + uniqueProductURL);
+				GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, uniqueProductURL,
+						Product.class, new Response.Listener<Product>() {
+					@Override
+					public void onResponse(Product p) {
+							if (p != null) {
+								System.out.println("Product name : " + p.getName());
+								System.out.println("Barcode no   : " + p.getBarcode());
+
+								// Set main product to use in other code parts
+								product = p;
+								showAlertDialog(product);
+								progressDialog.dismiss();
+							}
+						}
+					}, new Response.ErrorListener() {
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							if(error != null) {
+								if (error instanceof ServerError) {
+									Log.e(MainActivity.TAG, "Server Failure.");
+									Toast.makeText(getApplicationContext(),
+											"Server error !!", Toast.LENGTH_SHORT).show();
+								} else if (error instanceof NetworkError) {
+									Log.e(MainActivity.TAG, "Network Failure.");
+									Toast.makeText(getApplicationContext(),
+											"Network error !!", Toast.LENGTH_SHORT).show();
+								} else {
+									Log.e(MainActivity.TAG, "Unknown Failure.");
+									Toast.makeText(getApplicationContext(),
+											"Product is not found !!", Toast.LENGTH_SHORT).show();
 								}
-							}, new Response.ErrorListener() {
-								@Override
-								public void onErrorResponse(VolleyError error) {
-									if(error != null) {
-										if (error instanceof ServerError) {
-											Log.e(MainActivity.TAG, "Server Failure.");
-											Toast.makeText(getApplicationContext(),
-													"Server error !!", Toast.LENGTH_SHORT).show();
-										} else if (error instanceof NetworkError) {
-											Log.e(MainActivity.TAG, "Network Failure.");
-											Toast.makeText(getApplicationContext(),
-													"Network error !!", Toast.LENGTH_SHORT).show();
-										} else {
-											Log.e(MainActivity.TAG, "Unknown Failure.");
-											Toast.makeText(getApplicationContext(),
-													"Product is not found !!", Toast.LENGTH_SHORT).show();
-										}
-									}
-                                    progressDialog.dismiss();
-								}
-					});
+							}
+							progressDialog.dismiss();
+						}
+				});
 
-					/* Retry policy default timeout was 2500ms, now 3 * 5000 */
-					gsonRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
-							3, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-							DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-					Volley.newRequestQueue(getApplication()).add(gsonRequest);
-				}
+				/* Retry policy default timeout was 2500ms, now 3 * 5000 */
+				/*gsonRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+						3, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
+				Volley.newRequestQueue(getApplication()).add(gsonRequest);
+			}
+			else {
+				Toast.makeText(this, "No Barcode scanned ! Try again..", Toast.LENGTH_SHORT).show();
+				Log.e(MainActivity.TAG, "No Barcode scanned !");
 			}
 		}
 	}
@@ -278,8 +285,8 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 					showAlertDialog(product);
 				} else {
 					// Scan Bar Code
-					IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-					scanIntegrator.initiateScan();
+					Intent intent = new Intent(this, SimpleScannerActivity.class);
+					startActivityForResult(intent, MainActivity.BARCODE_REQUEST);
 				}
 				break;
 
