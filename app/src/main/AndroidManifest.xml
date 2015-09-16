@@ -28,7 +28,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
@@ -98,6 +98,10 @@
             android:name=".activity.AddProductActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_add_product" >
+        </activity>
+        <activity
+            android:name=".activity.SimpleScannerActivity"
+            android:label="@string/title_activity_simple_scanner" >
         </activity>
     </application>
 

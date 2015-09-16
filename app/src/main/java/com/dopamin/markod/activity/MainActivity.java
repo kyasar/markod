@@ -56,6 +56,9 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     private int LOGIN_FOR_SPY_REQUESTCODE = 2;
     private int LOGIN_FOR_ADD_PRODUCT_REQUESTCODE = 3;
 
+    public static final int BARCODE_REQUEST = 1071;
+    public static final int CAMERA_REQUEST = 1453;
+
     public static String TAG = "MDlog";
 
     /* Objects */

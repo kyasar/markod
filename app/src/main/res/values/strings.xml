@@ -81,4 +81,5 @@
     <string name="str_hint_productDesc">Enter description of product</string>
     <string name="str_take_photo_please">Take a photo of the product</string>
     <string name="str_send_product_please_wait">Sending product info..</string>
+    <string name="title_activity_simple_scanner">SimpleScannerActivity</string>
 </resources>

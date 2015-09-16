@@ -60,8 +60,6 @@ public class AddProductActivity extends Activity implements View.OnClickListener
     private Product p;
     private User user;
 
-    private static final int CAMERA_REQUEST = 1888;
-
     String productAddURL = MainActivity.MDS_SERVER + "/mds/api/products/" + "?token=" + MainActivity.MDS_TOKEN;
 
     @Override
@@ -124,8 +122,11 @@ public class AddProductActivity extends Activity implements View.OnClickListener
     public void onClick(View view) {
         if (view.getId() == R.id.id_btn_scanBarcode) {
             // Scan Bar Code
-            IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-            scanIntegrator.initiateScan();
+            //IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+            //scanIntegrator.initiateScan();
+
+            Intent intent = new Intent(this, SimpleScannerActivity.class);
+            startActivityForResult(intent, MainActivity.BARCODE_REQUEST);
         }
         else if (view.getId() == R.id.id_btn_back) {
             Log.v(MainActivity.TAG, "Return back to Main menu..");
@@ -135,7 +136,7 @@ public class AddProductActivity extends Activity implements View.OnClickListener
             Log.v(MainActivity.TAG, "Taking photo..");
 
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            startActivityForResult(cameraIntent, MainActivity.CAMERA_REQUEST);
         }
         else if (view.getId() == R.id.id_btn_sendProduct) {
             progressDialog.show();
@@ -186,33 +187,7 @@ public class AddProductActivity extends Activity implements View.OnClickListener
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        if (requestCode == IntentIntegrator.REQUEST_CODE) {
-            // retrieve scan result
-            IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-            if (scanningResult != null) {
-                // we have a result
-                String scanContent = scanningResult.getContents();
-                if (scanContent != null) {
-                    Log.v(MainActivity.TAG, "scanContent: " + scanContent);
-                    txt_scannedCode.setText(scanContent);
-                    etxt_productDesc.setVisibility(View.VISIBLE);
-                    etxt_productDesc.setFocusable(true);
-                    etxt_productDesc.requestFocus();
-
-                    try {
-
-                        Bitmap bitmap = encodeAsBitmap(scanContent, BarcodeFormat.CODE_128, 200, 50);
-                        iv_barcode.setImageBitmap(bitmap);
-                        iv_barcode.setVisibility(View.VISIBLE);
-
-                    } catch (WriterException e) {
-                        e.printStackTrace();
-                    }
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(etxt_productDesc, InputMethodManager.SHOW_IMPLICIT);
-                }
-            }
-        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == MainActivity.CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Log.v(MainActivity.TAG, "Camera finished.");
             if (intent.getExtras().get("data") != null) {
                 if (bitmapPhoto != null)
@@ -224,6 +199,38 @@ public class AddProductActivity extends Activity implements View.OnClickListener
                 //iv_photo.setMaxWidth(bitmapPhoto.getWidth());
                 txt_photoTake.setVisibility(View.GONE);
                 iv_photo.setImageBitmap(bitmapPhoto);
+            }
+        }  else if (requestCode == MainActivity.BARCODE_REQUEST && resultCode == Activity.RESULT_OK) {
+            Log.v(MainActivity.TAG, "Barcode scanning finished.");
+            Bundle res = intent.getExtras();
+            String barcode = res.getString("content");
+            String format = res.getString("format");
+
+            Toast.makeText(this, "Contents = " + barcode +
+                    ", Format = " + format, Toast.LENGTH_SHORT).show();
+
+            if (barcode != null) {
+                Log.v(MainActivity.TAG, "scanContent: " + barcode);
+                txt_scannedCode.setText(barcode);
+                etxt_productDesc.setVisibility(View.VISIBLE);
+                etxt_productDesc.setFocusable(true);
+                etxt_productDesc.requestFocus();
+
+                try {
+
+                    Bitmap bitmap = encodeAsBitmap(barcode, BarcodeFormat.CODE_128, 200, 50);
+                    iv_barcode.setImageBitmap(bitmap);
+                    iv_barcode.setVisibility(View.VISIBLE);
+
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etxt_productDesc, InputMethodManager.SHOW_IMPLICIT);
+            }
+            else {
+                Toast.makeText(this, "No Barcode scanned ! Try again..", Toast.LENGTH_SHORT).show();
+                Log.e(MainActivity.TAG, "No Barcode scanned !");
             }
         }
     }
@@ -253,6 +260,8 @@ public class AddProductActivity extends Activity implements View.OnClickListener
             bitmapPhoto = null;
         }
         iv_photo.setImageBitmap(null);
+        iv_barcode.setImageBitmap(null);
+        iv_barcode.setVisibility(View.GONE);
         txt_photoTake.setVisibility(View.VISIBLE);
         txt_scannedCode.setText(getResources().getString(R.string.str_mock_barcode));
 
