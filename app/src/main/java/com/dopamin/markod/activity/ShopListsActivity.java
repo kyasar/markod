@@ -6,7 +6,9 @@ import android.app.ExpandableListActivity;
 import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -31,14 +33,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShopListsActivity extends Activity implements View.OnClickListener/*, AdapterView.OnItemLongClickListener*/ {
+public class ShopListsActivity extends Activity implements View.OnClickListener, TextWatcher/*, AdapterView.OnItemLongClickListener*/ {
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
     private Button btn_newShopList;
     private String listName;
+    AlertDialog newListNameDialog;
 
     private List<ShopList> shopLists;
 
@@ -79,10 +80,10 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
         // Show context menu for groups
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             Log.v(MainActivity.TAG, "Group: " + groupPosition );
-            menu.setHeaderTitle(listDataHeader.get(groupPosition));
+            menu.setHeaderTitle(shopLists.get(groupPosition).getName());
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             Log.v(MainActivity.TAG, "Group: " + groupPosition + ", Child: " + childPosition);
-            menu.setHeaderTitle(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition));
+            menu.setHeaderTitle(shopLists.get(groupPosition).getProducts().get(childPosition).getName());
         }
     }
 
@@ -102,6 +103,7 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
                     break;
                 case R.id.id_menu_shoplist_delete:
                     Log.v(MainActivity.TAG, "Deleting ShopList " + shopLists.get(groupPosition).getName());
+                    deleteShopList(groupPosition);
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
@@ -111,6 +113,7 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
                     break;
                 case R.id.id_menu_shoplist_delete:
                     Log.v(MainActivity.TAG, "Removing A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
+                    removeItemFromList(groupPosition, childPosition);
                     break;
             }
         }
@@ -131,45 +134,17 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
         products.add(new Product("Product 4", "222222229"));
         sl1.setProducts(products);
 
+        ShopList sl2 = new ShopList("Children-Kids");
+        List<Product> products2 = new ArrayList<Product>();
+        products2.add(new Product("Product 11", "473847389"));
+        products2.add(new Product("Product 22", "333333339"));
+        products2.add(new Product("Product 33", "888888889"));
+        products2.add(new Product("Product 44", "222222229"));
+        sl2.setProducts(products2);
+
         shopLists = new ArrayList<ShopList>();
         shopLists.add(sl1);
-
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-
-        // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+        shopLists.add(sl2);
     }
 
     @Override
@@ -205,18 +180,30 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.str_dialog_title_newShoplist));
 
+        LinearLayout ll = new LinearLayout(this);
+        LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        ll.setLayoutParams(llParams);
+        ll.setOrientation(LinearLayout.HORIZONTAL);
+        ll.setPadding(40, 20, 40, 20);
+
         // Set up the input
         final EditText input = new EditText(this);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setLayoutParams(llParams);
         input.setPadding(20, 10, 20, 10);
-        builder.setView(input);
+        input.addTextChangedListener(this);
+
+        ll.addView(input);
+        builder.setView(ll);
 
         // Set up the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listName = input.getText().toString();
+                shopLists.add(new ShopList(input.getText().toString().trim()));
+                expListView.setAdapter(listAdapter);
                 Log.v(MainActivity.TAG, "NEw Shoplist name: " + listName);
             }
         });
@@ -228,31 +215,40 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
                 Log.v(MainActivity.TAG, "NEw Shoplist Canceled ");
             }
         });
+        newListNameDialog = builder.create();
 
-        builder.show();
+        // At first, OK is disabled as no name entered.
+        //newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        newListNameDialog.show();
+        newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
-    /*@Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-            int itemType = ExpandableListView.getPackedPositionType(id);
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        //newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+    }
 
-            if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                int childPosition = ExpandableListView.getPackedPositionChild(id);
-                int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (charSequence.toString().trim().length() >= 6) {
+            newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        } else {
+            newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        }
+    }
 
-                Log.v(MainActivity.TAG, "Group: " + groupPosition + ", Child: " + childPosition);
-                //do your per-item callback here
-                return true; //true if we consumed the click, false if not
+    @Override
+    public void afterTextChanged(Editable editable) {
 
-            } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                int groupPosition = ExpandableListView.getPackedPositionGroup(id);
-                Log.v(MainActivity.TAG, "Group: " + groupPosition);
-                //do your per-group callback here
-                return true; //true if we consumed the click, false if not
+    }
 
-            } else {
-                // null item; we don't consume the click
-                return false;
-            }
-    }*/
+    private void removeItemFromList(int group, int child) {
+        this.shopLists.get(group).getProducts().remove(child);
+        expListView.setAdapter(listAdapter);
+    }
+
+    private void deleteShopList(int group) {
+        this.shopLists.remove(group);
+        expListView.setAdapter(listAdapter);
+    }
 }

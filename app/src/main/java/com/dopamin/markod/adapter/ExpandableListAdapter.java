@@ -69,7 +69,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.shopLists.get(groupPosition).getProducts().size();
+        if (this.shopLists.get(groupPosition).getProducts() != null)
+            return this.shopLists.get(groupPosition).getProducts().size();
+        else
+            return 0;
     }
 
     @Override
@@ -79,7 +82,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return this.shopLists.size();
+        if (this.shopLists != null)
+            return this.shopLists.size();
+        else
+            return 0;
     }
 
     @Override
