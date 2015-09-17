@@ -33,12 +33,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShopListsActivity extends Activity implements View.OnClickListener, TextWatcher/*, AdapterView.OnItemLongClickListener*/ {
+public class ShopListsActivity extends Activity implements TextWatcher {
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    private Button btn_newShopList;
-    private String listName;
     AlertDialog newListNameDialog;
 
     private List<ShopList> shopLists;
@@ -51,17 +49,12 @@ public class ShopListsActivity extends Activity implements View.OnClickListener,
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.lv_exp_shoplists);
 
-        btn_newShopList = (Button) findViewById(R.id.id_btn_new_shoplist);
-        btn_newShopList.setOnClickListener(this);
-
         // preparing list data
         prepareListData();
 
         // setting list adapter
-        //listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         listAdapter = new ExpandableListAdapter(this, shopLists);
         expListView.setAdapter(listAdapter);
-        //expListView.setOnItemLongClickListener(this);
         registerForContextMenu(expListView);
     }
 
@@ -159,21 +152,17 @@ public class ShopListsActivity extends Activity implements View.OnClickListener,
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                break;
+            case R.id.action_create_new_shoplist:
+                openNewShopListDialog();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.id_btn_new_shoplist) {
-            openNewShopListDialog();
-        }
     }
 
     public void openNewShopListDialog() {
@@ -244,11 +233,11 @@ public class ShopListsActivity extends Activity implements View.OnClickListener,
 
     private void removeItemFromList(int group, int child) {
         this.shopLists.get(group).getProducts().remove(child);
-        expListView.setAdapter(listAdapter);
+        //expListView.setAdapter(listAdapter);
     }
 
     private void deleteShopList(int group) {
         this.shopLists.remove(group);
-        expListView.setAdapter(listAdapter);
+        //expListView.setAdapter(listAdapter);
     }
 }

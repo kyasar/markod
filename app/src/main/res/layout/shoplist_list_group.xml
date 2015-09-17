@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@color/gray"
+    android:background="@drawable/shoplist_group_highlighter"
     android:orientation="vertical" >
 
     <TextView
@@ -16,13 +16,5 @@
         android:textSize="24sp"
         android:textColor="@color/white"
         android:text="Group List" />
-
-    <ImageView
-        android:id="@+id/id_add_p_to_list"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="bottom|right"
-        android:src="@drawable/ico_plus_green"
-        android:layout_marginBottom="8dp"/>
 
 </FrameLayout>
