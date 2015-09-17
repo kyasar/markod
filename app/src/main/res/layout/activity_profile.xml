@@ -109,6 +109,43 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TableLayout
+            android:id="@+id/tableLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="10dip" >
+
+            <Button
+                android:id="@+id/id_btn_shoplists"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                style="@style/btnStyleOrange"
+                android:drawableTop="@drawable/ico_detective"
+                android:text="@string/str_btn_shoplists" />
+
+            <Button
+                android:id="@+id/id_catalog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                style="@style/btnStyleOrange"
+                android:drawableTop="@drawable/ico_detective"
+                android:text="@string/str_btn_catalog" />
+        </TableRow>
+
+    </TableLayout>
+
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:visibility="gone"

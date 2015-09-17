@@ -102,7 +102,10 @@
             android:name=".scanner.SimpleScannerActivity"
             android:label="@string/title_activity_simple_scanner" >
         </activity>
-
+        <activity
+            android:name=".activity.ShopListsActivity"
+            android:label="@string/title_activity_shop_lists" >
+        </activity>
     </application>
 
 </manifest>

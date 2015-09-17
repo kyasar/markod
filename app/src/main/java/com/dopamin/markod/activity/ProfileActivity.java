@@ -1,6 +1,7 @@
 package com.dopamin.markod.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,7 +30,7 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
 
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail, txtPoints;
-    private Button btn_back;
+    private Button btn_back, btn_shoplists;
     private LoginButton fbLoginButton;
     private ProfileTracker mProfileTracker;
 
@@ -53,6 +54,8 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         imgProfilePic = (ImageView) findViewById(R.id.id_profile_image);
         btn_back = (Button) findViewById(R.id.id_btn_back);
         btn_back.setOnClickListener(this);
+        btn_shoplists = (Button) findViewById(R.id.id_btn_shoplists);
+        btn_shoplists.setOnClickListener(this);
 
         if (user.getEncodedProfilePhoto() != null) {
             byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
@@ -128,6 +131,11 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         if (view.getId() == R.id.id_btn_back) {
             Log.v(MainActivity.TAG, "Return back to Main menu..");
             finish();
+        }
+        else if (view.getId() == R.id.id_btn_shoplists) {
+            Intent intent = new Intent(getBaseContext(), ShopListsActivity.class);
+            startActivity(intent);
+            Log.v(MainActivity.TAG, "ShopList Activity is started. OK.");
         }
     }
 

@@ -84,4 +84,14 @@
     <string name="str_send_product_please_wait">Sending product info..</string>
     <string name="title_activity_simple_scanner">SimpleScannerActivity</string>
     <string name="str_title_profile">Profile</string>
+    <string name="str_btn_shoplists">Shop Lists</string>
+    <string name="str_btn_catalog">Points Catalog</string>
+    <string name="title_activity_shop_lists">ShopListsActivity</string>
+    <string name="str_btn_add_new_list">Create New Shop List</string>
+    <string name="str_title_your_shoplists">Your Shopping Lists</string>
+    <string name="str_dialog_title_newShoplist">Enter a name</string>
+    <string name="str_hint_new_shoplist">kitchen needs</string>
+    <string name="str_menu_search_shoplist">Search in Markets</string>
+    <string name="str_menu_delete_shoplist">Delete</string>
+    <string name="str_menu_delete_shoplist_item">Remove from list</string>
 </resources>
