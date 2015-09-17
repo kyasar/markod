@@ -18,11 +18,14 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.ExpandableListAdapter;
+import com.dopamin.markod.objects.Product;
+import com.dopamin.markod.objects.ShopList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +39,8 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
     HashMap<String, List<String>> listDataChild;
     private Button btn_newShopList;
     private String listName;
+
+    private List<ShopList> shopLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,8 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
         prepareListData();
 
         // setting list adapter
-        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        //listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(this, shopLists);
         expListView.setAdapter(listAdapter);
         //expListView.setOnItemLongClickListener(this);
         registerForContextMenu(expListView);
@@ -92,19 +98,19 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_search:
-                    Log.v(MainActivity.TAG, "Searching ShopList " + listDataHeader.get(groupPosition));
+                    Log.v(MainActivity.TAG, "Searching ShopList " + shopLists.get(groupPosition).getName());
                     break;
                 case R.id.id_menu_shoplist_delete:
-                    Log.v(MainActivity.TAG, "Deleting ShopList " + listDataHeader.get(groupPosition));
+                    Log.v(MainActivity.TAG, "Deleting ShopList " + shopLists.get(groupPosition).getName());
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_search:
-                    Log.v(MainActivity.TAG, "Searching A Product " + listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition));
+                    Log.v(MainActivity.TAG, "Searching A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
                     break;
                 case R.id.id_menu_shoplist_delete:
-                    Log.v(MainActivity.TAG, "Removing A Product " + listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition));
+                    Log.v(MainActivity.TAG, "Removing A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
                     break;
             }
         }
@@ -116,6 +122,18 @@ public class ShopListsActivity extends Activity implements View.OnClickListener/
      * Preparing the list data
      */
     private void prepareListData() {
+
+        ShopList sl1 = new ShopList("Home Needs 1");
+        List<Product> products = new ArrayList<Product>();
+        products.add(new Product("Product 1", "473847389"));
+        products.add(new Product("Product 2", "333333339"));
+        products.add(new Product("Product 3", "888888889"));
+        products.add(new Product("Product 4", "222222229"));
+        sl1.setProducts(products);
+
+        shopLists = new ArrayList<ShopList>();
+        shopLists.add(sl1);
+
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
