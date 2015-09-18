@@ -3,6 +3,7 @@ package com.dopamin.markod.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -155,6 +156,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_search:
                     Log.v(MainActivity.TAG, "Searching ShopList " + shopLists.get(groupPosition).getName());
+                    searchNearbyMarkets((ArrayList<Product>) shopLists.get(groupPosition).getProducts());
                     break;
                 case R.id.id_menu_shoplist_delete:
                     Log.v(MainActivity.TAG, "Deleting ShopList " + shopLists.get(groupPosition).getName());
@@ -169,6 +171,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_item_search:
                     Log.v(MainActivity.TAG, "Searching A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
+                    searchNearbyMarkets(shopLists.get(groupPosition).getProducts().get(childPosition));
                     break;
                 case R.id.id_menu_shoplist_item_delete:
                     Log.v(MainActivity.TAG, "Removing A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
@@ -331,4 +334,20 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    private void searchNearbyMarkets(ArrayList<Product> searchProductList) {
+        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+        intent.putParcelableArrayListExtra("searchProductList", searchProductList);
+        startActivity(intent);
+        Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
+    }
+
+    private void searchNearbyMarkets(Product searchProduct) {
+        ArrayList<Product> searchProductList = new ArrayList<Product>();
+        searchProductList.add(searchProduct);
+
+        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+        intent.putParcelableArrayListExtra("searchProductList", searchProductList);
+        startActivity(intent);
+        Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
+    }
 }

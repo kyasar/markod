@@ -6,6 +6,11 @@
     android:background="@drawable/shoplist_group_highlighter"
     android:orientation="vertical" >
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="8dp"
+        android:background="@color/markod_bg_color"/>
+
     <TextView
         android:id="@+id/lblListHeader"
         android:layout_width="fill_parent"
@@ -16,10 +21,5 @@
         android:textSize="24sp"
         android:textColor="@color/white"
         android:text="Group List" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="8dp"
-        android:background="@color/markod_bg_color"/>
 
 </LinearLayout>
