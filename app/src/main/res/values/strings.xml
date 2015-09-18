@@ -89,11 +89,18 @@
     <string name="title_activity_shop_lists">ShopListsActivity</string>
     <string name="str_btn_add_new_list">Create New Shop List</string>
     <string name="str_title_your_shoplists">Your Shopping Lists</string>
-    <string name="str_dialog_title_newShoplist">Enter a name</string>
+    <string name="str_dialog_title_newShoplist">New Shoplist</string>
     <string name="str_hint_new_shoplist">kitchen needs</string>
     <string name="str_menu_search_shoplist">Search in Markets</string>
     <string name="str_menu_delete_shoplist">Delete</string>
     <string name="str_menu_delete_shoplist_item">Remove from list</string>
     <string name="str_menu_add_product">Add Product</string>
     <string name="str_toast_product_added_into_shoplist">is added into your shoplist.</string>
+    <string name="str_hint_dialog_new_shoplist_name">Ex. Everyday Needs</string>
+    <string name="str_dialog_msg_new_shoplist">Enter a name for your shoplist</string>
+    <string name="str_menu_search_product">Search Product in Markets</string>
+    <string name="str_dialog_title_delete_shoplist">Delete</string>
+    <string name="str_are_you_sure">Are you sure ?</string>
+    <string name="str_yes">YES</string>
+    <string name="str_no">NO</string>
 </resources>

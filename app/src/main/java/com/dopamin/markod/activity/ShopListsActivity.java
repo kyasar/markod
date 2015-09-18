@@ -1,10 +1,11 @@
 package com.dopamin.markod.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -26,17 +27,17 @@ import android.widget.Toast;
 
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.*;
+import com.dopamin.markod.dialog.ShopListNameDialogFragment;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.ShopList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopListsActivity extends Activity implements TextWatcher, View.OnClickListener  {
+public class ShopListsActivity extends FragmentActivity implements View.OnClickListener  {
 
     private ExpandableListAdapter exp_lv_adapter;
     private ExpandableListView exp_lv_shopLists;
-    private AlertDialog newListNameDialog;
     private LinearLayout searchLayout;
     private FrameLayout mainTopLayout;
     private AutoCompleteTextView ac_tv_product_search;
@@ -44,6 +45,9 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
 
     private List<ShopList> shopLists;
     private int selectedList = -1;
+
+    public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
+    public static int SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE = 701;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +113,6 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
         ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
 
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.context_shoplist, menu);
 
         int type = ExpandableListView.getPackedPositionType(info.packedPosition);
         int groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
@@ -117,9 +120,11 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
 
         // Show context menu for groups
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+            inflater.inflate(R.menu.context_shoplist, menu);
             Log.v(MainActivity.TAG, "Group: " + groupPosition );
             menu.setHeaderTitle(shopLists.get(groupPosition).getName());
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+            inflater.inflate(R.menu.context_shoplist_item, menu);
             Log.v(MainActivity.TAG, "Group: " + groupPosition + ", Child: " + childPosition);
             menu.setHeaderTitle(shopLists.get(groupPosition).getProducts().get(childPosition).getName());
         }
@@ -143,7 +148,7 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
                     break;
                 case R.id.id_menu_shoplist_delete:
                     Log.v(MainActivity.TAG, "Deleting ShopList " + shopLists.get(groupPosition).getName());
-                    deleteShopList(groupPosition);
+                    deleteShopList();
                     break;
                 case R.id.id_menu_add_product:
                     Log.v(MainActivity.TAG, "Adding a Product to ShopList " + shopLists.get(groupPosition).getName());
@@ -152,10 +157,10 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             switch(item.getItemId()) {
-                case R.id.id_menu_shoplist_search:
+                case R.id.id_menu_shoplist_item_search:
                     Log.v(MainActivity.TAG, "Searching A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
                     break;
-                case R.id.id_menu_shoplist_delete:
+                case R.id.id_menu_shoplist_item_delete:
                     Log.v(MainActivity.TAG, "Removing A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
                     removeItemFromList(groupPosition, childPosition);
                     break;
@@ -209,78 +214,20 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
             case R.id.action_settings:
                 break;
             case R.id.action_create_new_shoplist:
-                openNewShopListDialog();
+                showNewShopListNameDialog();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void openNewShopListDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.str_dialog_title_newShoplist));
-
-        LinearLayout ll = new LinearLayout(this);
-        LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        ll.setLayoutParams(llParams);
-        ll.setOrientation(LinearLayout.HORIZONTAL);
-        ll.setPadding(40, 20, 40, 20);
-
-        // Set up the input
-        final EditText input = new EditText(this);
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setLayoutParams(llParams);
-        input.setPadding(20, 10, 20, 10);
-        input.addTextChangedListener(this);
-
-        ll.addView(input);
-        builder.setView(ll);
-
-        // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String listName = input.getText().toString().trim();
-                shopLists.add(new ShopList(listName));
-                exp_lv_shopLists.setAdapter(exp_lv_adapter);
-                Log.v(MainActivity.TAG, "NEw Shoplist name: " + listName);
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                Log.v(MainActivity.TAG, "NEw Shoplist Canceled ");
-            }
-        });
-        newListNameDialog = builder.create();
-
-        // At first, OK is disabled as no name entered.
-        //newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-        newListNameDialog.show();
-        newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        //newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-    }
-
-    @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        if (charSequence.toString().trim().length() >= 6) {
-            newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        } else {
-            newListNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-        }
-    }
-
-    @Override
-    public void afterTextChanged(Editable editable) {
-
+    private void showNewShopListNameDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ShopListNameDialogFragment alertDialog = ShopListNameDialogFragment.newInstance(
+                getResources().getString(R.string.str_dialog_title_newShoplist));
+        ft.add(alertDialog, "fragment_alert");
+        // prevent data loss from screen rotates
+        ft.commitAllowingStateLoss();
     }
 
     private void removeItemFromList(int group, int child) {
@@ -289,9 +236,32 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
         exp_lv_shopLists.expandGroup(group);
     }
 
-    private void deleteShopList(int group) {
-        this.shopLists.remove(group);
-        exp_lv_shopLists.setAdapter(exp_lv_adapter);
+    private void deleteShopList() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getResources().getString(R.string.str_dialog_title_delete_shoplist)
+                + " " + shopLists.get(selectedList).getName() + " ?");
+        builder.setMessage(R.string.str_are_you_sure);
+
+        builder.setPositiveButton(getResources().getString(R.string.str_yes), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing but close the dialog
+                shopLists.remove(selectedList);
+                exp_lv_shopLists.setAdapter(exp_lv_adapter);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton(getResources().getString(R.string.str_no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
@@ -323,7 +293,7 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
         if (view.getId() == R.id.id_btn_back_from_search) {
             changeToMainView();
         } else if (view.getId() == R.id.id_btn_back) {
-            Log.v(MainActivity.TAG, "fisnihing shoplist activity.");
+            Log.v(MainActivity.TAG, "finishing shoplist activity.");
             finish();
         } else if (view.getId() == R.id.id_btn_delete) {
             Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
@@ -335,4 +305,20 @@ public class ShopListsActivity extends Activity implements TextWatcher, View.OnC
             }
         }
     }
+
+    /* Price Fragment Dialog Select Button Listener */
+    public void onUserSelectValue(int code, String value) {
+        // TODO Auto-generated method stub
+        if (code == SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE) {
+            String listName = value.trim();
+            shopLists.add(new ShopList(listName));
+            exp_lv_shopLists.setAdapter(exp_lv_adapter);
+            Log.v(MainActivity.TAG, "New Shoplist name: " + listName);
+            Toast.makeText(this, "New Shoplist is created: " + value, Toast.LENGTH_SHORT).show();
+
+        } else if (code == SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE) {
+            Log.v(MainActivity.TAG, "New Shoplist creation Canceled ");
+        }
+    }
+
 }
