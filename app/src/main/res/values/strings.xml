@@ -94,4 +94,6 @@
     <string name="str_menu_search_shoplist">Search in Markets</string>
     <string name="str_menu_delete_shoplist">Delete</string>
     <string name="str_menu_delete_shoplist_item">Remove from list</string>
+    <string name="str_menu_add_product">Add Product</string>
+    <string name="str_toast_product_added_into_shoplist">is added into your shoplist.</string>
 </resources>

@@ -19,7 +19,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/id_btn_back"
+                android:id="@+id/id_btn_back_from_search"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="start|center_vertical"

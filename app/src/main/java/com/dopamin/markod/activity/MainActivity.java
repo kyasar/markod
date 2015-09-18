@@ -44,7 +44,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.23:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
     private Button btn_delete_searchTxt, btn_spy_market, btn_checkIntConn, btn_backMain,
                     btn_profile, btn_campaign, btn_declare_product;
@@ -104,7 +104,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         btn_searchImage.setOnClickListener(this);
 
         // Search frame layout Back and Delete text buttons
-        btn_backMain = (Button) findViewById(R.id.id_btn_back);
+        btn_backMain = (Button) findViewById(R.id.id_btn_back_from_search);
         btn_backMain.setOnClickListener(this);
 
         btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
@@ -471,7 +471,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             else {
                 ac_tv_product_search.setText("");
             }
-        } else if (view.getId() == R.id.id_btn_back) {
+        } else if (view.getId() == R.id.id_btn_back_from_search) {
             changeToMainView();
         } else if (view.getId() == R.id.id_search_image_btn) {
             changeToSearchView();

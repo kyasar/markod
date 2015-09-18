@@ -2,9 +2,8 @@ package com.dopamin.markod.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ExpandableListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -15,47 +14,93 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dopamin.markod.R;
-import com.dopamin.markod.adapter.ExpandableListAdapter;
+import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.ShopList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class ShopListsActivity extends Activity implements TextWatcher {
+public class ShopListsActivity extends Activity implements TextWatcher, View.OnClickListener  {
 
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
-    AlertDialog newListNameDialog;
+    private ExpandableListAdapter exp_lv_adapter;
+    private ExpandableListView exp_lv_shopLists;
+    private AlertDialog newListNameDialog;
+    private LinearLayout searchLayout;
+    private FrameLayout mainTopLayout;
+    private AutoCompleteTextView ac_tv_product_search;
+    private Button btn_delete_searchTxt, btn_back, btn_backFromSearch;
 
     private List<ShopList> shopLists;
+    private int selectedList = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_lists);
 
+        searchLayout = (LinearLayout) findViewById(R.id.id_layout_search);
+        mainTopLayout = (FrameLayout) findViewById(R.id.id_layout_top);
+
+        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
+        btn_delete_searchTxt.setOnClickListener(this);
+
+        btn_back = (Button) findViewById(R.id.id_btn_back);
+        btn_back.setOnClickListener(this);
+
+        btn_backFromSearch = (Button) findViewById(R.id.id_btn_back_from_search);
+        btn_backFromSearch.setOnClickListener(this);
+
         // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.lv_exp_shoplists);
+        exp_lv_shopLists = (ExpandableListView) findViewById(R.id.lv_exp_shoplists);
 
         // preparing list data
         prepareListData();
 
         // setting list adapter
-        listAdapter = new ExpandableListAdapter(this, shopLists);
-        expListView.setAdapter(listAdapter);
-        registerForContextMenu(expListView);
+        exp_lv_adapter = new ExpandableListAdapter(this, shopLists);
+        exp_lv_shopLists.setAdapter(exp_lv_adapter);
+        registerForContextMenu(exp_lv_shopLists);
+
+        ac_tv_product_search = (AutoCompleteTextView) findViewById(R.id.id_ac_tv_productAutoSearch);
+        ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
+        ac_tv_product_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // Hide keyboard on autocomplete item click
+                ac_tv_product_search.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
+
+                Product p = (Product) adapterView.getItemAtPosition(i);
+                ac_tv_product_search.setText("");
+
+                if (selectedList >= 0) {
+                    Log.v(MainActivity.TAG, "Product: " + p.getName() + " will be added into group: " + shopLists.get(selectedList).getName());
+                    shopLists.get(selectedList).getProducts().add(p);
+                    exp_lv_shopLists.setAdapter(exp_lv_adapter);
+
+                    Toast.makeText(getApplicationContext(), p.getName() + " " +
+                            getResources().getString(R.string.str_toast_product_added_into_shoplist), Toast.LENGTH_SHORT).show();
+
+                    changeToMainView();
+
+                    // expand selected group
+                    exp_lv_shopLists.expandGroup(selectedList);
+                }
+            }
+        });
     }
 
     @Override
@@ -89,6 +134,8 @@ public class ShopListsActivity extends Activity implements TextWatcher {
         int groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
         int childPosition = ExpandableListView.getPackedPositionChild(info.packedPosition);
 
+        selectedList = groupPosition;
+
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_search:
@@ -97,6 +144,10 @@ public class ShopListsActivity extends Activity implements TextWatcher {
                 case R.id.id_menu_shoplist_delete:
                     Log.v(MainActivity.TAG, "Deleting ShopList " + shopLists.get(groupPosition).getName());
                     deleteShopList(groupPosition);
+                    break;
+                case R.id.id_menu_add_product:
+                    Log.v(MainActivity.TAG, "Adding a Product to ShopList " + shopLists.get(groupPosition).getName());
+                    changeToSearchView();
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
@@ -191,8 +242,9 @@ public class ShopListsActivity extends Activity implements TextWatcher {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                shopLists.add(new ShopList(input.getText().toString().trim()));
-                expListView.setAdapter(listAdapter);
+                String listName = input.getText().toString().trim();
+                shopLists.add(new ShopList(listName));
+                exp_lv_shopLists.setAdapter(exp_lv_adapter);
                 Log.v(MainActivity.TAG, "NEw Shoplist name: " + listName);
             }
         });
@@ -233,11 +285,54 @@ public class ShopListsActivity extends Activity implements TextWatcher {
 
     private void removeItemFromList(int group, int child) {
         this.shopLists.get(group).getProducts().remove(child);
-        //expListView.setAdapter(listAdapter);
+        exp_lv_shopLists.setAdapter(exp_lv_adapter);
+        exp_lv_shopLists.expandGroup(group);
     }
 
     private void deleteShopList(int group) {
         this.shopLists.remove(group);
-        //expListView.setAdapter(listAdapter);
+        exp_lv_shopLists.setAdapter(exp_lv_adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        changeToMainView();
+    }
+
+    private void changeToSearchView() {
+        searchLayout.setVisibility(View.VISIBLE);
+        mainTopLayout.setVisibility(View.GONE);
+        ac_tv_product_search.requestFocus();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void changeToMainView() {
+        searchLayout.setVisibility(View.GONE);
+        mainTopLayout.setVisibility(View.VISIBLE);
+        ac_tv_product_search.clearFocus();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.id_btn_back_from_search) {
+            changeToMainView();
+        } else if (view.getId() == R.id.id_btn_back) {
+            Log.v(MainActivity.TAG, "fisnihing shoplist activity.");
+            finish();
+        } else if (view.getId() == R.id.id_btn_delete) {
+            Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
+            if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
+                changeToMainView();
+            }
+            else {
+                ac_tv_product_search.setText("");
+            }
+        }
     }
 }
