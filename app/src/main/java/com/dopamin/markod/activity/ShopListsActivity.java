@@ -92,13 +92,23 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
 
                 if (selectedList >= 0) {
                     Log.v(MainActivity.TAG, "Product: " + p.getName() + " will be added into group: " + shopLists.get(selectedList).getName());
-                    shopLists.get(selectedList).getProducts().add(p);
+                    changeToMainView();
+                    ShopList shopList = shopLists.get(selectedList);
+
+                    // Check whether product is already added into the shoplist or not?
+                    for(Product pi : shopList.getProducts()) {
+                        if (pi.getBarcode().equalsIgnoreCase(p.getBarcode())) {
+                            Toast.makeText(getApplicationContext(), p.getName() + " " +
+                                    getResources().getString(R.string.str_toast_product_already_added), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    shopList.getProducts().add(p);
                     exp_lv_shopLists.setAdapter(exp_lv_adapter);
 
                     Toast.makeText(getApplicationContext(), p.getName() + " " +
                             getResources().getString(R.string.str_toast_product_added_into_shoplist), Toast.LENGTH_SHORT).show();
-
-                    changeToMainView();
 
                     // expand selected group
                     exp_lv_shopLists.expandGroup(selectedList);

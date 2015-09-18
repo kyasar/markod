@@ -103,4 +103,5 @@
     <string name="str_are_you_sure">Are you sure ?</string>
     <string name="str_yes">YES</string>
     <string name="str_no">NO</string>
+    <string name="str_toast_product_already_added">Product is already added into the shoplist</string>
 </resources>
