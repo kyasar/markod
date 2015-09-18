@@ -3,6 +3,9 @@ package com.dopamin.markod.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.dopamin.markod.objects.Product;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +17,7 @@ public class ShopList implements Parcelable {
 
     public ShopList(String name) {
         this.name = name;
+        this.products = new ArrayList<Product>();
     }
 
     public List<Product> getProducts() {
