@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dopamin.markod.R;
@@ -31,6 +32,7 @@ import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.dialog.ShopListNameDialogFragment;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.ShopList;
+import com.dopamin.markod.objects.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +44,10 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
     private LinearLayout searchLayout;
     private FrameLayout mainTopLayout;
     private AutoCompleteTextView ac_tv_product_search;
-    private Button btn_delete_searchTxt, btn_back, btn_backFromSearch;
+    private Button btn_delete_searchTxt, btn_back, btn_backFromSearch, btn_saveChanges;
+    private LinearLayout layout_hintAddShoplist;
 
-    private List<ShopList> shopLists;
+    private User user;
     private int selectedList = -1;
 
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
@@ -54,6 +57,16 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_lists);
+
+        Bundle bundle = getIntent().getExtras();
+        user = bundle.getParcelable("user");
+
+        layout_hintAddShoplist = (LinearLayout) findViewById(R.id.id_layout_hint_create_shoplists);
+
+        if (user.getShopLists() == null) {
+            user.setShopLists(new ArrayList<ShopList>());
+            layout_hintAddShoplist.setVisibility(View.VISIBLE);
+        }
 
         searchLayout = (LinearLayout) findViewById(R.id.id_layout_search);
         mainTopLayout = (FrameLayout) findViewById(R.id.id_layout_top);
@@ -67,14 +80,14 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         btn_backFromSearch = (Button) findViewById(R.id.id_btn_back_from_search);
         btn_backFromSearch.setOnClickListener(this);
 
+        btn_saveChanges = (Button) findViewById(R.id.id_btn_save_changes);
+        btn_saveChanges.setOnClickListener(this);
+
         // get the listview
         exp_lv_shopLists = (ExpandableListView) findViewById(R.id.lv_exp_shoplists);
 
-        // preparing list data
-        prepareListData();
-
         // setting list adapter
-        exp_lv_adapter = new ExpandableListAdapter(this, shopLists);
+        exp_lv_adapter = new ExpandableListAdapter(this, user.getShopLists());
         exp_lv_shopLists.setAdapter(exp_lv_adapter);
         registerForContextMenu(exp_lv_shopLists);
 
@@ -92,9 +105,9 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
                 ac_tv_product_search.setText("");
 
                 if (selectedList >= 0) {
-                    Log.v(MainActivity.TAG, "Product: " + p.getName() + " will be added into group: " + shopLists.get(selectedList).getName());
+                    Log.v(MainActivity.TAG, "Product: " + p.getName() + " will be added into group: " + user.getShopLists().get(selectedList).getName());
                     changeToMainView();
-                    ShopList shopList = shopLists.get(selectedList);
+                    ShopList shopList = user.getShopLists().get(selectedList);
 
                     // Check whether product is already added into the shoplist or not?
                     for(Product pi : shopList.getProducts()) {
@@ -107,6 +120,9 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
 
                     shopList.getProducts().add(p);
                     exp_lv_shopLists.setAdapter(exp_lv_adapter);
+
+                    // Make Save button visible
+                    btn_saveChanges.setVisibility(View.VISIBLE);
 
                     Toast.makeText(getApplicationContext(), p.getName() + " " +
                             getResources().getString(R.string.str_toast_product_added_into_shoplist), Toast.LENGTH_SHORT).show();
@@ -133,11 +149,11 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             inflater.inflate(R.menu.context_shoplist, menu);
             Log.v(MainActivity.TAG, "Group: " + groupPosition );
-            menu.setHeaderTitle(shopLists.get(groupPosition).getName());
+            menu.setHeaderTitle(user.getShopLists().get(groupPosition).getName());
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             inflater.inflate(R.menu.context_shoplist_item, menu);
             Log.v(MainActivity.TAG, "Group: " + groupPosition + ", Child: " + childPosition);
-            menu.setHeaderTitle(shopLists.get(groupPosition).getProducts().get(childPosition).getName());
+            menu.setHeaderTitle(user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
         }
     }
 
@@ -155,58 +171,32 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_search:
-                    Log.v(MainActivity.TAG, "Searching ShopList " + shopLists.get(groupPosition).getName());
-                    searchNearbyMarkets((ArrayList<Product>) shopLists.get(groupPosition).getProducts());
+                    Log.v(MainActivity.TAG, "Searching ShopList " + user.getShopLists().get(groupPosition).getName());
+                    searchNearbyMarkets((ArrayList<Product>) user.getShopLists().get(groupPosition).getProducts());
                     break;
                 case R.id.id_menu_shoplist_delete:
-                    Log.v(MainActivity.TAG, "Deleting ShopList " + shopLists.get(groupPosition).getName());
+                    Log.v(MainActivity.TAG, "Deleting ShopList " + user.getShopLists().get(groupPosition).getName());
                     deleteShopList();
                     break;
                 case R.id.id_menu_add_product:
-                    Log.v(MainActivity.TAG, "Adding a Product to ShopList " + shopLists.get(groupPosition).getName());
+                    Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
                     changeToSearchView();
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_item_search:
-                    Log.v(MainActivity.TAG, "Searching A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
-                    searchNearbyMarkets(shopLists.get(groupPosition).getProducts().get(childPosition));
+                    Log.v(MainActivity.TAG, "Searching A Product " + user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
+                    searchNearbyMarkets(user.getShopLists().get(groupPosition).getProducts().get(childPosition));
                     break;
                 case R.id.id_menu_shoplist_item_delete:
-                    Log.v(MainActivity.TAG, "Removing A Product " + shopLists.get(groupPosition).getProducts().get(childPosition).getName());
+                    Log.v(MainActivity.TAG, "Removing A Product " + user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
                     removeItemFromList(groupPosition, childPosition);
                     break;
             }
         }
 
         return super.onContextItemSelected(item);
-    }
-
-    /*
-     * Preparing the list data
-     */
-    private void prepareListData() {
-
-        ShopList sl1 = new ShopList("Home Needs 1");
-        List<Product> products = new ArrayList<Product>();
-        products.add(new Product("Product 1", "473847389"));
-        products.add(new Product("Product 2", "333333339"));
-        products.add(new Product("Product 3", "888888889"));
-        products.add(new Product("Product 4", "222222229"));
-        sl1.setProducts(products);
-
-        ShopList sl2 = new ShopList("Children-Kids");
-        List<Product> products2 = new ArrayList<Product>();
-        products2.add(new Product("Product 11", "473847389"));
-        products2.add(new Product("Product 22", "333333339"));
-        products2.add(new Product("Product 33", "888888889"));
-        products2.add(new Product("Product 44", "222222229"));
-        sl2.setProducts(products2);
-
-        shopLists = new ArrayList<ShopList>();
-        shopLists.add(sl1);
-        shopLists.add(sl2);
     }
 
     @Override
@@ -244,23 +234,28 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
     }
 
     private void removeItemFromList(int group, int child) {
-        this.shopLists.get(group).getProducts().remove(child);
+        this.user.getShopLists().get(group).getProducts().remove(child);
         exp_lv_shopLists.setAdapter(exp_lv_adapter);
         exp_lv_shopLists.expandGroup(group);
+        btn_saveChanges.setVisibility(View.VISIBLE);
     }
 
     private void deleteShopList() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(getResources().getString(R.string.str_dialog_title_delete_shoplist)
-                + " " + shopLists.get(selectedList).getName() + " ?");
+                + " " + user.getShopLists().get(selectedList).getName() + " ?");
         builder.setMessage(R.string.str_are_you_sure);
 
         builder.setPositiveButton(getResources().getString(R.string.str_yes), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing but close the dialog
-                shopLists.remove(selectedList);
+                user.getShopLists().remove(selectedList);
                 exp_lv_shopLists.setAdapter(exp_lv_adapter);
+                if (user.getShopLists().size() == 0) {
+                    layout_hintAddShoplist.setVisibility(View.VISIBLE);
+                }
+                btn_saveChanges.setVisibility(View.VISIBLE);
                 dialog.dismiss();
             }
         });
@@ -289,7 +284,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         ac_tv_product_search.requestFocus();
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_IMPLICIT);
+        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_FORCED);
     }
 
     private void changeToMainView() {
@@ -316,6 +311,9 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
             else {
                 ac_tv_product_search.setText("");
             }
+        } else if (view.getId() == R.id.id_btn_save_changes) {
+            Log.v(MainActivity.TAG, "Save Changes button clicked. User changes will be sent to server.");
+            btn_saveChanges.setVisibility(View.GONE);
         }
     }
 
@@ -324,8 +322,10 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         // TODO Auto-generated method stub
         if (code == SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE) {
             String listName = value.trim();
-            shopLists.add(new ShopList(listName));
+            user.getShopLists().add(new ShopList(listName));
             exp_lv_shopLists.setAdapter(exp_lv_adapter);
+            btn_saveChanges.setVisibility(View.VISIBLE);
+            layout_hintAddShoplist.setVisibility(View.GONE);
             Log.v(MainActivity.TAG, "New Shoplist name: " + listName);
             Toast.makeText(this, "New Shoplist is created: " + value, Toast.LENGTH_SHORT).show();
 

@@ -93,6 +93,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/id_btn_save_changes"
+        android:visibility="gone"
+        android:layout_margin="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        style="@style/btnStyleOrange"
+        android:text="@string/str_btn_save_changes" />
+
+    <LinearLayout
+        android:id="@+id/id_layout_hint_create_shoplists"
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <View
+            android:layout_margin="8dp"
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:background="@drawable/drop_shadow_gray" />
+
+        <TextView
+            android:id="@+id/id_tv_hint_create_shoplist"
+            android:visibility="visible"
+            android:padding="8dp"
+            android:gravity="center"
+            android:text="@string/str_hint_add_new_shoplist"
+            android:textSize="20sp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_margin="8dp"
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:background="@drawable/drop_shadow_gray" />
+    </LinearLayout>
+
     <ExpandableListView
         android:id="@+id/lv_exp_shoplists"
         android:padding="5dp"

@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Parcelable {
     private String _id;
@@ -16,6 +17,7 @@ public class User implements Parcelable {
     private String social_id;
     private String loginType;
     private String encodedProfilePhoto;
+    private List<ShopList> shopLists;
 
     public User(String id, String firstName, String lastName, String email,
                 String loginType, String social_id, int points) {
@@ -118,6 +120,14 @@ public class User implements Parcelable {
 
     public void incPoints(int p) {
         this.points += p;
+    }
+
+    public List<ShopList> getShopLists() {
+        return shopLists;
+    }
+
+    public void setShopLists(List<ShopList> shopLists) {
+        this.shopLists = shopLists;
     }
 
     @Override
