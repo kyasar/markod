@@ -134,7 +134,6 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         }
         else if (view.getId() == R.id.id_btn_shoplists) {
             Intent intent = new Intent(getBaseContext(), ShopListsActivity.class);
-            intent.putExtra("user", user);
             startActivity(intent);
             Log.v(MainActivity.TAG, "ShopList Activity is started. OK.");
         }

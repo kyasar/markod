@@ -1,10 +1,13 @@
 package com.dopamin.markod.activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
@@ -27,12 +30,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.dialog.ShopListNameDialogFragment;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.ShopList;
 import com.dopamin.markod.objects.User;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +57,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
     private AutoCompleteTextView ac_tv_product_search;
     private Button btn_delete_searchTxt, btn_back, btn_backFromSearch, btn_saveChanges;
     private LinearLayout layout_hintAddShoplist;
+    private ProgressDialog progressDialog;
 
     private User user;
     private int selectedList = -1;
@@ -53,19 +65,23 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE = 701;
 
+    String userUpdateURL = MainActivity.MDS_SERVER + "/mds/api/user-update/" + "?token=" + MainActivity.MDS_TOKEN;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_lists);
 
-        Bundle bundle = getIntent().getExtras();
-        user = bundle.getParcelable("user");
 
         layout_hintAddShoplist = (LinearLayout) findViewById(R.id.id_layout_hint_create_shoplists);
 
-        if (user.getShopLists() == null) {
-            user.setShopLists(new ArrayList<ShopList>());
-            layout_hintAddShoplist.setVisibility(View.VISIBLE);
+        if (loadUser()) {
+            if (user.getShopLists().size() == 0) {
+                layout_hintAddShoplist.setVisibility(View.VISIBLE);
+            }
+        } else {
+            Log.e(MainActivity.TAG, "No valid user in app !!");
+            finish();
         }
 
         searchLayout = (LinearLayout) findViewById(R.id.id_layout_search);
@@ -110,7 +126,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
                     ShopList shopList = user.getShopLists().get(selectedList);
 
                     // Check whether product is already added into the shoplist or not?
-                    for(Product pi : shopList.getProducts()) {
+                    for (Product pi : shopList.getProducts()) {
                         if (pi.getBarcode().equalsIgnoreCase(p.getBarcode())) {
                             Toast.makeText(getApplicationContext(), p.getName() + " " +
                                     getResources().getString(R.string.str_toast_product_already_added), Toast.LENGTH_SHORT).show();
@@ -132,6 +148,12 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
                 }
             }
         });
+
+        /* sending product declaration loading progress */
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(getResources().getString(R.string.str_progress_saving_user_changes));
     }
 
     @Override
@@ -278,6 +300,13 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         changeToMainView();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Save user to shared
+        saveUser(this.user);
+    }
+
     private void changeToSearchView() {
         searchLayout.setVisibility(View.VISIBLE);
         mainTopLayout.setVisibility(View.GONE);
@@ -313,7 +342,32 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
             }
         } else if (view.getId() == R.id.id_btn_save_changes) {
             Log.v(MainActivity.TAG, "Save Changes button clicked. User changes will be sent to server.");
-            btn_saveChanges.setVisibility(View.GONE);
+            progressDialog.show();
+            Gson gson = new Gson();
+            Log.v(MainActivity.TAG, "User: " + gson.toJson(this.user.createJSON_updateShopLists()).toString());
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userUpdateURL,
+                    gson.toJson(this.user.createJSON_updateShopLists()), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i("volley", "response: " + response);
+
+                    progressDialog.dismiss();
+                    btn_saveChanges.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(),
+                            "Your activities are saved.", Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.dismiss();
+                    Log.e(MainActivity.TAG, "Volley: User update error.");
+                    Toast.makeText(getApplicationContext(),
+                            "Server error ! Try again later..", Toast.LENGTH_SHORT).show();
+                }
+            });
+            //Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
+            Volley.newRequestQueue(getApplication()).add(jsObjRequest);
         }
     }
 
@@ -349,5 +403,27 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         intent.putParcelableArrayListExtra("searchProductList", searchProductList);
         startActivity(intent);
         Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
+    }
+
+    public boolean saveUser(User user) {
+        Gson gson = new Gson();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putString("user", gson.toJson(user));
+        Log.v(MainActivity.TAG, "User saved into Shared.");
+        return edit.commit();
+    }
+
+    public boolean loadUser() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String user_str = sp.getString("user", "");
+        if (!user_str.equalsIgnoreCase("")) {
+            this.user = gson.fromJson(user_str, User.class);
+            Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
+            return true;
+        }
+        this.user = null;
+        return false;
     }
 }

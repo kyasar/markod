@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Parcelable {
@@ -13,11 +14,11 @@ public class User implements Parcelable {
     private String lastName;
     private String email;
     private String username;
-    private int points;
+    private Integer points;
     private String social_id;
     private String loginType;
     private String encodedProfilePhoto;
-    private List<ShopList> shopLists;
+    private List<ShopList> shopLists = new ArrayList<ShopList>();
 
     public User(String id, String firstName, String lastName, String email,
                 String loginType, String social_id, int points) {
@@ -160,4 +161,11 @@ public class User implements Parcelable {
             return new User[i];
         }
     };
+
+    public User createJSON_updateShopLists() {
+        User user = new User();
+        user.set_id(this._id);
+        user.setShopLists(this.getShopLists());
+        return user;
+    }
 }
