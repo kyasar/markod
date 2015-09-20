@@ -75,13 +75,16 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
 
         layout_hintAddShoplist = (LinearLayout) findViewById(R.id.id_layout_hint_create_shoplists);
 
-        if (loadUser()) {
+        if (loadUser() == false) {
+            Log.e(MainActivity.TAG, "No valid user in app !!");
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.str_toast_no_valid_user), Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            // User found but It has no Shoplist so Show hint to create
             if (user.getShopLists().size() == 0) {
                 layout_hintAddShoplist.setVisibility(View.VISIBLE);
             }
-        } else {
-            Log.e(MainActivity.TAG, "No valid user in app !!");
-            finish();
         }
 
         searchLayout = (LinearLayout) findViewById(R.id.id_layout_search);

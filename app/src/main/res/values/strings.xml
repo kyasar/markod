@@ -107,4 +107,5 @@
     <string name="str_hint_add_new_shoplist">Your shoplists are empty\nUse Menu to create a new shoplist</string>
     <string name="str_btn_save_changes">Save changes</string>
     <string name="str_progress_saving_user_changes">Saving your changes..</string>
+    <string name="str_toast_no_valid_user">No User profile found !!</string>
 </resources>

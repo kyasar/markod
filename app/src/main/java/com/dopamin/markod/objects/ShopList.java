@@ -20,6 +20,11 @@ public class ShopList implements Parcelable {
         this.products = new ArrayList<Product>();
     }
 
+    public ShopList(Parcel parcel) {
+        this.name = parcel.readString();
+        this.products = parcel.readArrayList(Product.class.getClassLoader()); // be careful, Product type is parcelable?
+    }
+
     public List<Product> getProducts() {
         return products;
     }
@@ -43,6 +48,20 @@ public class ShopList implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-
+        parcel.writeString(name);
+        parcel.writeList(products);
     }
+
+    public static final Parcelable.Creator<ShopList> CREATOR = new Parcelable.Creator<ShopList>() {
+
+        @Override
+        public ShopList createFromParcel(Parcel parcel) {
+            return new ShopList(parcel);
+        }
+
+        @Override
+        public ShopList[] newArray(int i) {
+            return new ShopList[i];
+        }
+    };
 }

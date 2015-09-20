@@ -18,7 +18,7 @@ public class User implements Parcelable {
     private String social_id;
     private String loginType;
     private String encodedProfilePhoto;
-    private List<ShopList> shopLists = new ArrayList<ShopList>();
+    private List<ShopList> shopLists;
 
     public User(String id, String firstName, String lastName, String email,
                 String loginType, String social_id, int points) {
@@ -29,10 +29,11 @@ public class User implements Parcelable {
         this.points = points;
         this.social_id = social_id;
         this.loginType = loginType;
+        this.shopLists = new ArrayList<ShopList>();
     }
 
     public User() {
-        this.points = 0;
+        this.shopLists = new ArrayList<ShopList>();
     }
 
     public User(Parcel parcel) {
@@ -45,6 +46,7 @@ public class User implements Parcelable {
         this.social_id = parcel.readString();
         this.loginType = parcel.readString();
         this.encodedProfilePhoto = parcel.readString();
+        this.shopLists = parcel.readArrayList(ShopList.class.getClassLoader());
     }
 
     public String getFirstName() {
@@ -120,6 +122,9 @@ public class User implements Parcelable {
     }
 
     public void incPoints(int p) {
+        if (this.points == null) {
+            this.points = 0;
+        }
         this.points += p;
     }
 
@@ -147,6 +152,7 @@ public class User implements Parcelable {
         parcel.writeString(social_id);
         parcel.writeString(loginType);
         parcel.writeString(encodedProfilePhoto);
+        parcel.writeList(shopLists);
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {

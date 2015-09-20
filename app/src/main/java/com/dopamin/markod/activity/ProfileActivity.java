@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
@@ -44,8 +45,12 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_profile);
 
-        Bundle bundle = getIntent().getExtras();
-        user = bundle.getParcelable("user");
+        if (loadUser() == false) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.str_toast_no_valid_user), Toast.LENGTH_SHORT).show();
+            Log.e(MainActivity.TAG, "No valid user in app !!");
+            finish();
+        }
 
         fbLoginButton = (LoginButton) findViewById(R.id.login_button);
         txtName = (TextView) findViewById(R.id.txtName);
@@ -140,7 +145,7 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
     }
 
     public boolean saveUser(User user) {
-        com.google.gson.Gson gson = new com.google.gson.Gson();
+        Gson gson = new Gson();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor edit = sp.edit();
         if (user == null) {
@@ -165,5 +170,18 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
                 }
             }
         };
+    }
+
+    public boolean loadUser() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String user_str = sp.getString("user", "");
+        if (!user_str.equalsIgnoreCase("")) {
+            this.user = gson.fromJson(user_str, User.class);
+            Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
+            return true;
+        }
+        this.user = null;
+        return false;
     }
 }

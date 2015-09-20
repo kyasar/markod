@@ -45,7 +45,7 @@ public class Market implements Parcelable {
         this.vicinity = parcel.readString();
         this.reference = parcel.readString();
         this.userID = parcel.readString();
-        this.products = parcel.readArrayList(null); // be careful, Product type is parcelable?
+        this.products = parcel.readArrayList(Product.class.getClassLoader()); // be careful, Product type is parcelable?
         this.markerOptions = parcel.readParcelable(MarkerOptions.class.getClassLoader());
     }
 
