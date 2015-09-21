@@ -5,4 +5,7 @@
     <color name="white">#FFFFFF</color>
     <color name="red">#D50000</color>
     <color name="orange">#FF6E40</color>
+    <color name="markod_bg_color">#FFFFe5</color>
+    <color name="open_gray">#E0E0E0</color>
+    <color name="markod_lv_item_color">#FFFFFF</color>
 </resources>

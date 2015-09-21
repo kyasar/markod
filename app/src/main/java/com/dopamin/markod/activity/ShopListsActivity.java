@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,7 +51,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopListsActivity extends FragmentActivity implements View.OnClickListener  {
+public class ShopListsActivity extends AppCompatActivity implements View.OnClickListener  {
 
     private ExpandableListAdapter exp_lv_adapter;
     private ExpandableListView exp_lv_shopLists;
@@ -72,6 +75,15 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_lists);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        LayoutInflater inflator = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.actionbar_shoplists, null);
+        actionBar.setCustomView(v);
 
         layout_hintAddShoplist = (LinearLayout) findViewById(R.id.id_layout_hint_create_shoplists);
 
@@ -87,17 +99,17 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
             }
         }
 
-        searchLayout = (LinearLayout) findViewById(R.id.id_layout_search);
-        mainTopLayout = (FrameLayout) findViewById(R.id.id_layout_top);
+        //searchLayout = (LinearLayout) findViewById(R.id.id_layout_search);
+        //mainTopLayout = (FrameLayout) findViewById(R.id.id_layout_top);
 
-        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
-        btn_delete_searchTxt.setOnClickListener(this);
+//        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
+//        btn_delete_searchTxt.setOnClickListener(this);
 
-        btn_back = (Button) findViewById(R.id.id_btn_back);
-        btn_back.setOnClickListener(this);
+//        btn_back = (Button) findViewById(R.id.id_btn_back);
+//        btn_back.setOnClickListener(this);
 
-        btn_backFromSearch = (Button) findViewById(R.id.id_btn_back_from_search);
-        btn_backFromSearch.setOnClickListener(this);
+//        btn_backFromSearch = (Button) findViewById(R.id.id_btn_back_from_search);
+//        btn_backFromSearch.setOnClickListener(this);
 
         btn_saveChanges = (Button) findViewById(R.id.id_btn_save_changes);
         btn_saveChanges.setOnClickListener(this);
@@ -109,7 +121,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         exp_lv_adapter = new ExpandableListAdapter(this, user.getShopLists());
         exp_lv_shopLists.setAdapter(exp_lv_adapter);
         registerForContextMenu(exp_lv_shopLists);
-
+/*
         ac_tv_product_search = (AutoCompleteTextView) findViewById(R.id.id_ac_tv_productAutoSearch);
         ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
         ac_tv_product_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -151,7 +163,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
                 }
             }
         });
-
+*/
         /* sending product declaration loading progress */
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -205,7 +217,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
                     break;
                 case R.id.id_menu_add_product:
                     Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
-                    changeToSearchView();
+     //               changeToSearchView();
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
@@ -300,7 +312,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-        changeToMainView();
+   //     changeToMainView();
     }
 
     @Override
@@ -309,7 +321,7 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         // Save user to shared
         saveUser(this.user);
     }
-
+/*
     private void changeToSearchView() {
         searchLayout.setVisibility(View.VISIBLE);
         mainTopLayout.setVisibility(View.GONE);
@@ -327,18 +339,18 @@ public class ShopListsActivity extends FragmentActivity implements View.OnClickL
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
     }
-
+*/
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.id_btn_back_from_search) {
-            changeToMainView();
+  //          changeToMainView();
         } else if (view.getId() == R.id.id_btn_back) {
             Log.v(MainActivity.TAG, "finishing shoplist activity.");
             finish();
         } else if (view.getId() == R.id.id_btn_delete) {
             Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
             if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
-                changeToMainView();
+  //              changeToMainView();
             }
             else {
                 ac_tv_product_search.setText("");
