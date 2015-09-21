@@ -56,7 +56,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     private Button btn_delete_searchTxt, btn_back, btn_backFromSearch, btn_saveChanges;
     private LinearLayout layout_hintAddShoplist;
     private ProgressDialog progressDialog;
-    private MenuItem searchMenuItem;
 
     private User user;
     private int selectedList = -1;
@@ -188,7 +187,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        searchMenuItem = menu.findItem(R.id.action_search);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -297,8 +295,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
         btn_delete_searchTxt.setOnClickListener(this);
 
-        // Change search icon accordingly.
-        searchMenuItem.setVisible(false);
         mSearchOpened = true;
     }
 
@@ -312,7 +308,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         actionBar.setCustomView(R.layout.actionbar_shoplists);
 
         // Change search icon accordingly.
-        searchMenuItem.setVisible(true);
         mSearchOpened = false;
     }
 
