@@ -8,7 +8,10 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,9 +40,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends FragmentActivity implements BaseSliderView.OnSliderClickListener,
+public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener,
-        View.OnClickListener {
+        View.OnClickListener, AdapterView.OnItemClickListener {
 
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
@@ -68,13 +71,13 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
     private TextView loginNameTxt;
     private TextView marketNameTxt;
-    private ImageView btn_searchImage;
-    private LinearLayout searchFrameLayout;
-    private RelativeLayout mainTopLayout;
     private AutoCompleteTextView ac_tv_product_search;
 
     private SliderLayout mDemoSlider;
     private Menu menu;
+    private MenuItem searchMenuItem;
+
+    private boolean mSearchOpened = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +102,17 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         }
         setContentView(R.layout.activity_main);
 
-        // Main actionbar layout Search Image button
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        LayoutInflater inflator = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.actionbar_main, null);
+        actionBar.setCustomView(v);
+
+
+        /*// Main actionbar layout Search Image button
         btn_searchImage = (ImageView) findViewById(R.id.id_search_image_btn);
         btn_searchImage.setOnClickListener(this);
 
@@ -109,7 +122,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
 
         btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
         btn_delete_searchTxt.setOnClickListener(this);
-
+        */
         // Main Menu buttons: Spy, Declare, Campaign and Profile
         btn_spy_market = (Button) findViewById(R.id.id_btn_spy_market);
         btn_spy_market.setOnClickListener(this);
@@ -126,44 +139,11 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         // Layouts to change search state or main state
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
         marketNameTxt = (TextView) findViewById(R.id.market_name_text);
-        searchFrameLayout = (LinearLayout) findViewById(R.id.search_frame);
-        mainTopLayout = (RelativeLayout) findViewById(R.id.main_top_layout);
+        //searchFrameLayout = (LinearLayout) findViewById(R.id.search_frame);
+        //mainTopLayout = (RelativeLayout) findViewById(R.id.main_top_layout);
 
         /* Load Location-based Ads */
         loadAdImages();
-
-        ac_tv_product_search = (AutoCompleteTextView) findViewById(R.id.id_ac_tv_productAutoSearch);
-        ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
-        ac_tv_product_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Hide keyboard on autocomplete item click
-                ac_tv_product_search.clearFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
-
-                Product p = (Product) adapterView.getItemAtPosition(i);
-                Log.v(MainActivity.TAG, "Product searched: " + p.getName());
-                ac_tv_product_search.setText(p.getName());
-
-                ArrayList<Product> searchProductList = new ArrayList<Product>();
-                searchProductList.add(p);
-                searchProductList.add(new Product("Urederm", "8699561460099"));
-                searchProductList.add(new Product("Eti Karam 80g", "8690526098043"));
-
-                Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
-                intent.putParcelableArrayListExtra("searchProductList", searchProductList);
-                startActivity(intent);
-                Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
-            }
-        });
-
-        ac_tv_product_search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                Log.v(MainActivity.TAG, "On focus: " + b);
-            }
-        });
     }
 
     @Override
@@ -229,6 +209,7 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         super.onPrepareOptionsMenu(menu);
         if (user == null)
             menu.findItem(R.id.action_profile).setVisible(false);
+        searchMenuItem = menu.findItem(R.id.action_search);
         Log.v(MainActivity.TAG, "");
         return true;
     }
@@ -241,6 +222,10 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         Log.v(MainActivity.TAG, "actionbar item: " + item.getItemId());
         // Take appropriate action for each action item click
         switch (item.getItemId()) {
+            case R.id.action_search:
+                Log.v(MainActivity.TAG, "Search clicked.");
+                openSearchBar();
+                break;
             case R.id.action_help:
                 // help action
                 Log.v(MainActivity.TAG, "HELP");
@@ -252,13 +237,14 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
             case R.id.action_profile:
                 Log.v(MainActivity.TAG, "PROFILE");
                 Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
-                intent.putExtra("user", user);
                 startActivity(intent);
                 Log.v(MainActivity.TAG, "Profile activity started.");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public boolean isInternetAvailable()
@@ -353,9 +339,9 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
     protected void onResume() {
         super.onResume();
         setUserInfo();
-        ac_tv_product_search.setText("");
-        searchFrameLayout.setVisibility(View.GONE);
-        mainTopLayout.setVisibility(View.VISIBLE);
+        if (mSearchOpened) {
+            closeSearchBar();
+        }
         Log.v(MainActivity.TAG, this.toString() + " onResume");
     }
 
@@ -419,22 +405,43 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         return false;
     }
 
-    private void changeToSearchView() {
-        searchFrameLayout.setVisibility(View.VISIBLE);
-        mainTopLayout.setVisibility(View.GONE);
+    private void openSearchBar() {
+        // Set custom view on action bar.
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.product_autocomplete_search_bar);
+
+        // Search edit text field setup.
+        ac_tv_product_search = (AutoCompleteTextView) actionBar.getCustomView()
+                .findViewById(R.id.id_ac_tv_productAutoSearch);
+        ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
+        ac_tv_product_search.setOnItemClickListener(this);
+        ac_tv_product_search.setText("");
         ac_tv_product_search.requestFocus();
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_IMPLICIT);
+        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_FORCED);
+
+        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
+        btn_delete_searchTxt.setOnClickListener(this);
+
+        // Change search icon accordingly.
+        searchMenuItem.setVisible(false);
+        mSearchOpened = true;
     }
 
-    private void changeToMainView() {
-        searchFrameLayout.setVisibility(View.GONE);
-        mainTopLayout.setVisibility(View.VISIBLE);
-        ac_tv_product_search.clearFocus();
-
+    private void closeSearchBar() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
+
+        // Remove custom view.
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.actionbar_main);
+
+        // Change search icon accordingly.
+        searchMenuItem.setVisible(true);
+        mSearchOpened = false;
     }
 
     @Override
@@ -466,15 +473,11 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
         } else if (view.getId() == R.id.id_btn_delete) {
             Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
             if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
-                changeToMainView();
+                closeSearchBar();
             }
             else {
                 ac_tv_product_search.setText("");
             }
-        } else if (view.getId() == R.id.id_btn_back_from_search) {
-            changeToMainView();
-        } else if (view.getId() == R.id.id_search_image_btn) {
-            changeToSearchView();
         } else if (view.getId() == R.id.id_btn_campaign) {
             Log.v(TAG, "Campaign Btn is clicked.");
         } else if (view.getId() == R.id.id_btn_declare_product) {
@@ -491,5 +494,27 @@ public class MainActivity extends FragmentActivity implements BaseSliderView.OnS
                 Log.v(TAG, "AddProductActivity is started. OK.");
             }
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        // Hide keyboard on autocomplete item click
+        ac_tv_product_search.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
+
+        Product p = (Product) adapterView.getItemAtPosition(i);
+        Log.v(MainActivity.TAG, "Product searched: " + p.getName());
+        ac_tv_product_search.setText(p.getName());
+
+        ArrayList<Product> searchProductList = new ArrayList<Product>();
+        searchProductList.add(p);
+        searchProductList.add(new Product("Urederm", "8699561460099"));
+        searchProductList.add(new Product("Eti Karam 80g", "8690526098043"));
+
+        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+        intent.putParcelableArrayListExtra("searchProductList", searchProductList);
+        startActivity(intent);
+        Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
     }
 }

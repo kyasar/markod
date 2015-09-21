@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp" >
+
+        <AutoCompleteTextView
+            android:id="@+id/id_ac_tv_productAutoSearch"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:hint="@string/hint_product_search"
+            android:textColorHint="@color/open_gray"
+            android:layout_gravity="center_vertical"/>
+
+        <Button
+            android:id="@+id/id_btn_delete"
+            android:layout_marginBottom="4dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/abc_ic_clear_mtrl_alpha" />
+    </FrameLayout>
+
+</LinearLayout>

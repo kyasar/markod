@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Market Detective</string>
+    <string name="app_name">Markod</string>
     <string name="action_settings">Settings</string>
     <string name="scan">Scan</string>
     <string name="search_text">Search Text</string>
@@ -105,5 +105,7 @@
     <string name="str_btn_save_changes">Save changes</string>
     <string name="str_progress_saving_user_changes">Saving your changes..</string>
     <string name="str_toast_no_valid_user">No User profile found !!</string>
-    <string name="str_title_shoplists_activity">ShopLists</string>
+    <string name="str_title_shoplists_activity">Your Shopping Lists</string>
+    <string name="menu_search">Search</string>
+    <string name="str_app_welcome">Welcome to Markod</string>
 </resources>

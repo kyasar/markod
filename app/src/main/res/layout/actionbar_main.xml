@@ -16,7 +16,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/str_title_shoplists_activity"
+            android:text="@string/str_app_welcome"
             android:textColor="@color/white"
             android:padding="10dp"
             android:textSize="20dp" />

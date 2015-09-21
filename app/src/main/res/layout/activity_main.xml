@@ -4,84 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/product_lv_item"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:background="@color/red"
-        android:orientation="horizontal" >
-
-        <LinearLayout
-            android:id="@+id/search_frame"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/id_btn_back_from_search"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="start|center_vertical"
-                android:background="@drawable/ic_action_back" />
-
-            <FrameLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" >
-
-                <AutoCompleteTextView
-                    android:id="@+id/id_ac_tv_productAutoSearch"
-                    android:padding="4dp"
-                    android:singleLine="true"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textColor="@color/white"
-                    android:hint="@string/hint_product_search"
-                    android:textColorHint="@color/white"
-                    android:layout_gravity="center_vertical"/>
-
-                <Button
-                    android:id="@+id/id_btn_delete"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:background="@drawable/ic_action_cancel" />
-            </FrameLayout>
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/main_top_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/app_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/str_app_name"
-                android:textColor="@color/white"
-                android:padding="10dp"
-                android:textSize="24dp" />
-
-            <ImageView
-                android:id="@+id/id_search_image_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_action_search" />
-        </RelativeLayout>
-    </LinearLayout>
-
     <View
         android:layout_width="fill_parent"
         android:layout_height="5dip"
-        android:background="@drawable/drop_shadow" />
+        android:background="@color/markod_bg_color" />
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
