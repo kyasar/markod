@@ -16,6 +16,12 @@
             android:layout_height="5dip"
             android:background="@color/markod_bg_color" />
 
+        <com.dopamin.markod.search.SearchBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchbox"
+            />
+
         <com.daimajia.slider.library.SliderLayout
             android:id="@+id/slider"
             android:padding="2dp"

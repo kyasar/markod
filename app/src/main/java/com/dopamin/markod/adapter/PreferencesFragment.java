@@ -13,11 +13,9 @@ import com.dopamin.markod.R;
  */
 public class PreferencesFragment extends Fragment {
 
-
     public PreferencesFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

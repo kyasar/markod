@@ -8,11 +8,10 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,13 +24,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -43,9 +45,16 @@ import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.google.gson.Gson;
+import com.dopamin.markod.search.SearchBox;
+import com.dopamin.markod.search.SearchResult;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener,
@@ -93,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
+    private SearchBox searchBox;
+    private List<Product> products = new ArrayList<Product>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,14 +128,16 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
         setContentView(R.layout.activity_main);
 
-        mNavItems.add(new NavItem("Home", "Meetup destination", R.drawable.ico_market));
-        mNavItems.add(new NavItem("Preferences", "Change your preferences", R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem("Home", "Your Profile", R.drawable.ico_market));
+        mNavItems.add(new NavItem("Shop Lists", "ShopLists and Favourites", R.drawable.ico_market));
+        mNavItems.add(new NavItem("Preferences", "Change your preferences and Settings", R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem("Help", "Help and Usage", R.drawable.ic_action_about));
         mNavItems.add(new NavItem("About", "Get to know about us", R.drawable.ic_action_about));
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-        // Populate the Navigtion Drawer with options
+        // Populate the Navigation Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
         DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
@@ -144,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 super.onDrawerOpened(drawerView);
                 Log.d(TAG, "onDrawerOpened: " + getTitle());
                 getSupportActionBar().hide();
-
                 invalidateOptionsMenu();
             }
 
@@ -153,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 super.onDrawerClosed(drawerView);
                 Log.d(TAG, "onDrawerClosed: " + getTitle());
                 getSupportActionBar().show();
-
                 invalidateOptionsMenu();
             }
         };
@@ -187,13 +199,115 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         btn_declare_product = (Button) findViewById(R.id.id_btn_declare_product);
         btn_declare_product.setOnClickListener(this);
 
-        // Layouts to change search state or main state
+        // Layouts to change searchBox state or main state
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
         marketNameTxt = (TextView) findViewById(R.id.market_name_text);
 
         /* Load Location-based Ads */
         loadAdImages();
+
+        //////////////////////////////
+
+
+        // SEARCH BOX
+        searchBox = (SearchBox) findViewById(R.id.searchbox);
+        searchBox.enableVoiceRecognition(this);
+        /* for (int x = 0; x < 10; x++){
+            SearchResult option = new SearchResult("Result " + Integer.toString(x),
+            getResources().getDrawable(R.drawable.ico_points));
+            searchBox.addSearchable(option);
+        } */
+        searchBox.setMenuListener(new SearchBox.MenuListener() {
+            @Override
+            public void onMenuClick() {
+                //Hamburger has been clicked
+                Toast.makeText(MainActivity.this, "Menu click", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        searchBox.setSearchListener(new SearchBox.SearchListener() {
+
+            @Override
+            public void onSearchOpened() {
+                //Use this to tint the screen
+                Log.v(MainActivity.TAG, "Search Opened.");
+                //searchBox.clearResults();
+            }
+
+            @Override
+            public void onSearchClosed() {
+                //Use this to un-tint the screen
+                Log.v(MainActivity.TAG, "Search Closed.");
+                searchBox.clearResults();
+            }
+
+            @Override
+            public void onSearchTermChanged(String term) {
+                //React to the searchBox term changing
+                //Called after it has updated results
+                Log.v(MainActivity.TAG, "TERM: " + searchBox.getSearchText());
+                searchBox.showLoading(true);
+                getProducts(searchBox.getSearchText());
+            }
+
+            @Override
+            public void onSearch(String searchTerm) {
+                Toast.makeText(MainActivity.this, searchTerm + " Searched", Toast.LENGTH_LONG).show();
+                Log.v(MainActivity.TAG, "Search DONE.");
+            }
+
+            @Override
+            public void onSearchCleared() {
+                Log.v(MainActivity.TAG, "Search Cleared.");
+                //Called when the clear button is clicked
+            }
+        });
     }
+
+    public void getProducts(final String search) {
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
+                MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + search,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(MainActivity.TAG, response.toString());
+
+                        try {
+                            // TODO: Json respond check status?
+                            // Parsing json array response
+                            // loop through each json object
+                            JSONArray jsonProducts = response.getJSONArray("product");
+
+                            Log.v(MainActivity.TAG, "Product searchBox array respond length: " + jsonProducts.length());
+                            searchBox.clearResults();
+                            for (int i = 0; i < jsonProducts.length(); i++) {
+                                JSONObject p = (JSONObject) jsonProducts.get(i);
+                                String name = p.getString("name");
+                                String barcode = p.getString("barcode");
+                                Product product = new Product(name, barcode);
+                                products.add(product);
+
+                                SearchResult option = new SearchResult(product.getName(),
+                                        getResources().getDrawable(R.drawable.ico_points));
+                                searchBox.addSearchable(option);
+                                searchBox.updateResults();
+                            }
+                            searchBox.showLoading(false);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Volley.newRequestQueue(getApplicationContext()).add(req);
+    }
+
 
     /*
 * Called when a particular item from the navigation drawer
@@ -208,7 +322,17 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 .commit();
 
         mDrawerList.setItemChecked(position, true);
-        setTitle(mNavItems.get(position).mTitle);
+        if (mNavItems.get(position).getTitle().equalsIgnoreCase("Home")) {
+            goToProfilePage();
+        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("Shop Lists")) {
+
+        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("Preferences")) {
+
+        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("Help")) {
+
+        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("About")) {
+
+        }
 
         // Close the drawer
         mDrawerLayout.closeDrawer(mDrawerPane);
@@ -257,6 +381,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             startActivity(intent);
             Log.v(TAG, "AddProductActivity is started. OK.");
         }
+        else if (requestCode == 1234 && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            searchBox.populateEditText(matches);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -304,10 +434,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 Log.v(MainActivity.TAG, "SETTINGS");
                 return true;
             case R.id.action_profile:
-                Log.v(MainActivity.TAG, "PROFILE");
-                Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
-                startActivity(intent);
-                Log.v(MainActivity.TAG, "Profile activity started.");
+                goToProfilePage();
                 return true;
         }
 
@@ -507,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
         btn_delete_searchTxt.setOnClickListener(this);
 
-        // Change search icon accordingly.
+        // Change searchBox icon accordingly.
         searchMenuItem.setVisible(false);
         mSearchOpened = true;
     }
@@ -521,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.actionbar_main);
 
-        // Change search icon accordingly.
+        // Change searchBox icon accordingly.
         searchMenuItem.setVisible(true);
         mSearchOpened = false;
     }
@@ -543,15 +670,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             }
         } else if(view.getId() == R.id.id_btn_profile) {
             Log.v(TAG, "Profile Btn is clicked.");
-            if (user == null) {
-                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                startActivityForResult(intent, LOGIN_FOR_PROFILE_REQUESTCODE);
-                Log.v(TAG, "LoginActivity is started. OK.");
-            } else {
-                Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
-                startActivity(intent);
-                Log.v(TAG, "ProfileActivity is started. OK.");
-            }
+            goToProfilePage();
         } else if (view.getId() == R.id.id_btn_delete) {
             Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
             if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
@@ -598,5 +717,17 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         intent.putParcelableArrayListExtra("searchProductList", searchProductList);
         startActivity(intent);
         Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
+    }
+
+    private void goToProfilePage() {
+        if (this.user == null) {
+            Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+            startActivityForResult(intent, LOGIN_FOR_PROFILE_REQUESTCODE);
+            Log.v(TAG, "LoginActivity is started. OK.");
+        } else {
+            Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
+            startActivity(intent);
+            Log.v(TAG, "ProfileActivity is started. OK.");
+        }
     }
 }

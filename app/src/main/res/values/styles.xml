@@ -34,4 +34,13 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <declare-styleable name="MaterialMenuView">
+        <attr name="mm_color" format="color"/>
+        <attr name="mm_scale" format="integer"/>
+        <attr name="mm_transformDuration" format="integer"/>
+        <attr name="mm_pressedDuration" format="integer"/>
+        <attr name="mm_strokeWidth" format="integer"/>
+        <attr name="mm_rtlEnabled" format="boolean"/>
+    </declare-styleable>
+
 </resources>

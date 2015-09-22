@@ -5,13 +5,37 @@ package com.dopamin.markod.adapter;
  */
 
 public class NavItem {
-    public String mTitle;
-    String mSubtitle;
+    private String title;
+    private String subtitle;
     int mIcon;
 
     public NavItem(String title, String subtitle, int icon) {
-        mTitle = title;
-        mSubtitle = subtitle;
+        this.title = title;
+        this.subtitle = subtitle;
         mIcon = icon;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
+
+    public int getmIcon() {
+        return mIcon;
+    }
+
+    public void setmIcon(int mIcon) {
+        this.mIcon = mIcon;
     }
 }
