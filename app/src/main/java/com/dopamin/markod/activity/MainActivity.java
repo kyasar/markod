@@ -1,13 +1,19 @@
 package com.dopamin.markod.activity;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     private boolean mSearchOpened = false;
 
+    ListView mDrawerList;
+    RelativeLayout mDrawerPane;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
+
+    ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,27 +116,64 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
         setContentView(R.layout.activity_main);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        mNavItems.add(new NavItem("Home", "Meetup destination", R.drawable.ico_market));
+        mNavItems.add(new NavItem("Preferences", "Change your preferences", R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem("About", "Get to know about us", R.drawable.ic_action_about));
 
+        // DrawerLayout
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
+        // Populate the Navigtion Drawer with options
+        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
+        mDrawerList.setAdapter(adapter);
+
+        // Drawer Item click listeners
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItemFromDrawer(position);
+            }
+        });
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ico_market,
+                R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                Log.d(TAG, "onDrawerOpened: " + getTitle());
+                getSupportActionBar().hide();
+
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                Log.d(TAG, "onDrawerClosed: " + getTitle());
+                getSupportActionBar().show();
+
+                invalidateOptionsMenu();
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+
+        ActionBar actionBar = getSupportActionBar();
         LayoutInflater inflator = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflator.inflate(R.layout.actionbar_main, null);
-        actionBar.setCustomView(v);
+        if (actionBar != null) {
+            actionBar.setCustomView(v);
+        }
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        getSupportActionBar().setIcon(R.drawable.ico_market);
 
-        /*// Main actionbar layout Search Image button
-        btn_searchImage = (ImageView) findViewById(R.id.id_search_image_btn);
-        btn_searchImage.setOnClickListener(this);
-
-        // Search frame layout Back and Delete text buttons
-        btn_backMain = (Button) findViewById(R.id.id_btn_back_from_search);
-        btn_backMain.setOnClickListener(this);
-
-        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
-        btn_delete_searchTxt.setOnClickListener(this);
-        */
         // Main Menu buttons: Spy, Declare, Campaign and Profile
         btn_spy_market = (Button) findViewById(R.id.id_btn_spy_market);
         btn_spy_market.setOnClickListener(this);
@@ -139,11 +190,28 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Layouts to change search state or main state
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
         marketNameTxt = (TextView) findViewById(R.id.market_name_text);
-        //searchFrameLayout = (LinearLayout) findViewById(R.id.search_frame);
-        //mainTopLayout = (RelativeLayout) findViewById(R.id.main_top_layout);
 
         /* Load Location-based Ads */
         loadAdImages();
+    }
+
+    /*
+* Called when a particular item from the navigation drawer
+* is selected.
+* */
+    private void selectItemFromDrawer(int position) {
+        Fragment fragment = new PreferencesFragment();
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.mainContent, fragment)
+                .commit();
+
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mNavItems.get(position).mTitle);
+
+        // Close the drawer
+        mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
     @Override
@@ -210,7 +278,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         if (user == null)
             menu.findItem(R.id.action_profile).setVisible(false);
         searchMenuItem = menu.findItem(R.id.action_search);
-        Log.v(MainActivity.TAG, "");
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerPane);
+        searchMenuItem.setVisible(!drawerOpen);
         return true;
     }
 
@@ -240,8 +309,13 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 startActivity(intent);
                 Log.v(MainActivity.TAG, "Profile activity started.");
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        }
+
+        // Pass the event to ActionBarDrawerToggle
+        // If it returns true, then it has handled
+        // the nav drawer indicator touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -324,11 +398,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     }
 
-    public User createMockUser() {
-        return new User("0123456789", "Mock", "Mockish", "mock@mock.com",
-                "FACEBOOK", "3333a3333", 55);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -361,6 +430,19 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     protected void onDestroy() {
         super.onDestroy();
         Log.v(MainActivity.TAG, this.toString() + " onDestroy");
+    }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        mDrawerToggle.syncState();
+        super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void setUserInfo() {

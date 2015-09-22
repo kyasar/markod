@@ -108,4 +108,6 @@
     <string name="str_title_shoplists_activity">Your Shopping Lists</string>
     <string name="menu_search">Search</string>
     <string name="str_app_welcome">Welcome to Markod</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
 </resources>
