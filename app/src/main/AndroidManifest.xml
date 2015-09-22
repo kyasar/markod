@@ -84,7 +84,8 @@
         <activity
             android:name=".activity.ProfileActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MainActivity" >
         </activity>
         <activity
             android:name=".activity.SearchResultsActivity"

@@ -501,7 +501,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     }
 
     public void openSearch() {
-        toolbar.setTitle("");
         searchBox.setVisibility(View.VISIBLE);
         searchBox.revealFromMenuItem(R.id.action_search, this);
         searchBox.setMenuListener(new SearchBox.MenuListener() {

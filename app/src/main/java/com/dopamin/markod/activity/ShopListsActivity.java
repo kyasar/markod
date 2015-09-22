@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -29,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.dopamin.markod.search.SearchBox;
 import com.google.gson.Gson;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -46,20 +49,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ShopListsActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher, AdapterView.OnItemClickListener {
+public class ShopListsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ExpandableListAdapter exp_lv_adapter;
     private ExpandableListView exp_lv_shopLists;
-    private LinearLayout searchLayout;
-    private FrameLayout mainTopLayout;
-    private AutoCompleteTextView ac_tv_product_search;
-    private Button btn_delete_searchTxt, btn_back, btn_backFromSearch, btn_saveChanges;
+    private Button btn_saveChanges;
     private LinearLayout layout_hintAddShoplist;
     private ProgressDialog progressDialog;
 
     private User user;
     private int selectedList = -1;
-    private boolean mSearchOpened = false;
+
+    private Toolbar toolbar;
+    private SearchBox searchBox;
 
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE = 701;
@@ -71,15 +73,11 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_lists);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-
-        LayoutInflater inflator = (LayoutInflater) this
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflator.inflate(R.layout.actionbar_shoplists, null);
-        actionBar.setCustomView(v);
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         layout_hintAddShoplist = (LinearLayout) findViewById(R.id.id_layout_hint_create_shoplists);
 
@@ -111,6 +109,12 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage(getResources().getString(R.string.str_progress_saving_user_changes));
+
+        // Search Box
+        searchBox = (SearchBox) findViewById(R.id.searchbox);
+        searchBox.enableVoiceRecognition(this);
+        searchBox.setLogoText(getResources().getString(R.string.app_name));
+        searchBox.setHintText(getResources().getString(R.string.str_hint_product_searchbox));
     }
 
     @Override
@@ -159,7 +163,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                     break;
                 case R.id.id_menu_add_product:
                     Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
-                    openSearchBar();
+                    openSearch();
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
@@ -198,21 +202,29 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
         //noinspection SimplifiableIfStatement
         switch(item.getItemId()) {
-            case R.id.home:
-                Log.v(MainActivity.TAG, "Return Back clicked.");
+            case R.id.action_search:
+                Log.v(MainActivity.TAG, "Search clicked.");
+                openSearch();
                 break;
             case R.id.action_settings:
                 break;
             case R.id.action_create_new_shoplist:
                 showNewShopListNameDialog();
                 break;
-            case R.id.action_search:
-                Log.v(MainActivity.TAG, "Search clicked.");
-                openSearchBar();
-                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1234 && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            searchBox.populateEditText(matches);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void showNewShopListNameDialog() {
@@ -275,56 +287,9 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         saveUser(this.user);
     }
 
-    private void openSearchBar() {
-        // Set custom view on action bar.
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.product_autocomplete_search_bar);
-
-        // Search edit text field setup.
-        ac_tv_product_search = (AutoCompleteTextView) actionBar.getCustomView()
-                .findViewById(R.id.id_ac_tv_productAutoSearch);
-        ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
-        ac_tv_product_search.setOnItemClickListener(this);
-        ac_tv_product_search.setText("");
-        ac_tv_product_search.requestFocus();
-
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_FORCED);
-
-        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
-        btn_delete_searchTxt.setOnClickListener(this);
-
-        mSearchOpened = true;
-    }
-
-    private void closeSearchBar() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
-
-        // Remove custom view.
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.actionbar_shoplists);
-
-        // Change search icon accordingly.
-        mSearchOpened = false;
-    }
-
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.id_btn_back) {
-            Log.v(MainActivity.TAG, "finishing shoplist activity.");
-            finish();
-        } else if (view.getId() == R.id.id_btn_delete) {
-            Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
-            if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
-                  closeSearchBar();
-            }
-            else {
-                ac_tv_product_search.setText("");
-            }
-        } else if (view.getId() == R.id.id_btn_save_changes) {
+        if (view.getId() == R.id.id_btn_save_changes) {
             Log.v(MainActivity.TAG, "Save Changes button clicked. User changes will be sent to server.");
             progressDialog.show();
             Gson gson = new Gson();
@@ -411,57 +376,61 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         return false;
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    public void openSearch() {
+        toolbar.setTitle("");
+        searchBox.setVisibility(View.VISIBLE);
+        searchBox.revealFromMenuItem(R.id.action_search, this);
+        searchBox.setMenuListener(new SearchBox.MenuListener() {
+            @Override
+            public void onMenuClick() {
+                //Hamburger has been clicked
+                //searchBox.toggleSearch();
+            }
+        });
+        searchBox.setSearchListener(new SearchBox.SearchListener() {
 
-    }
-
-    @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable editable) {
-
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        // Hide keyboard on autocomplete item click
-        ac_tv_product_search.clearFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
-
-        Product p = (Product) adapterView.getItemAtPosition(i);
-        ac_tv_product_search.setText("");
-
-        Log.v(MainActivity.TAG, "Product will be added into Group.");
-        if (selectedList >= 0) {
-            Log.v(MainActivity.TAG, "Product: " + p.getName() + " will be added into group: " + user.getShopLists().get(selectedList).getName());
-            //changeToMainView();
-            ShopList shopList = user.getShopLists().get(selectedList);
-
-            // Check whether product is already added into the shoplist or not?
-            for (Product pi : shopList.getProducts()) {
-                if (pi.getBarcode().equalsIgnoreCase(p.getBarcode())) {
-                    Toast.makeText(getApplicationContext(), p.getName() + " " +
-                            getResources().getString(R.string.str_toast_product_already_added), Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            @Override
+            public void onSearchOpened() {
+                //Use this to tint the screen
+                Log.v(MainActivity.TAG, "Search Opened.");
             }
 
-            shopList.getProducts().add(p);
-            exp_lv_shopLists.setAdapter(exp_lv_adapter);
+            @Override
+            public void onSearchClosed() {
+                //Use this to un-tint the screen
+                Log.v(MainActivity.TAG, "Search Closed.");
+                searchBox.clearResults();
+                if (searchBox.isSearchOpen())
+                    closeSearch();
+            }
 
-            // Make Save button visible
-            btn_saveChanges.setVisibility(View.VISIBLE);
+            @Override
+            public void onSearchTermChanged(String term) {
+                //React to the searchBox term changing
+                //Called after it has updated results
+            }
 
-            Toast.makeText(getApplicationContext(), p.getName() + " " +
-                    getResources().getString(R.string.str_toast_product_added_into_shoplist), Toast.LENGTH_SHORT).show();
+            @Override
+            public void onSearch(String searchTerm) {
+                Log.v(MainActivity.TAG, "Search DONE.");
+            }
 
-            // expand selected group
-            exp_lv_shopLists.expandGroup(selectedList);
-        }
+            @Override
+            public void onSearchCleared() {
+                Log.v(MainActivity.TAG, "Search Cleared.");
+                //Called when the clear button is clicked
+            }
+
+            @Override
+            public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).getProduct().getName());
+            }
+        });
+        searchBox.requestFocus();
+    }
+
+    protected void closeSearch() {
+        searchBox.hideCircularly(this);
+        toolbar.setTitle(getResources().getString(R.string.title_activity_shop_lists));
     }
 }

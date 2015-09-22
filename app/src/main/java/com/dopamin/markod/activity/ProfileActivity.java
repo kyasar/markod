@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -27,13 +28,15 @@ import com.facebook.ProfileTracker;
 import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
 
-public class ProfileActivity extends Activity implements View.OnClickListener {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail, txtPoints;
-    private Button btn_back, btn_shoplists;
+    private Button btn_shoplists;
     private LoginButton fbLoginButton;
     private ProfileTracker mProfileTracker;
+
+    private Toolbar toolbar;
 
     private User user;
 
@@ -52,13 +55,17 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
             finish();
         }
 
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         fbLoginButton = (LoginButton) findViewById(R.id.login_button);
         txtName = (TextView) findViewById(R.id.txtName);
         txtEmail = (TextView) findViewById(R.id.txtEmail);
         txtPoints = (TextView) findViewById(R.id.txtPoints);
         imgProfilePic = (ImageView) findViewById(R.id.id_profile_image);
-        btn_back = (Button) findViewById(R.id.id_btn_back);
-        btn_back.setOnClickListener(this);
         btn_shoplists = (Button) findViewById(R.id.id_btn_shoplists);
         btn_shoplists.setOnClickListener(this);
 
@@ -102,42 +109,8 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onStart");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onResume");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onStop");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onPause");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.v(MainActivity.TAG, ProfileActivity.this.toString() + " onDestroy");
-    }
-
-    @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.id_btn_back) {
-            Log.v(MainActivity.TAG, "Return back to Main menu..");
-            finish();
-        }
-        else if (view.getId() == R.id.id_btn_shoplists) {
+        if (view.getId() == R.id.id_btn_shoplists) {
             Intent intent = new Intent(getBaseContext(), ShopListsActivity.class);
             startActivity(intent);
             Log.v(MainActivity.TAG, "ShopList Activity is started. OK.");

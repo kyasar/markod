@@ -49,7 +49,7 @@
     <string name="please_wait">Please wait..</string>
     <string name="spymarket_sharing_title">Sharing products..</string>
     <string name="spymarket_product_title">Searching product..</string>
-    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_profile">Profile</string>
     <string name="action_profile">Profile</string>
     <string name="select_this_market">Select this market for spying?</string>
     <string name="txt_scan_button">Scan</string>
@@ -83,7 +83,7 @@
     <string name="str_title_profile">Profile</string>
     <string name="str_btn_shoplists">Shop Lists</string>
     <string name="str_btn_catalog">Points Catalog</string>
-    <string name="title_activity_shop_lists">ShopListsActivity</string>
+    <string name="title_activity_shop_lists">ShopLists &amp; Favorites</string>
     <string name="str_btn_add_new_list">Create New Shop List</string>
     <string name="str_title_your_shoplists">Your Shopping Lists</string>
     <string name="str_dialog_title_newShoplist">New Shoplist</string>

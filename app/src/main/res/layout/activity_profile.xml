@@ -6,42 +6,17 @@
     android:orientation="vertical"
     tools:context="com.dopamin.markod.activity.ProfileActivity">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/product_lv_item"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:background="@color/red"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/id_btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="start|center_vertical"
-            android:background="@drawable/ic_action_back" />
-
-        <TextView
-            android:id="@+id/app_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/str_title_profile"
-            android:textColor="@color/white"
-            android:padding="10dp"
-            android:textSize="24dp" />
-    </FrameLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="5dip"
-        android:background="@drawable/drop_shadow" />
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_margin="4dp"
         android:padding="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/open_gray"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView

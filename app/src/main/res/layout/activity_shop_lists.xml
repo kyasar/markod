@@ -5,11 +5,35 @@
     android:orientation="vertical"
     tools:context="com.dopamin.markod.activity.ShopListsActivity">
 
+    <!-- The ActionBar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.dopamin.markod.search.SearchBox
+            android:layout_width="wrap_content"
+            android:id="@+id/searchbox"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="-6dp"
+            android:layout_marginLeft="-6dp"
+            android:layout_marginRight="-6dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" >
+            <requestFocus/>
+        </com.dopamin.markod.search.SearchBox>
+    </RelativeLayout>
+
     <TextView
         android:gravity="center"
         android:text="@string/str_title_your_shoplists"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
