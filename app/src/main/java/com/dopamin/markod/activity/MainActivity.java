@@ -10,11 +10,14 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.app.Fragment;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,15 +96,14 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     private boolean mSearchOpened = false;
 
-    ListView mDrawerList;
-    RelativeLayout mDrawerPane;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-
-    ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
+    // Toolbar and Navigation Drawer
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
 
     private SearchBox searchBox;
-    private List<Product> products = new ArrayList<Product>();
+
+    private NavigationView nvDrawer;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,63 +128,29 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
         setContentView(R.layout.activity_main);
 
-        mNavItems.add(new NavItem("Home", "Your Profile", R.drawable.ico_market));
-        mNavItems.add(new NavItem("Shop Lists", "ShopLists and Favourites", R.drawable.ico_market));
-        mNavItems.add(new NavItem("Preferences", "Change your preferences and Settings", R.drawable.ic_action_settings));
-        mNavItems.add(new NavItem("Help", "Help and Usage", R.drawable.ic_action_about));
-        mNavItems.add(new NavItem("About", "Get to know about us", R.drawable.ic_action_about));
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // DrawerLayout
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        // Populate the Navigation Drawer with options
-        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
-        mDrawerList = (ListView) findViewById(R.id.navList);
-        DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
-        mDrawerList.setAdapter(adapter);
+        // Set the menu icon instead of the launcher icon.
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
 
-        // Drawer Item click listeners
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItemFromDrawer(position);
-            }
-        });
+        // Find and setup drawer view
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        setupDrawerContent(nvDrawer);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ico_market,
-                R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                Log.d(TAG, "onDrawerOpened: " + getTitle());
-                getSupportActionBar().hide();
-                invalidateOptionsMenu();
-            }
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
 
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                Log.d(TAG, "onDrawerClosed: " + getTitle());
-                getSupportActionBar().show();
-                invalidateOptionsMenu();
-            }
-        };
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
-
-        ActionBar actionBar = getSupportActionBar();
-        LayoutInflater inflator = (LayoutInflater) this
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflator.inflate(R.layout.actionbar_main, null);
-        if (actionBar != null) {
-            actionBar.setCustomView(v);
-        }
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
-        getSupportActionBar().setIcon(R.drawable.ico_market);
+        // Tie DrawerLayout events to the ActionBarToggle
+        mDrawer.setDrawerListener(drawerToggle);
 
         // Main Menu buttons: Spy, Declare, Campaign and Profile
         btn_spy_market = (Button) findViewById(R.id.id_btn_spy_market);
@@ -204,134 +172,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         /* Load Location-based Ads */
         loadAdImages();
 
-        // SEARCH BOX
+        // Search Box
         searchBox = (SearchBox) findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
-        searchBox.setAnimateDrawerLogo(true);
-        searchBox.setMenuListener(new SearchBox.MenuListener() {
-            @Override
-            public void onMenuClick() {
-                //Hamburger has been clicked
-                Toast.makeText(MainActivity.this, "Menu click", Toast.LENGTH_LONG).show();
-                searchBox.toggleSearch();
-            }
-        });
-
-        searchBox.setSearchListener(new SearchBox.SearchListener() {
-            @Override
-            public void onSearchOpened() {
-                //Use this to tint the screen
-                Log.v(MainActivity.TAG, "Search Opened.");
-            }
-
-            @Override
-            public void onSearchClosed() {
-                //Use this to un-tint the screen
-                Log.v(MainActivity.TAG, "Search Closed.");
-                searchBox.clearResults();
-            }
-
-            @Override
-            public void onSearchTermChanged(String term) {
-                //React to the searchBox term changing
-                //Called after it has updated results
-                Log.v(MainActivity.TAG, "TERM: " + term);
-                searchBox.showLoading(true);
-                getProducts(term);
-            }
-
-            @Override
-            public void onSearch(String searchTerm) {
-                Toast.makeText(MainActivity.this, searchTerm + " Searched", Toast.LENGTH_LONG).show();
-                Log.v(MainActivity.TAG, "Search DONE.");
-            }
-
-            @Override
-            public void onSearchCleared() {
-                Log.v(MainActivity.TAG, "Search Cleared.");
-                //Called when the clear button is clicked
-            }
-
-            @Override
-            public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).title);
-            }
-        });
-    }
-
-    public void getProducts(final String search) {
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
-                MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + search,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(MainActivity.TAG, response.toString());
-
-                        try {
-                            // TODO: Json respond check status?
-                            // Parsing json array response
-                            // loop through each json object
-                            JSONArray jsonProducts = response.getJSONArray("product");
-
-                            Log.v(MainActivity.TAG, "Product searchBox array respond length: " + jsonProducts.length());
-                            searchBox.clearResults();
-                            searchBox.getSearchables().clear();
-                            for (int i = 0; i < jsonProducts.length(); i++) {
-                                JSONObject p = (JSONObject) jsonProducts.get(i);
-                                String name = p.getString("name");
-                                String barcode = p.getString("barcode");
-                                Product product = new Product(name, barcode);
-                                products.add(product);
-
-                                SearchResult option = new SearchResult(product.getName(),
-                                        getResources().getDrawable(R.drawable.ico_points));
-                                searchBox.addSearchable(option);
-                            }
-                            searchBox.updateResults();
-                            searchBox.showLoading(false);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        Volley.newRequestQueue(getApplicationContext()).add(req);
-    }
-
-
-    /*
-* Called when a particular item from the navigation drawer
-* is selected.
-* */
-    private void selectItemFromDrawer(int position) {
-        Fragment fragment = new PreferencesFragment();
-
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.mainContent, fragment)
-                .commit();
-
-        mDrawerList.setItemChecked(position, true);
-        if (mNavItems.get(position).getTitle().equalsIgnoreCase("Home")) {
-            goToProfilePage();
-        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("Shop Lists")) {
-
-        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("Preferences")) {
-
-        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("Help")) {
-
-        } else if (mNavItems.get(position).getTitle().equalsIgnoreCase("About")) {
-
-        }
-
-        // Close the drawer
-        mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
     @Override
@@ -382,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             searchBox.populateEditText(matches);
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -404,8 +248,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         if (user == null)
             menu.findItem(R.id.action_profile).setVisible(false);
         searchMenuItem = menu.findItem(R.id.action_search);
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerPane);
-        searchMenuItem.setVisible(!drawerOpen);
         return true;
     }
 
@@ -417,35 +259,39 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         Log.v(MainActivity.TAG, "actionbar item: " + item.getItemId());
         // Take appropriate action for each action item click
         switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                return true;
+
             case R.id.action_search:
                 Log.v(MainActivity.TAG, "Search clicked.");
-                openSearchBar();
+                openSearch();
+                //startActivity(new Intent(this, SearchRevealActivity.class));
                 break;
+
             case R.id.action_help:
                 // help action
                 Log.v(MainActivity.TAG, "HELP");
                 return true;
+
             case R.id.action_settings:
                 // check for updates action
                 Log.v(MainActivity.TAG, "SETTINGS");
                 return true;
+
             case R.id.action_profile:
                 goToProfilePage();
                 return true;
         }
 
-        // Pass the event to ActionBarDrawerToggle
-        // If it returns true, then it has handled
-        // the nav drawer indicator touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean isInternetAvailable()
-    {
+    public boolean isInternetAvailable() {
+
         NetworkInfo info = (NetworkInfo) ((ConnectivityManager)
                 this.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
 
@@ -557,15 +403,16 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
-        mDrawerToggle.syncState();
         super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void setUserInfo() {
@@ -693,7 +540,37 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
     }
 
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the planet to show based on
+        // position
+        switch(menuItem.getItemId()) {
+            case R.id.nav_first_fragment:
+                break;
+            case R.id.nav_second_fragment:
+                break;
+            case R.id.nav_third_fragment:
+                break;
+            default:
+        }
+
+        // Highlight the selected item, update the title, and close the drawer
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+        mDrawer.closeDrawers();
+    }
     @Override
+
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         // Hide keyboard on autocomplete item click
         ac_tv_product_search.clearFocus();
@@ -713,6 +590,111 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         intent.putParcelableArrayListExtra("searchProductList", searchProductList);
         startActivity(intent);
         Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
+    }
+
+    public void openSearch() {
+        toolbar.setTitle("");
+        searchBox.setHintText(getResources().getString(R.string.str_hint_product_searchbox));
+        searchBox.setVisibility(View.VISIBLE);
+        searchBox.revealFromMenuItem(R.id.action_search, this);
+        searchBox.setMenuListener(new SearchBox.MenuListener() {
+            @Override
+            public void onMenuClick() {
+                //Hamburger has been clicked
+                //searchBox.toggleSearch();
+            }
+        });
+        searchBox.setSearchListener(new SearchBox.SearchListener() {
+
+            @Override
+            public void onSearchOpened() {
+                //Use this to tint the screen
+                Log.v(MainActivity.TAG, "Search Opened.");
+            }
+
+            @Override
+            public void onSearchClosed() {
+                //Use this to un-tint the screen
+                Log.v(MainActivity.TAG, "Search Closed.");
+                searchBox.clearResults();
+                if (searchBox.isSearchOpen())
+                    closeSearch();
+            }
+
+            @Override
+            public void onSearchTermChanged(String term) {
+                //React to the searchBox term changing
+                //Called after it has updated results
+                Log.v(MainActivity.TAG, "TERM: " + term);
+                searchBox.showLoading(true);
+                getProducts(term);
+            }
+
+            @Override
+            public void onSearch(String searchTerm) {
+                Log.v(MainActivity.TAG, "Search DONE.");
+            }
+
+            @Override
+            public void onSearchCleared() {
+                Log.v(MainActivity.TAG, "Search Cleared.");
+                //Called when the clear button is clicked
+            }
+
+            @Override
+            public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).title);
+            }
+        });
+    }
+
+    protected void closeSearch() {
+        searchBox.hideCircularly(this);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
+    }
+
+    public void getProducts(final String search) {
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
+                MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + search,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(MainActivity.TAG, response.toString());
+
+                        try {
+                            // TODO: Json respond check status?
+                            // Parsing json array response
+                            // loop through each json object
+                            JSONArray jsonProducts = response.getJSONArray("product");
+
+                            Log.v(MainActivity.TAG, "Product searchBox array respond length: " + jsonProducts.length());
+                            searchBox.clearResults();
+                            searchBox.getSearchables().clear();
+                            for (int i = 0; i < jsonProducts.length(); i++) {
+                                JSONObject p = (JSONObject) jsonProducts.get(i);
+                                String name = p.getString("name");
+                                String barcode = p.getString("barcode");
+                                Product product = new Product(name, barcode);
+
+                                SearchResult option = new SearchResult(product.getName(),
+                                        getResources().getDrawable(R.drawable.ico_points));
+                                searchBox.addSearchable(option);
+                            }
+                            searchBox.updateResults();
+                            searchBox.showLoading(false);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Volley.newRequestQueue(getApplicationContext()).add(req);
     }
 
     private void goToProfilePage() {

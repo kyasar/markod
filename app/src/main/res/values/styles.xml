@@ -1,10 +1,10 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/markod_bg_color</item>
-        <item name="actionBarStyle">@style/MyActionBar</item>
-        <item name="actionBarTheme">@style/MyActionBarTheme</item>
+        <!--<item name="actionBarStyle">@style/MyActionBar</item>
+        <item name="actionBarTheme">@style/MyActionBarTheme</item>-->
     </style>
 
     <style name="btnStyleOrange" parent="Base.Widget.AppCompat.Button">
@@ -20,19 +20,18 @@
         <item name="android:padding">10dip</item>
     </style>
 
-    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
+    <!--<style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="background">@color/red</item>
         <item name="titleTextStyle">@style/MyActionBarTitle</item>
     </style>
 
     <style name="MyActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <!-- THIS is where you can color the arrow! -->
         <item name="colorControlNormal">@color/white</item>
     </style>
 
     <style name="MyActionBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/white</item>
-    </style>
+    </style>-->
 
     <declare-styleable name="MaterialMenuView">
         <attr name="mm_color" format="color"/>

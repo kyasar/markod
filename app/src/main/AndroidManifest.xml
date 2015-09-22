@@ -54,6 +54,7 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -107,10 +108,15 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_shop_lists"
             android:parentActivityName=".activity.ProfileActivity" >
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.ProfileActivity" />
+        </activity>
+        <activity
+            android:name=".activity.SearchRevealActivity"
+            android:label="@string/title_activity_search_reveal" >
         </activity>
     </application>
 

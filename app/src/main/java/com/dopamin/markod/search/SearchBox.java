@@ -277,7 +277,7 @@ public class SearchBox extends RelativeLayout {
 				int[] location = new int[2];
 				menuButton.getLocationInWindow(location);
 				hideCircularly(location[0] + menuButton.getWidth() * 2 / 3, location[1],
-                        activity);
+						activity);
 			}
 		}
 	}
@@ -352,7 +352,10 @@ public class SearchBox extends RelativeLayout {
 			openSearch(true);
 		}
 	}
-	
+
+	public boolean isSearchOpen() {
+		return this.searchOpen;
+	}
 
     public boolean getSearchOpen(){
         return getVisibility() == VISIBLE;
@@ -809,7 +812,9 @@ public class SearchBox extends RelativeLayout {
 		searchOpen = false;
 	}
 
-	
+	public void setHintText(CharSequence ch) {
+		this.search.setHint(ch);
+	}
 
 	
 

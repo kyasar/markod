@@ -111,4 +111,6 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="speak_now">Speak Now</string>
+    <string name="title_activity_search_reveal">SearchRevealActivity</string>
+    <string name="str_hint_product_searchbox">product name</string>
 </resources>
