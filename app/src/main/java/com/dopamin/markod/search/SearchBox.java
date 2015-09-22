@@ -17,6 +17,7 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -40,8 +41,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.dopamin.markod.activity.MainActivity;
 import com.dopamin.markod.search.MaterialMenuDrawable.IconState;
 import com.dopamin.markod.R;
+import com.dopamin.markod.objects.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +57,10 @@ import java.util.List;
 import com.dopamin.markod.search.animation.ReverseInterpolator;
 import com.dopamin.markod.search.animation.SupportAnimator;
 import com.dopamin.markod.search.animation.ViewAnimationUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SearchBox extends RelativeLayout {
 
@@ -220,7 +232,8 @@ public class SearchBox extends RelativeLayout {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 									  int count) {
-
+				showLoading(true);
+				getProducts(s.toString());
 			}
 
 		});
@@ -228,10 +241,56 @@ public class SearchBox extends RelativeLayout {
 		mSearchFilter = new SearchFilter() {
 			@Override
 			public boolean onFilter(SearchResult searchResult, String searchTerm) {
-				return searchResult.title.toLowerCase()
+				return searchResult.getProduct().getName().toLowerCase()
 						.contains(searchTerm.toLowerCase());
 			}
 		};
+	}
+
+	/*
+	 The Most important method in this class
+	 Retrieves the products from server that matches with Search text
+	 */
+	private void getProducts(final String search) {
+		JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
+				MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + search,
+				new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(MainActivity.TAG, response.toString());
+
+						try {
+							// TODO: Json respond check status?
+							// Parsing json array response
+							// loop through each json object
+							JSONArray jsonProducts = response.getJSONArray("product");
+
+							getSearchables().clear();
+							for (int i = 0; i < jsonProducts.length(); i++) {
+								JSONObject p = (JSONObject) jsonProducts.get(i);
+								String name = p.getString("name");
+								String barcode = p.getString("barcode");
+								Product product = new Product(name, barcode);
+
+								SearchResult option = new SearchResult(product,
+										getResources().getDrawable(R.drawable.ico_points));
+								addSearchable(option);
+							}
+							updateResults();
+							showLoading(false);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}, new Response.ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.e(MainActivity.TAG, "Server product search error inside SearchBox !");
+			}
+		});
+
+		Volley.newRequestQueue(getContext()).add(req);
 	}
 
 	private static boolean isIntentAvailable(Context context, Intent intent) {
@@ -708,11 +767,11 @@ public class SearchBox extends RelativeLayout {
 
 	private void search(SearchResult result) {
 		if(!searchWithoutSuggestions && getNumberOfResults() == 0)return;
-		setSearchString(result.title);
+		setSearchString(result.getProduct().getName());
 		if (!TextUtils.isEmpty(getSearchText())) {
-			setLogoTextInt(result.title);
+			setLogoTextInt(result.getProduct().getName());
 			if (listener != null)
-				listener.onSearch(result.title);
+				listener.onSearch(result.getProduct().getName());
 		} else {
 			setLogoTextInt(logoText);
 		}
@@ -827,7 +886,7 @@ public class SearchBox extends RelativeLayout {
 	
 
 	private void search(String text) {
-		SearchResult option = new SearchResult(text, null);
+		SearchResult option = new SearchResult(new Product(text, null), null);
 		search(option);
 		
 	}
@@ -868,7 +927,7 @@ public class SearchBox extends RelativeLayout {
 			}
 			final TextView title = (TextView) convertView
 					.findViewById(R.id.title);
-			title.setText(option.title);
+			title.setText(option.getProduct().getName());
 			ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
 			icon.setImageDrawable(option.icon);
 			ImageView up = (ImageView) convertView.findViewById(R.id.up);

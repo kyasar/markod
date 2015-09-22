@@ -2,8 +2,10 @@ package com.dopamin.markod.search;
 
 import android.graphics.drawable.Drawable;
 
+import com.dopamin.markod.objects.Product;
+
 public class SearchResult {
-    public String title;
+    public Product product;
     public Drawable icon;
 
     /**
@@ -11,17 +13,16 @@ public class SearchResult {
      * @param title
      * @param icon
      */
-    public SearchResult(String title, Drawable icon) {
-       this.title = title;
+    public SearchResult(Product product, Drawable icon) {
+       this.product = product;
        this.icon = icon;
     }
     
     /**
      * Return the title of the result
      */
-    @Override
-    public String toString() {
-        return title;
+    public Product getProduct() {
+        return product;
     }
     
 }

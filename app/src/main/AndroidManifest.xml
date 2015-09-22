@@ -114,10 +114,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.ProfileActivity" />
         </activity>
-        <activity
-            android:name=".activity.SearchRevealActivity"
-            android:label="@string/title_activity_search_reveal" >
-        </activity>
     </application>
 
 </manifest>

@@ -515,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
         // Highlight the selected item, update the title, and close the drawer
         menuItem.setChecked(true);
-        setTitle(menuItem.getTitle());
+        //setTitle(menuItem.getTitle());
         mDrawer.closeDrawers();
     }
 
@@ -551,9 +551,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             public void onSearchTermChanged(String term) {
                 //React to the searchBox term changing
                 //Called after it has updated results
-                Log.v(MainActivity.TAG, "TERM: " + term);
-                searchBox.showLoading(true);
-                getProducts(term);
             }
 
             @Override
@@ -569,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
             @Override
             public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).title);
+                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).getProduct().getName());
             }
         });
     }
@@ -577,50 +574,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     protected void closeSearch() {
         searchBox.hideCircularly(this);
         toolbar.setTitle(getResources().getString(R.string.app_name));
-    }
-
-    public void getProducts(final String search) {
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
-                MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + search,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(MainActivity.TAG, response.toString());
-
-                        try {
-                            // TODO: Json respond check status?
-                            // Parsing json array response
-                            // loop through each json object
-                            JSONArray jsonProducts = response.getJSONArray("product");
-
-                            Log.v(MainActivity.TAG, "Product searchBox array respond length: " + jsonProducts.length());
-                            searchBox.clearResults();
-                            searchBox.getSearchables().clear();
-                            for (int i = 0; i < jsonProducts.length(); i++) {
-                                JSONObject p = (JSONObject) jsonProducts.get(i);
-                                String name = p.getString("name");
-                                String barcode = p.getString("barcode");
-                                Product product = new Product(name, barcode);
-
-                                SearchResult option = new SearchResult(product.getName(),
-                                        getResources().getDrawable(R.drawable.ico_points));
-                                searchBox.addSearchable(option);
-                            }
-                            searchBox.updateResults();
-                            searchBox.showLoading(false);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        Volley.newRequestQueue(getApplicationContext()).add(req);
     }
 
     private void goToProfilePage() {
