@@ -1,4 +1,4 @@
-package io.codetail.widget;
+package com.dopamin.markod.search.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import io.codetail.animation.RevealAnimator;
+import com.dopamin.markod.search.animation.RevealAnimator;
 
 public class RevealLinearLayout extends LinearLayout implements RevealAnimator{
 

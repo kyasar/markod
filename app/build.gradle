@@ -6,6 +6,7 @@ android {
 
     repositories {
         mavenCentral()
+
         maven {
             url "https://raw.github.com/embarkmobile/zxing-android-minimal/mvn-repo/maven-repository/"
         }

@@ -1,4 +1,4 @@
-package io.codetail.animation;
+package com.dopamin.markod.search.animation;
 
 import android.annotation.TargetApi;
 import android.graphics.Rect;

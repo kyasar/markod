@@ -41,9 +41,7 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.*;
-import com.dopamin.markod.objects.Market;
-import com.dopamin.markod.objects.Product;
-import com.dopamin.markod.objects.User;
+import com.dopamin.markod.objects.*;
 import com.google.gson.Gson;
 import com.dopamin.markod.search.SearchBox;
 import com.dopamin.markod.search.SearchResult;
@@ -206,32 +204,24 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         /* Load Location-based Ads */
         loadAdImages();
 
-        //////////////////////////////
-
-
         // SEARCH BOX
         searchBox = (SearchBox) findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
-        /* for (int x = 0; x < 10; x++){
-            SearchResult option = new SearchResult("Result " + Integer.toString(x),
-            getResources().getDrawable(R.drawable.ico_points));
-            searchBox.addSearchable(option);
-        } */
+        searchBox.setAnimateDrawerLogo(true);
         searchBox.setMenuListener(new SearchBox.MenuListener() {
             @Override
             public void onMenuClick() {
                 //Hamburger has been clicked
                 Toast.makeText(MainActivity.this, "Menu click", Toast.LENGTH_LONG).show();
+                searchBox.toggleSearch();
             }
         });
 
         searchBox.setSearchListener(new SearchBox.SearchListener() {
-
             @Override
             public void onSearchOpened() {
                 //Use this to tint the screen
                 Log.v(MainActivity.TAG, "Search Opened.");
-                //searchBox.clearResults();
             }
 
             @Override
@@ -245,9 +235,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             public void onSearchTermChanged(String term) {
                 //React to the searchBox term changing
                 //Called after it has updated results
-                Log.v(MainActivity.TAG, "TERM: " + searchBox.getSearchText());
+                Log.v(MainActivity.TAG, "TERM: " + term);
                 searchBox.showLoading(true);
-                getProducts(searchBox.getSearchText());
+                getProducts(term);
             }
 
             @Override
@@ -260,6 +250,11 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             public void onSearchCleared() {
                 Log.v(MainActivity.TAG, "Search Cleared.");
                 //Called when the clear button is clicked
+            }
+
+            @Override
+            public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).title);
             }
         });
     }
@@ -280,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
                             Log.v(MainActivity.TAG, "Product searchBox array respond length: " + jsonProducts.length());
                             searchBox.clearResults();
+                            searchBox.getSearchables().clear();
                             for (int i = 0; i < jsonProducts.length(); i++) {
                                 JSONObject p = (JSONObject) jsonProducts.get(i);
                                 String name = p.getString("name");
@@ -290,8 +286,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                                 SearchResult option = new SearchResult(product.getName(),
                                         getResources().getDrawable(R.drawable.ico_points));
                                 searchBox.addSearchable(option);
-                                searchBox.updateResults();
                             }
+                            searchBox.updateResults();
                             searchBox.showLoading(false);
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -41,15 +41,14 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.dopamin.markod.search.MaterialMenuDrawable.IconState;
-import com.dopamin.markod.search.MaterialMenuView;
 import com.dopamin.markod.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.codetail.animation.ReverseInterpolator;
-import io.codetail.animation.SupportAnimator;
-import io.codetail.animation.ViewAnimationUtils;
+import com.dopamin.markod.search.animation.ReverseInterpolator;
+import com.dopamin.markod.search.animation.SupportAnimator;
+import com.dopamin.markod.search.animation.ViewAnimationUtils;
 
 public class SearchBox extends RelativeLayout {
 
@@ -743,7 +742,7 @@ public class SearchBox extends RelativeLayout {
                                     long arg3) {
                 SearchResult result = resultList.get(arg2);
                 search(result);
-
+				listener.onResultItemClicked(arg0, arg1, arg2, arg3);
 			}
 
 		});
@@ -767,6 +766,7 @@ public class SearchBox extends RelativeLayout {
 					getApplicationWindowToken(),
 					InputMethodManager.SHOW_FORCED, 0);
 		}
+		this.searchOpen = true;
 	}
 	
 	private void setInitialResults(){
@@ -785,9 +785,6 @@ public class SearchBox extends RelativeLayout {
 		}
 	}
 
-	
-
-	
 
 	private void closeSearch() {
         if(animateDrawerLogo){
@@ -910,6 +907,11 @@ public class SearchBox extends RelativeLayout {
 		 * @param result
 		 */
 		public void onSearch(String result);
+
+		/**
+		 * Called when a search result item is clicked
+		 */
+		public void onResultItemClicked(AdapterView<?> arg0, View arg1, int arg2, long arg3);
 	}
 
 	public interface MenuListener {
