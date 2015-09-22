@@ -42,7 +42,6 @@
                 android:layout_marginLeft="54dp"
                 android:singleLine="true"
                 android:gravity="center_vertical"
-                android:text="Logo"
                 android:textColor="#212121"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 

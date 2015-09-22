@@ -59,14 +59,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener,
-        View.OnClickListener, AdapterView.OnItemClickListener {
+        View.OnClickListener {
 
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.43.120:8000";
+    public static String MDS_SERVER = "http://192.168.1.23:8000";
 
-    private Button btn_delete_searchTxt, btn_spy_market, btn_checkIntConn, btn_backMain,
+    private Button btn_spy_market, btn_checkIntConn,
                     btn_profile, btn_campaign, btn_declare_product;
 
     /* Select market request for the Market Select Activity */
@@ -88,13 +88,10 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     private TextView loginNameTxt;
     private TextView marketNameTxt;
-    private AutoCompleteTextView ac_tv_product_search;
 
     private SliderLayout mDemoSlider;
     private Menu menu;
     private MenuItem searchMenuItem;
-
-    private boolean mSearchOpened = false;
 
     // Toolbar and Navigation Drawer
     private DrawerLayout mDrawer;
@@ -175,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Search Box
         searchBox = (SearchBox) findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
+        searchBox.setLogoText(getResources().getString(R.string.app_name));
+        searchBox.setHintText(getResources().getString(R.string.str_hint_product_searchbox));
     }
 
     @Override
@@ -377,9 +376,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     protected void onResume() {
         super.onResume();
         setUserInfo();
-        if (mSearchOpened) {
-            closeSearchBar();
-        }
         Log.v(MainActivity.TAG, this.toString() + " onResume");
     }
 
@@ -457,45 +453,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         return false;
     }
 
-    private void openSearchBar() {
-        // Set custom view on action bar.
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.product_autocomplete_search_bar);
-
-        // Search edit text field setup.
-        ac_tv_product_search = (AutoCompleteTextView) actionBar.getCustomView()
-                .findViewById(R.id.id_ac_tv_productAutoSearch);
-        ac_tv_product_search.setAdapter(new ProductSearchAdapter(this));
-        ac_tv_product_search.setOnItemClickListener(this);
-        ac_tv_product_search.setText("");
-        ac_tv_product_search.requestFocus();
-
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(ac_tv_product_search, InputMethodManager.SHOW_FORCED);
-
-        btn_delete_searchTxt = (Button) findViewById(R.id.id_btn_delete);
-        btn_delete_searchTxt.setOnClickListener(this);
-
-        // Change searchBox icon accordingly.
-        searchMenuItem.setVisible(false);
-        mSearchOpened = true;
-    }
-
-    private void closeSearchBar() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
-
-        // Remove custom view.
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.actionbar_main);
-
-        // Change searchBox icon accordingly.
-        searchMenuItem.setVisible(true);
-        mSearchOpened = false;
-    }
-
     @Override
     public void onClick(View view) {
         // getId() returns this view's identifier.
@@ -514,14 +471,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         } else if(view.getId() == R.id.id_btn_profile) {
             Log.v(TAG, "Profile Btn is clicked.");
             goToProfilePage();
-        } else if (view.getId() == R.id.id_btn_delete) {
-            Log.v(MainActivity.TAG, "Delete button clicked: " + ac_tv_product_search.getText());
-            if (ac_tv_product_search.getText().toString().equalsIgnoreCase("")) {
-                closeSearchBar();
-            }
-            else {
-                ac_tv_product_search.setText("");
-            }
         } else if (view.getId() == R.id.id_btn_campaign) {
             Log.v(TAG, "Campaign Btn is clicked.");
         } else if (view.getId() == R.id.id_btn_declare_product) {
@@ -569,32 +518,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         setTitle(menuItem.getTitle());
         mDrawer.closeDrawers();
     }
-    @Override
-
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        // Hide keyboard on autocomplete item click
-        ac_tv_product_search.clearFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(ac_tv_product_search.getWindowToken(), 0);
-
-        Product p = (Product) adapterView.getItemAtPosition(i);
-        Log.v(MainActivity.TAG, "Product searched: " + p.getName());
-        ac_tv_product_search.setText(p.getName());
-
-        ArrayList<Product> searchProductList = new ArrayList<Product>();
-        searchProductList.add(p);
-        searchProductList.add(new Product("Urederm", "8699561460099"));
-        searchProductList.add(new Product("Eti Karam 80g", "8690526098043"));
-
-        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
-        intent.putParcelableArrayListExtra("searchProductList", searchProductList);
-        startActivity(intent);
-        Log.v(TAG, "MainActivity: SearchResultsActivity is started. OK.");
-    }
 
     public void openSearch() {
         toolbar.setTitle("");
-        searchBox.setHintText(getResources().getString(R.string.str_hint_product_searchbox));
         searchBox.setVisibility(View.VISIBLE);
         searchBox.revealFromMenuItem(R.id.action_search, this);
         searchBox.setMenuListener(new SearchBox.MenuListener() {

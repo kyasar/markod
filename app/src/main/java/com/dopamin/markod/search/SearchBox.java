@@ -818,7 +818,7 @@ public class SearchBox extends RelativeLayout {
 
 	
 
-	private void setLogoTextInt(String text) {
+	public void setLogoTextInt(String text) {
 		logo.setText(text);
 	}
 
