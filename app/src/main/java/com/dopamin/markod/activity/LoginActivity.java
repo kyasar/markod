@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -69,6 +70,8 @@ public class LoginActivity extends AppCompatActivity implements
     // Profile pic image size in pixels
     private static final int PROFILE_PIC_SIZE = 400;
 
+    private Toolbar toolbar;
+
     private Map<String,String> params = new HashMap<String, String>();
 
     String url = MainActivity.MDS_SERVER + "/mds/signup/social";
@@ -118,6 +121,12 @@ public class LoginActivity extends AppCompatActivity implements
         // Initialize Facebook Sdk before UI
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
+
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         /* Facebook Login */
         callbackManager = CallbackManager.Factory.create();
@@ -195,11 +204,6 @@ public class LoginActivity extends AppCompatActivity implements
                 Log.v(MainActivity.TAG, "fblogin onError");
             }
         });
-
-        // Enabling Up / Back navigation
-        ActionBar ab = getSupportActionBar();
-        ab.setTitle(R.string.login_title);
-        ab.setDisplayShowTitleEnabled(true);
     }
 
     private void setupTokenTracker() {
@@ -325,14 +329,6 @@ public class LoginActivity extends AppCompatActivity implements
         Log.v(MainActivity.TAG, "actionbar item: " + item.getItemId());
         // Take appropriate action for each action item click
         switch (item.getItemId()) {
-            case R.id.action_help:
-                // help action
-                Log.v(MainActivity.TAG, "HELP");
-                return true;
-            case R.id.action_settings:
-                // check for updates action
-                Log.v(MainActivity.TAG, "SETTINGS");
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

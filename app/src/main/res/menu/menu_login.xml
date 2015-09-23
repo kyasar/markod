@@ -1,25 +1,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="com.dopamin.markod.activity.LoginActivity">
-    <!-- More -->
-    <item
-        android:id="@+id/a_More"
-        android:icon="@drawable/ic_action_overflow"
-        app:showAsAction="always"
-        android:title="More">
-        <menu>
-            <!-- Settings -->
-            <item android:id="@+id/action_settings"
-                android:icon="@drawable/ic_action_settings"
-                android:title="@string/action_settings"
-                android:orderInCategory="100"
-                app:showAsAction="never" />
-
-            <!-- Help -->
-            <item android:id="@+id/action_help"
-                android:icon="@drawable/ic_action_help"
-                android:title="@string/action_help"
-                app:showAsAction="never"/>
-        </menu>
-    </item>
 </menu>

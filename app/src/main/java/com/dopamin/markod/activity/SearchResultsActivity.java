@@ -14,6 +14,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class SearchResultsActivity extends FragmentActivity
+public class SearchResultsActivity extends AppCompatActivity
         implements LocationListener, PlacesResult, AdapterView.OnItemClickListener {
 
     private LocationManager locationManager = null;
@@ -78,6 +80,8 @@ public class SearchResultsActivity extends FragmentActivity
     private FrameLayout view_map_fragment;
     boolean fakeLocation = true;
 
+    private Toolbar toolbar;
+
     private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
 
@@ -91,8 +95,14 @@ public class SearchResultsActivity extends FragmentActivity
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
-
         setContentView(R.layout.activity_search_results);
+
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         lv_markets = (ListView) findViewById(R.id.list);
 
         view_map_fragment = (FrameLayout) findViewById(R.id.id_fl_map);

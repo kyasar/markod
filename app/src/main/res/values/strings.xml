@@ -17,7 +17,7 @@
     <string name="title_activity_market_select">MarketSelectActivity</string>
 
     <string name="facebook_app_id">897460156962618</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login">Login</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="password_hint">Password</string>
@@ -113,4 +113,5 @@
     <string name="speak_now">Speak Now</string>
     <string name="title_activity_search_reveal">SearchRevealActivity</string>
     <string name="str_hint_product_searchbox">product name</string>
+    <string name="title_activity_results">Search Results</string>
 </resources>

@@ -2,73 +2,65 @@
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dip">
-    <!--  Email Label -->
-    <EditText android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dip"
-        android:layout_marginBottom="0dip"
-        android:hint="@string/email_hint"
-        android:singleLine="true"/>
-    <!--  Password Label -->
-    <EditText android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dip"
-        android:singleLine="true"
-        android:hint="@string/password_hint"
-        android:password="true"/>
+    android:layout_height="wrap_content" >
 
-    <!-- Login button -->
-    <Button android:id="@+id/btnLogin"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
-        android:text="@string/loginBtn"/>
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <!-- Link to Registration Screen -->
-    <TextView android:id="@+id/link_to_register"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
-        android:layout_marginBottom="10dip"
-        android:text="@string/registerText"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:textColor="#0b84aa"/>
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dip"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textSize="20sp"
-        facebook:com_facebook_login_text="Facebook Login"
-        facebook:com_facebook_logout_text="Facebook Logout" />
+        <!--  Email Label -->
+        <EditText android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dip"
+            android:layout_marginBottom="0dip"
+            android:hint="@string/email_hint"
+            android:singleLine="true"/>
 
-    <!-- <com.google.android.gms.common.SignInButton
-        android:id="@+id/btn_sign_in"
-        android:paddingTop="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"/>
+        <!--  Password Label -->
+        <EditText android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:singleLine="true"
+            android:hint="@string/password_hint"
+            android:password="true"/>
 
-    <Button
-        android:id="@+id/btn_sign_out"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_logout_from_google"
-        android:visibility="gone"
-        android:layout_marginBottom="10dp"/>
+        <!-- Login button -->
+        <Button android:id="@+id/btnLogin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="@string/loginBtn"/>
 
-    <Button
-        android:id="@+id/btn_revoke_access"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_revoke_access"
-        android:visibility="gone" /> -->
+        <!-- Link to Registration Screen -->
+        <TextView android:id="@+id/link_to_register"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:layout_marginBottom="10dip"
+            android:text="@string/registerText"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="#0b84aa"/>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dip"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="20sp"
+            facebook:com_facebook_login_text="Facebook Login"
+            facebook:com_facebook_logout_text="Facebook Logout" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/llProfile"

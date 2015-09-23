@@ -47,6 +47,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
         List<Market> nearbyMarkets = new ArrayList<Market>();
         String name, vicinity, reference;
 
+        //TODO: List may return empty ! NullPointer exception
         for (int i = 0; i < list.size(); i++) {
 
             // Getting a place from the places list
