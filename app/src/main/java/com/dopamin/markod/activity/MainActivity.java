@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static final String MDS_TOKEN = "test";
     public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
-    public static String MDS_SERVER = "http://192.168.1.23:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
     private Button btn_spy_market, btn_checkIntConn,
                     btn_profile, btn_campaign, btn_declare_product;
@@ -546,7 +546,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
             @Override
             public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).getProduct().getName());
+                Product quickSearchProduct = searchBox.getSearchables().get(pos).getProduct();
+                Log.v(MainActivity.TAG, "Product: " + quickSearchProduct.getName() + " is being searched..");
+                searchNearbyMarkets(quickSearchProduct);
             }
         });
     }
@@ -566,5 +568,15 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             startActivity(intent);
             Log.v(TAG, "ProfileActivity is started. OK.");
         }
+    }
+
+    private void searchNearbyMarkets(Product searchProduct) {
+        ArrayList<Product> searchProductList = new ArrayList<Product>();
+        searchProductList.add(searchProduct);
+
+        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+        intent.putParcelableArrayListExtra("searchProductList", searchProductList);
+        startActivity(intent);
+        Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
     }
 }
