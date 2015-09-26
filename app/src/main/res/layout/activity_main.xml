@@ -48,6 +48,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 
+            <FrameLayout
+                android:id="@+id/rootLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fabBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:layout_marginBottom="@dimen/fab_margin_bottom"
+                    android:layout_marginRight="@dimen/fab_margin_right"
+                    android:src="@drawable/ic_plus"
+                    app:backgroundTint="@color/red"
+                    app:fabSize="normal" />
+
+            </FrameLayout>
+
             <TableLayout
                 android:id="@+id/tableLayout1"
                 android:layout_width="fill_parent"
