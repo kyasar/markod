@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/id_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -55,7 +56,7 @@
                 >
 
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fabBtn"
+                    android:id="@+id/id_btn_fab_add"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|right"
