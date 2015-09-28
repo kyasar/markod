@@ -87,7 +87,6 @@
                         android:layout_weight="1"
                         android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp"
-                        style="@style/btnStyleOrange"
                         android:drawableTop="@drawable/ico_detective"
                         android:text="@string/str_btn_spy_market" />
 
@@ -98,7 +97,6 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        style="@style/btnStyleOrange"
                         android:drawableTop="@drawable/ico_detective"
                         android:text="@string/str_btn_campaign" />
 
