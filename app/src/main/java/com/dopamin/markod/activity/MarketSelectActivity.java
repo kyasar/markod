@@ -13,11 +13,19 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -40,24 +48,33 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class MarketSelectActivity extends FragmentActivity implements LocationListener, PlacesResult {
+public class MarketSelectActivity extends AppCompatActivity implements LocationListener,
+        PlacesResult, SearchView.OnQueryTextListener,
+        View.OnClickListener, SearchView.OnCloseListener,
+        RecyclerItemClickListener.OnItemClickListener {
 
     private LocationManager locationManager = null;
     private GoogleMap googleMap = null;
+    private SupportMapFragment mapFragment;
     private double latitude = 0;
     private double longitude = 0;
     private int PROXIMITY_RADIUS = 500;
     private String selectedMarketName = null;
     protected AlertDialog.Builder builder;
-    private MarketListAdapter adapter;
     private ProgressDialog progressDialog;
     private ListView lv_markets;
+    private RecyclerView rv_markets;
+    private RV_MarketAdapter adapter;
     private EditText tv_marketFilter;
     boolean fakeLocation = true;
+
+    private Toolbar toolbar;
+    private SearchView searchView;
 
     private List<Market> nearbyMarkets = null;
     HashMap <String, String> mMarkerPlaceLink = new HashMap <String, String> ();
@@ -70,23 +87,19 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
-
         setContentView(R.layout.activity_market_select);
-        lv_markets = (ListView) findViewById(R.id.list);
-        tv_marketFilter = (EditText) findViewById(R.id.id_tv_marketFilter);
 
-        tv_marketFilter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                adapter.getFilter().filter(charSequence);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) { }
-        });
+        //lv_markets = (ListView) findViewById(R.id.list);
+        rv_markets = (RecyclerView) findViewById(R.id.id_rv_markets);
+        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+        rv_markets.setLayoutManager(llm);
+        rv_markets.addOnItemTouchListener(new RecyclerItemClickListener(this, this));
 
         /* Nearby Markets loading progress */
         progressDialog = new ProgressDialog(this);
@@ -108,7 +121,8 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
 
         if (googleMap == null)
         {
-            googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment)).getMap();
+            mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment));
+            googleMap = mapFragment.getMap();
             googleMap.setMyLocationEnabled(true);
             Log.v(MainActivity.TAG, "Google Map fragment is OK.");
         }
@@ -171,7 +185,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
          * ListItem click event
          * On selecting a listitem SinglePlaceActivity is launched
          * */
-        lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -186,16 +200,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
                 AlertDialog alert = builder.create();
                 alert.show();
             }
-        });
-
-        if (savedInstanceState != null) {
-            nearbyMarkets = (List<Market>) savedInstanceState.getSerializable("nearbyMarkets");
-            Log.v(MainActivity.TAG, "Restoring market LIST.. size: " + nearbyMarkets.size());
-
-            // list adapter
-            adapter = new MarketListAdapter(this, nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
-            lv_markets.setAdapter(adapter);
-        }
+        });*/
 
         /* Search nearby markets and list them in Listview */
         locateMe();
@@ -230,7 +235,11 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_market_select, menu);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(this);
+        searchView.setOnSearchClickListener(this);
         return true;
     }
 
@@ -239,10 +248,7 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        // int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
 
@@ -322,13 +328,75 @@ public class MarketSelectActivity extends FragmentActivity implements LocationLi
     public void processPlaces(List<Market> markets) {
         // set global places list before use it
         nearbyMarkets = markets;
-        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
-        lv_markets.setAdapter(adapter);
+        //adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
+        //lv_markets.setAdapter(adapter);
+        adapter = new RV_MarketAdapter(this.nearbyMarkets);
+        rv_markets.setAdapter(adapter);
+
         progressDialog.dismiss();
 
         for (Market m : nearbyMarkets) {
             Marker marker = googleMap.addMarker(m.getMarkerOptions());
             mMarkerPlaceLink.put(marker.getId(), m.getReference());
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.v(MainActivity.TAG, "Filtering: " + newText);
+        adapter.setData(filterResults(newText));
+        rv_markets.scrollToPosition(0);
+        adapter.notifyDataSetChanged();
+
+        return true;
+    }
+
+    private List<Market> filterResults(String query) {
+        List<Market> filteredMarkets = new ArrayList<Market>();
+
+        for (Market m : this.nearbyMarkets) {
+            if (m.getName().toLowerCase().contains(query.toLowerCase())) {
+                filteredMarkets.add(m);
+            }
+        }
+        return filteredMarkets;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.action_search) {
+            Log.v(MainActivity.TAG, "SEARCH");
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.hide(mapFragment);
+            ft.commit();
+            //mapFragment.getView().setVisibility(View.GONE);
+        } else {
+            Log.v(MainActivity.TAG, "OTHER");
+        }
+    }
+
+    @Override
+    public boolean onClose() {
+        Log.v(MainActivity.TAG, "SEARCH CLOSE");
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.show(mapFragment);
+        ft.commit();
+        //mapFragment.getView().setVisibility(View.VISIBLE);
+        return false;
+    }
+
+    @Override
+    public void onItemClick(View childView, int position) {
+        Log.v(MainActivity.TAG, "Clicked: " + this.nearbyMarkets.get(position).getName());
+    }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        Log.v(MainActivity.TAG, "LONG Clicked: " + this.nearbyMarkets.get(position).getName());
     }
 }

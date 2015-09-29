@@ -14,7 +14,7 @@
     <string name="comma">,</string>
     <string name="logtag">MDlog</string>
     <string name="setProductPrice">Set a price for the product</string>
-    <string name="title_activity_market_select">MarketSelectActivity</string>
+    <string name="title_activity_market_select">Choose a Market</string>
 
     <string name="facebook_app_id">897460156962618</string>
     <string name="title_activity_login">Login</string>
