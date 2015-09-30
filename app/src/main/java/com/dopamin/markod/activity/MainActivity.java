@@ -87,8 +87,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
 
-    private LinearLayout mainLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,10 +146,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
         btn_declare_product = (Button) findViewById(R.id.id_btn_declare_product);
         btn_declare_product.setOnClickListener(this);
-
-        btn_add = (FloatingActionButton) findViewById(R.id.id_btn_fab_add);
-        btn_add.setOnClickListener(this);
-        mainLayout = (LinearLayout) findViewById(R.id.id_main_layout);
 
         // Layouts to change searchBox state or main state
         loginNameTxt = (TextView) findViewById(R.id.login_name_text);
@@ -477,15 +471,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 startActivity(intent);
                 Log.v(TAG, "AddProductActivity is started. OK.");
             }
-        } else if (view.getId() == R.id.id_btn_fab_add) {
-            Snackbar.make(mainLayout, "Hello. I am Snackbar!", Snackbar.LENGTH_SHORT)
-                    .setAction("Undo", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.v(TAG, "SnackBar button is clicked. OK.");
-                        }
-                    })
-                    .show();
         }
     }
 

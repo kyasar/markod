@@ -51,6 +51,8 @@ import com.dopamin.markod.search.MaterialMenuDrawable.IconState;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,8 +234,11 @@ public class SearchBox extends RelativeLayout {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 									  int count) {
+				// At least 3 letter must be entered to search
+				if (count < 3)
+					return;
 				showLoading(true);
-				getProducts(s.toString());
+				getProducts(s.toString().trim());
 			}
 
 		});
@@ -252,8 +257,16 @@ public class SearchBox extends RelativeLayout {
 	 Retrieves the products from server that matches with Search text
 	 */
 	private void getProducts(final String search) {
+		String encodedSearchTerm = null;
+		//Log.v(MainActivity.TAG, "search term: " + search);
+		try {
+			encodedSearchTerm = URLEncoder.encode(search, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
 		JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
-				MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + search,
+				MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + encodedSearchTerm,
 				new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
