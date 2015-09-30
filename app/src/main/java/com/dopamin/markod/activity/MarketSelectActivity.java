@@ -53,8 +53,7 @@ import java.util.List;
 
 public class MarketSelectActivity extends AppCompatActivity implements LocationListener,
         PlacesResult, SearchView.OnQueryTextListener,
-        View.OnClickListener, SearchView.OnCloseListener,
-        RecyclerItemClickListener.OnItemClickListener {
+        View.OnClickListener, SearchView.OnCloseListener {
 
     private LocationManager locationManager = null;
     private GoogleMap googleMap = null;
@@ -377,15 +376,5 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
         ft.commit();
         //mapFragment.getView().setVisibility(View.VISIBLE);
         return false;
-    }
-
-    @Override
-    public void onItemClick(View childView, int position) {
-        Log.v(MainActivity.TAG, "Clicked: " + this.nearbyMarkets.get(position).getName());
-    }
-
-    @Override
-    public void onItemLongPress(View childView, int position) {
-        Log.v(MainActivity.TAG, "LONG Clicked: " + this.nearbyMarkets.get(position).getName());
     }
 }
