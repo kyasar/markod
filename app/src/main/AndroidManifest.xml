@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dopamin.markod" > <!-- Min Android release is Gingerbread, Android 2.3 -->
-    <uses-sdk android:minSdkVersion="9" />
+    package="com.dopamin.markod" >
+
+    <!-- Min Android release is ICS, Android 4.0 -->
+    <uses-sdk android:minSdkVersion="14" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -61,7 +63,8 @@
             android:name=".activity.MarketSelectActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/title_activity_market_select"
-            android:windowSoftInputMode="stateHidden|stateAlwaysHidden" >
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:parentActivityName=".activity.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
