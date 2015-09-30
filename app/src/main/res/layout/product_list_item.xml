@@ -4,12 +4,16 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="8dp" >
+    android:paddingRight="12dp"
+    android:paddingTop="8dp"
+    android:paddingLeft="8dp"
+    android:paddingBottom="8dp" >
 
     <!-- Thumbnail Image -->
     <ImageView
         android:id="@+id/thumbnail"
         android:src="@drawable/ico_actionbar"
+        android:paddingRight="8dp"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerInParent="true"
@@ -24,7 +28,7 @@
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
         android:layout_toLeftOf="@+id/product_price"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <!-- Barcode -->
@@ -35,7 +39,7 @@
         android:layout_below="@id/product_name"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="12sp" />
+        android:textSize="10sp" />
 
     <!-- Price -->
     <TextView
@@ -43,6 +47,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:textSize="48sp" />
+        android:textSize="32sp" />
 
 </RelativeLayout>

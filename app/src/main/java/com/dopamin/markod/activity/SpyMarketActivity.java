@@ -32,6 +32,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -44,18 +46,17 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SpyMarketActivity extends FragmentActivity implements OnClickListener {
+public class SpyMarketActivity extends AppCompatActivity implements OnClickListener {
 	
 	private View scanBtn, sendBtn;
-	private TextView tv_points;
 	private ListView products_lv;
 	private List <Product> productList;
 	private ListAdapter adapter;
 	private Boolean test = false;
 	protected AlertDialog.Builder builder;
     private ProgressDialog progressDialog;
-	private TextView tv_spymarket_name, tv_spymarket_info, tv_send;
-	private CircleImageView profileView;
+	private TextView tv_spymarket_info;
+	private Toolbar toolbar;
 
 	public static int POINTS_DIALOG_FRAGMENT_SUCC_CODE = 2;
 	public static int PRICE_DIALOG_FRAGMENT_SUCC_CODE = 1;
@@ -75,24 +76,23 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		setContentView(R.layout.activity_spymarket);
 		
 		Log.v(MainActivity.TAG, "onCreate Spy Market Activity.");
+		// Setting Toolbar
+		// Set a Toolbar to replace the ActionBar.
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		scanBtn = findViewById(R.id.scan_button);
 		sendBtn = findViewById(R.id.send_button);
-		tv_send = (TextView) findViewById(R.id.tv_send_products);
-		tv_points = (TextView) findViewById(R.id.id_tvPoints);
 
-		tv_send.setVisibility(View.GONE);
 		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
-		tv_spymarket_name = (TextView) findViewById(R.id.spymarket_name);
 		tv_spymarket_info = (TextView) findViewById(R.id.spymarket_info);
-		profileView = (CircleImageView) findViewById(R.id.id_profile_image);
-		
+
 		scanBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
 		builder = new AlertDialog.Builder(this);
 
-		/* Product List TODO: Convert Hashmap to Product object */
 		productList = new ArrayList <Product> ();
 
         /* sharing product declarations loading progress */
@@ -104,12 +104,13 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 		market = bundle.getParcelable("market");
 		user = bundle.getParcelable("user");
 
-		tv_points.setText(Integer.toString(user.getPoints()));
-		tv_spymarket_name.setText(market.getName());
-
-		byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
-		Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-		profileView.setImageBitmap(bitmap);
+		if (market != null && user != null) {
+			getSupportActionBar().setTitle(market.getName());
+		} else {
+			Toast.makeText(this, "No Market or User defined !!", Toast.LENGTH_SHORT).show();
+			Log.e(MainActivity.TAG, "Fatal Error. No Market or User defined !!");
+			finish();
+		}
 	}
 	
 	private int isProductAlreadyAdded(Product p) {
@@ -137,7 +138,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			productList.add(p);
 			total++;
 			sendBtn.setVisibility(View.VISIBLE);
-			tv_send.setVisibility(View.VISIBLE);
 		}
 		tv_spymarket_info.setVisibility(View.GONE);
 		refreshScannedListView();
@@ -146,7 +146,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
     private void clearScannedList() {
         this.productList.clear();
 		sendBtn.setVisibility(View.GONE);
-		tv_send.setVisibility(View.GONE);
 		tv_spymarket_info.setVisibility(View.VISIBLE);
 		total = 0;
         refreshScannedListView();
@@ -160,8 +159,7 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 			String barcode = res.getString("content");
 			String format = res.getString("format");
 
-			Toast.makeText(this, "Contents = " + barcode +
-					", Format = " + format, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Contents = " + barcode +", Format = " + format, Toast.LENGTH_SHORT).show();
 
 			if (barcode != null) {
 				progressDialog.setTitle(getResources().getString(R.string.spymarket_product_title));
@@ -324,13 +322,13 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	public void onUserSelectValue(int code, String value) {
 		// TODO Auto-generated method stub
 		if (code == PRICE_DIALOG_FRAGMENT_SUCC_CODE) {
-			Toast.makeText(this, "Entered price for " + product.getName() + " price: " + value, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Entered price for " + product.getName() + " price: " + value, Toast.LENGTH_SHORT).show();
 			product.setPrice(value);
 			addProductToList(product);
 		} else if (code == POINTS_DIALOG_FRAGMENT_SUCC_CODE) {
 			updateUserPointsUI();
 		} else if (code == PRICE_DIALOG_FRAGMENT_FAIL_CODE) {
-			Toast.makeText(this, "Product is discarded !!", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Product is discarded !!", Toast.LENGTH_SHORT).show();
 			total--;
 		}
 	}
@@ -344,7 +342,6 @@ public class SpyMarketActivity extends FragmentActivity implements OnClickListen
 	}
 
 	public void updateUserPointsUI() {
-		tv_points.setText(Integer.toString(user.getPoints()));
 		saveUser(this.user);
 	}
 }
