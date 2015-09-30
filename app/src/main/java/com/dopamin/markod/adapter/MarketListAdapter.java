@@ -25,20 +25,17 @@ import java.util.List;
 /**
  * Created by kadir on 14.08.2015.
  */
-public class MarketListAdapter extends BaseAdapter implements Filterable {
+public class MarketListAdapter extends BaseAdapter {
     public enum LIST_TYPE {
         MARKET_SELECT,
         MARKET_SCAN,
     }
-    private List<Market> orig_markets;
     private List<Market> markets;
-    private List<Market> filtered_markets;
     private Context mContext;
     private LIST_TYPE list_type;
 
     public MarketListAdapter(Context context, List<Market> markets, LIST_TYPE list_type) {
         this.mContext = context;
-        this.orig_markets = markets;
         this.markets = markets;
         this.list_type = list_type;
     }
@@ -128,43 +125,5 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
 
         // Return the completed view to render on screen
         return convertView;
-    }
-
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults filterResults = new FilterResults();
-                String filterString = constraint.toString().toLowerCase();
-                Log.v(MainActivity.TAG, "Filter string: " + filterString);
-
-                if (constraint != null) {
-                    filtered_markets = new ArrayList<Market>();
-                    for (Market m : orig_markets) {
-                        if (m.getName().toLowerCase().startsWith(filterString))
-                            filtered_markets.add(m);
-                    }
-
-                    // Assign the data to the FilterResults
-                    filterResults.values = filtered_markets;
-                    filterResults.count = filtered_markets.size();
-                }
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                Log.v(MainActivity.TAG, "publishResults");
-                if (results != null && results.count > 0) {
-                    filtered_markets = (List<Market>) results.values;
-                    markets = filtered_markets;
-                    Log.v(MainActivity.TAG, "publishResult OK. " + filtered_markets.size());
-                    notifyDataSetChanged();
-                } else {
-                    Log.v(MainActivity.TAG, "publishResult Invalid.");
-                    notifyDataSetInvalidated();
-                }
-            }};
     }
 }
