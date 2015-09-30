@@ -16,8 +16,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -68,9 +66,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
     protected AlertDialog.Builder builder;
     private ProgressDialog progressDialog;
     private ListView lv_markets;
-    private RecyclerView rv_markets;
-    private RV_MarketAdapter adapter;
-    private EditText tv_marketFilter;
+    private MarketListAdapter adapter;
     boolean fakeLocation = true;
 
     private Toolbar toolbar;
@@ -95,11 +91,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //lv_markets = (ListView) findViewById(R.id.list);
-        rv_markets = (RecyclerView) findViewById(R.id.id_rv_markets);
-        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-        rv_markets.setLayoutManager(llm);
-        rv_markets.addOnItemTouchListener(new RecyclerItemClickListener(this, this));
+        lv_markets = (ListView) findViewById(R.id.list);
 
         /* Nearby Markets loading progress */
         progressDialog = new ProgressDialog(this);
@@ -185,7 +177,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
          * ListItem click event
          * On selecting a listitem SinglePlaceActivity is launched
          * */
-        /*lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_markets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -200,7 +192,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
                 AlertDialog alert = builder.create();
                 alert.show();
             }
-        });*/
+        });
 
         /* Search nearby markets and list them in Listview */
         locateMe();
@@ -328,10 +320,8 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
     public void processPlaces(List<Market> markets) {
         // set global places list before use it
         nearbyMarkets = markets;
-        //adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
-        //lv_markets.setAdapter(adapter);
-        adapter = new RV_MarketAdapter(this.nearbyMarkets);
-        rv_markets.setAdapter(adapter);
+        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SELECT);
+        lv_markets.setAdapter(adapter);
 
         progressDialog.dismiss();
 
@@ -350,7 +340,6 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
     public boolean onQueryTextChange(String newText) {
         Log.v(MainActivity.TAG, "Filtering: " + newText);
         adapter.setData(filterResults(newText));
-        rv_markets.scrollToPosition(0);
         adapter.notifyDataSetChanged();
 
         return true;

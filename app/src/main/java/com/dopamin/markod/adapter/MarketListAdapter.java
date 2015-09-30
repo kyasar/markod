@@ -51,6 +51,10 @@ public class MarketListAdapter extends BaseAdapter implements Filterable {
         public int position;
     }
 
+    public void setData(List<Market> markets) {
+        this.markets = markets;
+    }
+
     @Override
     public int getCount() {
         return markets.size();
