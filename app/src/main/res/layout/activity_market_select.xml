@@ -1,57 +1,39 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <include
         layout="@layout/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <fragment
-        android:id="@+id/mapfragment"
+    <LinearLayout
+        android:id="@+id/id_lly_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="70"
-        class="com.google.android.gms.maps.SupportMapFragment" />
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbar">
 
-    <!-- <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp" >
+        <fragment
+            android:id="@+id/mapfragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            class="com.google.android.gms.maps.SupportMapFragment" />
 
-        <EditText
-            android:id="@+id/id_tv_marketFilter"
-            android:padding="10dp"
-            android:singleLine="true"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:textSize="16sp"
-            android:layout_gravity="center_vertical"/>
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:divider="@color/markod_bg_color"
+            android:dividerHeight="1dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:listSelector="@drawable/listview_selector" />
 
-        <Button
-            android:id="@+id/id_btn_delete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="end|center_vertical"
-            android:background="@drawable/ic_action_cancel_dark" />
-    </FrameLayout> -->
+    </LinearLayout>
 
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="40"
-        android:divider="@color/markod_bg_color"
-        android:dividerHeight="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:listSelector="@drawable/listview_selector" />
-
-</LinearLayout>
+</RelativeLayout>

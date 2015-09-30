@@ -3,7 +3,7 @@
     android:id="@+id/product_lv_item"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/markod_lv_item_color"
+    android:background="@color/white"
     android:padding="8dp" >
 
     <!-- Thumbnail Image -->

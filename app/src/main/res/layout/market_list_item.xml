@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 
     <TextView android:id="@+id/reference"
@@ -12,15 +12,20 @@
     <TextView android:id="@+id/place_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="4dip"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="12dp"
         android:textColor="@color/black"
         android:textStyle="bold"
+        android:text="MArket Name"
         android:textSize="20dp"/>
 
     <TextView android:id="@+id/place_address"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="4dip"
+        android:paddingBottom="4dp"
+        android:paddingLeft="12dp"
+        android:text="MArket address 1344 Blver."
         android:textSize="12dp"/>
 
 </LinearLayout>
