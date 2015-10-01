@@ -55,9 +55,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static String MDS_SERVER = "http://192.168.43.120:8000";
 
-    private Button btn_spy_market, btn_checkIntConn,
-                    btn_profile, btn_campaign, btn_declare_product;
-    private FloatingActionButton btn_add;
+    private Button btn_spy_market, btn_checkIntConn;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_MARKET_REQUESTCODE = 1;
@@ -76,18 +74,15 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static User user;
     public static Market market;
 
-    private TextView loginNameTxt;
-    private TextView marketNameTxt;
-
     private SliderLayout mDemoSlider;
-    private Menu menu;
-    private MenuItem searchMenuItem;
 
     // Toolbar and Navigation Drawer
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
 
     private SearchBox searchBox;
+
+    ViewPAger
 
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
@@ -119,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setBackgroundDrawable(null);
 
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -143,21 +139,8 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         btn_spy_market = (Button) findViewById(R.id.id_btn_spy_market);
         btn_spy_market.setOnClickListener(this);
 
-        btn_profile = (Button) findViewById(R.id.id_btn_profile);
-        btn_profile.setOnClickListener(this);
-
-        btn_campaign = (Button) findViewById(R.id.id_btn_campaign);
-        btn_campaign.setOnClickListener(this);
-
-        btn_declare_product = (Button) findViewById(R.id.id_btn_declare_product);
-        btn_declare_product.setOnClickListener(this);
-
-        // Layouts to change searchBox state or main state
-        loginNameTxt = (TextView) findViewById(R.id.login_name_text);
-        marketNameTxt = (TextView) findViewById(R.id.market_name_text);
-
         /* Load Location-based Ads */
-        loadAdImages();
+        //loadAdImages();
 
         // Search Box
         searchBox = (SearchBox) findViewById(R.id.searchbox);
@@ -175,8 +158,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             Log.v(TAG, "MainActivity: Market is ready");
             loadMarket();
             loadUser();
-            marketNameTxt.setText(market.getName() + " \nid: " + market.getId() + " \n"
-                    + market.getVicinity());
 
             Intent intent = new Intent(getBaseContext(), SpyMarketActivity.class);
             intent.putExtra("market", market);
@@ -224,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             Log.v(MainActivity.TAG, "inflating Action bar view..");
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.menu_main, menu);
-            this.menu = menu;
             return true;
         } else {
             return false;
@@ -236,7 +216,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         super.onPrepareOptionsMenu(menu);
         if (user == null)
             menu.findItem(R.id.action_profile).setVisible(false);
-        searchMenuItem = menu.findItem(R.id.action_search);
         return true;
     }
 
@@ -304,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         }
     }
 
-    public void loadAdImages() {
+    /*public void loadAdImages() {
         mDemoSlider = (SliderLayout)findViewById(R.id.slider);
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
@@ -334,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         mDemoSlider.setCustomAnimation(new DescriptionAnimation());
         mDemoSlider.setDuration(4000);
         mDemoSlider.addOnPageChangeListener(this);
-    }
+    }*/
 
     @Override
     public void onSliderClick(BaseSliderView baseSliderView) {
@@ -402,7 +381,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     }
 
     private void setUserInfo() {
-        this.loginNameTxt.setText("");
         // Set profile info in Navigation Header
         updateNavProfile(loadUser());
     }
@@ -481,24 +459,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 startActivityForResult(intent, SELECT_MARKET_REQUESTCODE);
                 Log.v(TAG, "MarketSelectActivity is started. OK.");
             }
-        } else if(view.getId() == R.id.id_btn_profile) {
-            Log.v(TAG, "Profile Btn is clicked.");
-            goToProfilePage();
-        } else if (view.getId() == R.id.id_btn_campaign) {
-            Log.v(TAG, "Campaign Btn is clicked.");
-        } else if (view.getId() == R.id.id_btn_declare_product) {
-            Log.v(TAG, "Declare Product Btn is clicked.");
-
-            if (user == null) {
-                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                startActivityForResult(intent, LOGIN_FOR_ADD_PRODUCT_REQUESTCODE);
-                Log.v(TAG, "LoginActivity is started. OK.");
-            } else {
-                Intent intent = new Intent(getBaseContext(), AddProductActivity.class);
-                intent.putExtra("user", user);
-                startActivity(intent);
-                Log.v(TAG, "AddProductActivity is started. OK.");
-            }
         }
     }
 
@@ -517,11 +477,22 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Create a new fragment and specify the planet to show based on
         // position
         switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
+            case R.id.nav_profile:
+            case R.id.nav_login:
+                goToProfilePage();
                 break;
-            case R.id.nav_second_fragment:
+            case R.id.nav_shoplists:
+                goToShopListsFavorites();
                 break;
-            case R.id.nav_third_fragment:
+            case R.id.nav_favorites:
+                goToShopListsFavorites();
+                break;
+            case R.id.nav_declare_product:
+                goToDeclareProduct();
+                break;
+            case R.id.nav_settings:
+                break;
+            case R.id.nav_help_feedback:
                 break;
             default:
         }
@@ -530,6 +501,17 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         menuItem.setChecked(true);
         //setTitle(menuItem.getTitle());
         mDrawer.closeDrawers();
+    }
+
+    private void goToDeclareProduct() {
+        Log.v(TAG, "Declare Product Btn is clicked.");
+
+        if (user != null) {
+            Intent intent = new Intent(getBaseContext(), AddProductActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
+            Log.v(TAG, "AddProductActivity is started. OK.");
+        }
     }
 
     public void openSearch() {
@@ -599,6 +581,14 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
             startActivity(intent);
             Log.v(TAG, "ProfileActivity is started. OK.");
+        }
+    }
+
+    private void goToShopListsFavorites() {
+        if (this.user != null) {
+            Intent intent = new Intent(getBaseContext(), ShopListsActivity.class);
+            startActivity(intent);
+            Log.v(MainActivity.TAG, "ShopList Activity is started. OK.");
         }
     }
 

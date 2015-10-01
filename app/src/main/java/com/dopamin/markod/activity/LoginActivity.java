@@ -66,12 +66,8 @@ public class LoginActivity extends AppCompatActivity implements
      * A flag indicating that a PendingIntent is in progress and prevents us
      * from starting further intents.
      */
-    private ImageView imgProfilePic;
-    private TextView txtName, txtEmail;
-    private LinearLayout llProfileLayout;
     private ProgressDialog progressDialog;
     // Profile pic image size in pixels
-    private static final int PROFILE_PIC_SIZE = 400;
 
     private Toolbar toolbar;
 
@@ -99,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements
 
                 // OK, save User into Shared preference
                 // saveUser(user);
-                new LoadProfileImage(imgProfilePic).execute("https://graph.facebook.com/"
+                new LoadProfileImage().execute("https://graph.facebook.com/"
                         + user.getSocial_id() + "/picture?type=large");
 
                 updateUI(true);
@@ -136,10 +132,6 @@ public class LoginActivity extends AppCompatActivity implements
         callbackManager = CallbackManager.Factory.create();
         fbLoginButton = (LoginButton) findViewById(R.id.login_button);
         fbLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-        txtName = (TextView) findViewById(R.id.txtName);
-        txtEmail = (TextView) findViewById(R.id.txtEmail);
-        llProfileLayout = (LinearLayout) findViewById(R.id.llProfile);
-        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(R.string.dialog_login_title);
@@ -270,13 +262,9 @@ public class LoginActivity extends AppCompatActivity implements
             // Make visible associative logout buttons
             if (user.getLoginType().equals("FACEBOOK"))
                 fbLoginButton.setVisibility(View.VISIBLE);
-            llProfileLayout.setVisibility(View.VISIBLE);
 
-            txtName.setText(user.getFirstName() + " " + user.getLastName());
-            txtEmail.setText(user.getEmail());
         } else {
             fbLoginButton.setVisibility(View.VISIBLE);
-            llProfileLayout.setVisibility(View.GONE);
         }
     }
 
@@ -289,10 +277,8 @@ public class LoginActivity extends AppCompatActivity implements
      * Background Async task to load user profile picture from url
      * */
     private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
 
-        public LoadProfileImage(ImageView bmImage) {
-            this.bmImage = bmImage;
+        public LoadProfileImage() {
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -318,7 +304,6 @@ public class LoginActivity extends AppCompatActivity implements
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
             LoginActivity.user.setEncodedProfilePhoto(encodedImage);
 
-            bmImage.setImageBitmap(result);
             loginCompleted();
         }
     }

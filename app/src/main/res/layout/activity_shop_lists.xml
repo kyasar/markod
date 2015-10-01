@@ -44,7 +44,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
-        style="@style/btnStyleOrange"
         android:text="@string/str_btn_save_changes" />
 
     <LinearLayout

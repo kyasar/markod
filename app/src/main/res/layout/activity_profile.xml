@@ -26,7 +26,7 @@
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ico_market"
+            android:src="@drawable/img_no_profile"
             app:border_width="1dp"
             app:border_color="#9E9E9E" />
 
@@ -42,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:textStyle="bold"
+                android:shadowColor="@color/text_shadow"
                 android:text="Name Surname"
                 android:textSize="20dp" />
 
@@ -103,7 +104,6 @@
                 android:layout_weight="1"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
-                style="@style/btnStyleOrange"
                 android:drawableTop="@drawable/ico_detective"
                 android:text="@string/str_btn_shoplists" />
 
@@ -114,7 +114,6 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                style="@style/btnStyleOrange"
                 android:drawableTop="@drawable/ico_detective"
                 android:text="@string/str_btn_catalog" />
         </TableRow>
