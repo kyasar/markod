@@ -1,8 +1,10 @@
 package com.dopamin.markod.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInstaller;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -38,6 +40,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
@@ -110,6 +113,7 @@ public class LoginActivity extends AppCompatActivity implements
                 //Log.e("MainActivity", volleyError.getMessage());
                 Toast.makeText(getApplicationContext(), "Login failed !!", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+                callFacebookLogout();
             }
         }
     });
@@ -232,6 +236,13 @@ public class LoginActivity extends AppCompatActivity implements
                 }
             }
         };
+    }
+
+    /**
+     * Logout From Facebook
+     */
+    public static void callFacebookLogout() {
+        LoginManager.getInstance().logOut();
     }
 
     @Override
