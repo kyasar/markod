@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +43,8 @@ import com.dopamin.markod.search.SearchBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener,
@@ -398,17 +403,40 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     private void setUserInfo() {
         this.loginNameTxt.setText("");
-        if (loadUser()) {
-            Log.v(TAG, "MainActivity: User is ready.");
-            if (this.menu != null)
-                this.menu.findItem(R.id.action_profile).setVisible(true);
-            loginNameTxt.setText(" full name: " + user.getFirstName() + " " + user.getLastName()
-                    + "\n email: " + user.getEmail()
-                    + "\n points: " + user.getPoints()
-                    + "\n social_type: " + user.getLoginType()
-                    + "\n social_id: " + user.getSocial_id()
-                    + "\n id: " + user.get_id()
-                    + "\n shoplist" + user.getShopLists().toString());
+        // Set profile info in Navigation Header
+        updateNavProfile(loadUser());
+    }
+
+    private void updateNavProfile(boolean online) {
+        View profileBox = findViewById(R.id.id_profileBox);
+        View tv_welcome = findViewById(R.id.id_tv_welcome);
+
+        if (online) {
+            profileBox.setVisibility(View.VISIBLE);
+            tv_welcome.setVisibility(View.GONE);
+
+            CircleImageView profileImage = (CircleImageView) profileBox.findViewById(R.id.id_profile_image);
+            TextView profileName = (TextView) profileBox.findViewById(R.id.id_profile_userName);
+            TextView profilePoints = (TextView) profileBox.findViewById(R.id.id_profile_points);
+
+            byte[] b = Base64.decode(user.getEncodedProfilePhoto(), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+
+            if (bitmap != null) {
+                profileImage.setImageBitmap(bitmap);
+            }
+            profileName.setText(user.getFullName());
+            profilePoints.setText(user.getPoints() + " " + getResources().getString(R.string.str_points));
+
+            nvDrawer.getMenu().findItem(R.id.nav_login).setVisible(false);
+        } else {
+            profileBox.setVisibility(View.GONE);
+            tv_welcome.setVisibility(View.VISIBLE);
+
+            nvDrawer.getMenu().findItem(R.id.nav_login).setVisible(true);
+            nvDrawer.getMenu().findItem(R.id.nav_profile).setVisible(false);
+            nvDrawer.getMenu().findItem(R.id.nav_shoplists).setVisible(false);
+            nvDrawer.getMenu().findItem(R.id.nav_favorites).setVisible(false);
         }
     }
 

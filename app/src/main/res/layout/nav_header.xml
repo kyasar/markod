@@ -2,17 +2,74 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="192dp"
-    android:background="?attr/colorPrimaryDark"
-    android:padding="16dp"
+    android:background="@drawable/img_nav_header_1"
+    android:padding="8dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:orientation="vertical"
     android:gravity="bottom">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/id_tv_welcome"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Header"
-        android:textColor="@color/white"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:textColor="@android:color/white"
+            android:shadowColor="@color/text_shadow"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="@string/str_app_welcome" />
+
+    </RelativeLayout>
+
+    <!-- Profile Box -->
+    <RelativeLayout
+        android:id="@+id/id_profileBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/id_profile_image"
+            android:layout_alignParentBottom="true"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ico_market"
+            android:layout_marginTop="2dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/id_profile_image"
+            android:paddingBottom="8dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/id_profile_userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kadir Yasar"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/id_profile_points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="4dp"
+                android:text="10 Points"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

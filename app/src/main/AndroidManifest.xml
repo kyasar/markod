@@ -72,6 +72,7 @@
         <activity
             android:name=".activity.SpyMarketActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:parentActivityName=".activity.MainActivity"
             android:label="@string/title_activity_spymarket" >
         </activity>
         <activity
@@ -101,7 +102,8 @@
         <activity
             android:name=".activity.AddProductActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/title_activity_add_product" >
+            android:label="@string/title_activity_add_product"
+            android:parentActivityName=".activity.MainActivity" >
         </activity>
         <activity
             android:name=".scanner.SimpleScannerActivity"

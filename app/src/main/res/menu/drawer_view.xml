@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group>
         <item
-            android:id="@+id/nav_first_fragment"
-            android:icon="@drawable/ico_new_product"
-            android:title="First" />
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_account_circle_black_24dp"
+            android:title="@string/str_nav_profile" />
         <item
-            android:id="@+id/nav_second_fragment"
-            android:icon="@drawable/ico_plus_green"
-            android:title="Second" />
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_account_circle_black_24dp"
+            android:title="@string/str_nav_login" />
         <item
-            android:id="@+id/nav_third_fragment"
-            android:icon="@drawable/ico_points"
-            android:title="Third" />
+            android:id="@+id/nav_shoplists"
+            android:icon="@drawable/ic_shopping_cart_black_24dp"
+            android:title="@string/str_nav_shoplists" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_stars_black_24dp"
+            android:title="@string/str_nav_fav" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/str_nav_settings" />
+        <item
+            android:id="@+id/nav_help_feedback"
+            android:icon="@drawable/ic_help_black_24dp"
+            android:title="@string/str_nav_help" />
     </group>
 </menu>

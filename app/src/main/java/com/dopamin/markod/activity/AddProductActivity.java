@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -43,15 +45,16 @@ import java.io.ByteArrayOutputStream;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class AddProductActivity extends Activity implements View.OnClickListener, TextWatcher {
+public class AddProductActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     private ImageButton btn_scanBarcode;
     private TextView txt_scannedCode, txt_photoTake;
     private EditText etxt_productDesc;
-    private Button btn_sendProduct, btn_back;
+    private Button btn_sendProduct;
     private ImageView iv_photo, iv_take_photo, iv_barcode;
     private Bitmap bitmapPhoto;
     private ProgressDialog progressDialog;
+    private Toolbar toolbar;
 
     private Product p;
     private User user;
@@ -63,14 +66,17 @@ public class AddProductActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
 
+        // Setting Toolbar
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         btn_scanBarcode = (ImageButton) findViewById(R.id.id_btn_scanBarcode);
         btn_scanBarcode.setOnClickListener(this);
 
         btn_sendProduct = (Button) findViewById(R.id.id_btn_sendProduct);
         btn_sendProduct.setOnClickListener(this);
-
-        btn_back = (Button) findViewById(R.id.id_btn_back);
-        btn_back.setOnClickListener(this);
 
         txt_scannedCode = (TextView) findViewById(R.id.txt_scannedCode);
         txt_photoTake =  (TextView) findViewById(R.id.id_txt_take_photo);
@@ -104,12 +110,6 @@ public class AddProductActivity extends Activity implements View.OnClickListener
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -123,10 +123,6 @@ public class AddProductActivity extends Activity implements View.OnClickListener
 
             Intent intent = new Intent(this, SimpleScannerActivity.class);
             startActivityForResult(intent, MainActivity.BARCODE_REQUEST);
-        }
-        else if (view.getId() == R.id.id_btn_back) {
-            Log.v(MainActivity.TAG, "Return back to Main menu..");
-            finish();
         }
         else if (view.getId() == R.id.id_take_photo) {
             Log.v(MainActivity.TAG, "Taking photo..");

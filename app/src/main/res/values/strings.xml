@@ -40,7 +40,7 @@
     <string name="login_title">Please Login</string>
     <string name="noconn_tryagain">No Interntet Connection!! Try again later..</string>
     <string name="noconn_tryagain_btn">Check Connection</string>
-    <string name="title_activity_spymarket">SpyMarket</string>
+    <string name="title_activity_spymarket">Spy Market</string>
     <string name="send">Send</string>
     <string name="dialog_login_title">Logging..</string>
     <string name="dialog_login_msg">Please wait.. Logging into markod.com</string>
@@ -114,4 +114,12 @@
     <string name="title_activity_search_reveal">SearchRevealActivity</string>
     <string name="str_hint_product_searchbox">product name</string>
     <string name="title_activity_results">Search Results</string>
+    <string name="str_points">Points</string>
+    <string name="str_nav_prfile">Profile</string>
+    <string name="str_nav_profile">Profile</string>
+    <string name="str_nav_login">Log In</string>
+    <string name="str_nav_shoplists">Shop Lists</string>
+    <string name="str_nav_fav">Favorites</string>
+    <string name="str_nav_settings">Settings</string>
+    <string name="str_nav_help"><![CDATA[Help & Feedback]]></string>
 </resources>

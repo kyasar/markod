@@ -123,69 +123,17 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Navigation Bar Drawer -->
     <!-- The navigation drawer -->
-    <RelativeLayout
-        android:layout_width="280dp"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nvView"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/drawerPane"
-        android:layout_gravity="start">
-
-        <!-- Profile Box -->
-
-        <RelativeLayout
-            android:id="@+id/profileBox"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@color/material_blue_grey_800"
-            android:padding="8dp" >
-
-            <ImageView
-                android:id="@+id/avatar"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ico_market"
-                android:layout_marginTop="15dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_toRightOf="@+id/avatar"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:id="@+id/userName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kadir Yasar"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="4dp"
-                    android:text="View Profile"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <!-- The navigation drawer -->
-        <android.support.design.widget.NavigationView
-            android:id="@+id/nvView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="@android:color/white"
-            app:headerLayout="@layout/nav_header"
-            app:menu="@menu/drawer_view" />
-
-    </RelativeLayout>
+        android:layout_gravity="start"
+        android:background="@color/markod_bg_color"
+        android:theme="@style/NavigationDrawerStyle"
+        app:itemIconTint="@color/nav_drawer_item"
+        app:itemTextColor="@color/nav_drawer_item"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_view" />
 
 </android.support.v4.widget.DrawerLayout>

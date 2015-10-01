@@ -42,4 +42,8 @@
         <attr name="mm_rtlEnabled" format="boolean"/>
     </declare-styleable>
 
+    <style name="NavigationDrawerStyle" parent="NavigationDrawerStyle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
