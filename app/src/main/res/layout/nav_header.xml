@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:background="@drawable/img_nav_header_1"
@@ -10,6 +11,7 @@
 
     <RelativeLayout
         android:id="@+id/id_tv_welcome"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -37,10 +39,12 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/id_profile_image"
             android:layout_alignParentBottom="true"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/ico_market"
-            android:layout_marginTop="2dp" />
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/img_no_profile"
+            android:layout_marginTop="2dp"
+            app:border_width="1dp"
+            app:border_color="#9E9E9E" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -56,19 +60,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Kadir Yasar"
-                android:textColor="#fff"
-                android:textSize="20sp"
+                android:textColor="@color/primary_material_dark"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/id_profile_points"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="4dp"
-                android:text="10 Points"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/ico_points"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|center_horizontal" />
+
+                <TextView
+                    android:id="@+id/id_profile_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="6dp"
+                    android:text="10 Points"
+                    android:textColor="@color/primary_material_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </RelativeLayout>
 
