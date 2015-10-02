@@ -4,8 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:padding="8dp">
+    android:descendantFocusability="blocksDescendants"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -19,6 +22,7 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/total_price"
             android:layout_centerInParent="true"
+            android:padding="6dp"
             android:orientation="vertical">
 
             <!-- Place Name -->
@@ -26,10 +30,10 @@
                 android:id="@+id/place_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
+                android:paddingBottom="2dp"
                 android:text="MArket NAme"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <!-- Place Address -->
@@ -37,7 +41,6 @@
                 android:id="@+id/place_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dip"
                 android:text="Market Address, Street, #No, 06800 Smthing Mooore"
                 android:textSize="12sp" />
 
@@ -46,7 +49,6 @@
                 android:id="@+id/missing"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dip"
                 android:visibility="gone"
                 android:text="# of missing products"
                 android:textColor="@color/red"
@@ -69,17 +71,56 @@
 
     <!-- Result Details Layout -->
     <LinearLayout
-        android:id="@+id/result_details"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/id_results_bar"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <!--<TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/id_products_details"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Product List"
-            android:textSize="20dp"/> -->
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/id_action_tools"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageButton
+                        android:id="@+id/id_open_in_maps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/darkgreen"
+                        android:background="@android:drawable/btn_default_small"
+                        android:drawablePadding="2dp"
+                        android:src="@drawable/ic_directions_black_24dp" />
+
+                    <ImageButton
+                        android:id="@+id/id_order_to_market"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/primary_material_dark"
+                        android:background="@android:drawable/btn_default_small"
+                        android:drawablePadding="2dp"
+                        android:src="@drawable/ic_local_shipping_black_24dp" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

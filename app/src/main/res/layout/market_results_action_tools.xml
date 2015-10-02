@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/id_action_tools"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/id_open_in_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/darkgreen"
+                android:background="@android:drawable/btn_default_small"
+                android:drawablePadding="2dp"
+                android:src="@drawable/ic_directions_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/id_order_to_market"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/primary_material_dark"
+                android:background="@android:drawable/btn_default_small"
+                android:drawablePadding="2dp"
+                android:src="@drawable/ic_local_shipping_black_24dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

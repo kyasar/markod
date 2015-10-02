@@ -21,9 +21,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -495,8 +498,9 @@ public class SearchResultsActivity extends AppCompatActivity
 
         Log.v(MainActivity.TAG, "List-view item is clicked (" + market.getName() + "). OK.");
 
-        LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.result_details);
-        toolbar.removeAllViews();
+        LinearLayout lay_results_bar = (LinearLayout) view.findViewById(R.id.id_results_bar);
+        LinearLayout lay_products_details = (LinearLayout) lay_results_bar.findViewById(R.id.id_products_details);
+        lay_products_details.removeAllViews();
 
         /* Search product in Product list and use info in local product list
          * Because list from server just contains price and barcode, No name !! */
@@ -532,11 +536,11 @@ public class SearchResultsActivity extends AppCompatActivity
                 tvN.setTextColor(R.color.gray);
             }
 
-            toolbar.addView(llPview);
+            lay_products_details.addView(llPview);
         }
 
         // Creating the expand animation for the item
-        ExpandListviewAnimation expandAni = new ExpandListviewAnimation(toolbar, 500);
+        ExpandListviewAnimation expandAni = new ExpandListviewAnimation(lay_results_bar, 500);
 
         // Start the animation on the toolbar
         toolbar.startAnimation(expandAni);

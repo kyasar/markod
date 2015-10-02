@@ -126,4 +126,6 @@
     <string name="str_ads_search">Use \"Search\" to search a product in nearby markets.\nWhere it is sold ? How much ?</string>
     <string name="str_ads_account">Login to search multiple products\nGet notifications on price changings\nWatch your favorite markets..\nAnd more..</string>
     <string name="str_ads_spy">Be a Markod Agent !!\nSpy a market, share product prices and earn money !!</string>
+    <string name="str_btn_show_in_maps">Maps</string>
+    <string name="str_btn_order_to_market">Order</string>
 </resources>

@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_product_price_iem"
+<LinearLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView android:id="@+id/product_name"
+    <View
+        android:background="@color/primary_material_dark"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="5dip"
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
+        android:layout_height="1dp" />
 
-    <TextView android:id="@+id/product_price"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/ll_product_price_iem"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="end"
-        android:padding="5dip"
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp"
+        android:orientation="horizontal" >
+
+        <TextView android:id="@+id/product_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Product Name"
+            android:textColor="@color/primary_material_dark"
+            android:textSize="16sp"/>
+
+        <TextView android:id="@+id/product_price"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="end"
+            android:text="19.90"
+            android:textColor="@color/primary_material_dark"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
 
 </LinearLayout>
