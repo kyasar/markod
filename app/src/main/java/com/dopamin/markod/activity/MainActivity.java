@@ -9,11 +9,13 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -37,13 +40,17 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.dopamin.markod.R;
+import com.dopamin.markod.adapter.ViewPagerAdapter;
 import com.dopamin.markod.objects.*;
 import com.google.gson.Gson;
 import com.dopamin.markod.search.SearchBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
@@ -82,10 +89,13 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     private SearchBox searchBox;
 
-    ViewPAger
+    private AutoScrollViewPager ads_viewpager;
 
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+
+    static int count = 0;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +157,20 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         searchBox.enableVoiceRecognition(this);
         searchBox.setLogoText(getResources().getString(R.string.app_name));
         searchBox.setHintText(getResources().getString(R.string.str_hint_product_searchbox));
+
+        ads_viewpager = (AutoScrollViewPager) findViewById(R.id.id_ads_pager);
+        int [] icons = {R.drawable.ic_action_search, R.drawable.ic_account_circle_black_24dp, R.drawable.ico_scan_market};
+        String [] ads = {   getResources().getString(R.string.str_ads_search),
+                            getResources().getString(R.string.str_ads_account),
+                            getResources().getString(R.string.str_ads_spy) };
+        final ViewPagerAdapter ads_adapter = new ViewPagerAdapter(this, ads, icons);
+        ads_viewpager.setAdapter(ads_adapter);
+
+        ads_viewpager.setCycle(true);
+        ads_viewpager.setSlideBorderMode(AutoScrollViewPager.SLIDE_BORDER_MODE_CYCLE);
+        ads_viewpager.setInterval(3000);
+        ads_viewpager.setScrollDurationFactor(2);
+        ads_viewpager.startAutoScroll();
     }
 
     @Override

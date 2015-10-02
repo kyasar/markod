@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/shoplist_group_highlighter"
+    android:background="@drawable/btn_background"
     android:orientation="vertical" >
 
     <View
@@ -18,7 +18,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:padding="6dp"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textColor="@color/white"
         android:text="Group List" />
 

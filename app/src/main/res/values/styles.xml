@@ -9,9 +9,6 @@
 
     <style name="btnStyle" parent="Base.Widget.AppCompat.Button">
         <item name="android:textColor">@color/white</item>
-
-        <item name="android:shadowRadius">5.6</item>
-        <item name="android:background">@color/darkgreen</item>
         <item name="android:padding">2dp</item>
     </style>
 

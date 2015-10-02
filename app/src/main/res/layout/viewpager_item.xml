@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="8dp"
+    android:background="@drawable/ads_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/id_viewpager_img"
+        android:tint="@color/primary_material_dark"
+        android:src="@drawable/ic_create_black_24dp"
+        android:paddingRight="6dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+    <TextView
+        android:id="@+id/id_viewpager_info"
+        android:layout_toRightOf="@id/id_viewpager_img"
+        android:textColor="@color/gray"
+        android:textSize="16dp"
+        android:lineSpacingExtra="4dp"
+        android:text="Use search button to find which product is sold with which price in where?"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

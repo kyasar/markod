@@ -13,20 +13,17 @@
     <!-- More -->
     <!-- Profile -->
     <item android:id="@+id/action_profile"
-        android:icon="@drawable/ic_action_about"
         android:title="@string/action_profile"
         app:showAsAction="never"/>
 
     <!-- Settings -->
     <item android:id="@+id/action_settings"
-        android:icon="@drawable/ic_action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
 
     <!-- Help -->
     <item android:id="@+id/action_help"
-        android:icon="@drawable/ic_action_help"
         android:title="@string/action_help"
         app:showAsAction="never"/>
 

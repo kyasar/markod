@@ -18,9 +18,9 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="400dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/img_nav_header_4" />
+                android:src="@drawable/img_main_page" />
 
             <View
                 android:layout_width="fill_parent"
@@ -51,17 +51,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
+            <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
+                android:id="@+id/id_ads_pager"
+                android:layout_alignParentTop="true"
+                android:layout_width="fill_parent"
+                android:layout_height="120dp" />
+
             <!--<com.daimajia.slider.library.SliderLayout
                 android:id="@+id/slider"
                 android:padding="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />-->
-
-            <ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
             <Button
                 android:id="@+id/id_btn_spy_market"
                 android:layout_width="match_parent"
@@ -70,8 +70,8 @@
                 android:layout_alignParentBottom="true"
                 android:drawableLeft="@drawable/ico_scan_market"
                 android:background="@drawable/btn_background"
-                style="@style/btnStyle"
                 android:textSize="18dp"
+                android:textColor="@color/white"
                 android:text="@string/str_btn_spy_market" />
 
         </RelativeLayout>

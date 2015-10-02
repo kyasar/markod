@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +50,7 @@ import com.dopamin.markod.objects.User;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShopListsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -62,6 +65,8 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
     private Toolbar toolbar;
     private SearchBox searchBox;
+
+    CoordinatorLayout snackbarCoordinatorLayout;
 
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE = 701;
@@ -92,6 +97,8 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                 layout_hintAddShoplist.setVisibility(View.VISIBLE);
             }
         }
+
+        snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
 
         btn_saveChanges = (Button) findViewById(R.id.id_btn_save_changes);
         btn_saveChanges.setOnClickListener(this);
@@ -241,6 +248,28 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         exp_lv_shopLists.setAdapter(exp_lv_adapter);
         exp_lv_shopLists.expandGroup(group);
         btn_saveChanges.setVisibility(View.VISIBLE);
+        snackIt("Product is removed from shoplist");
+    }
+
+    private boolean isProductAlreadyAdded(int group, Product p) {
+        List<Product> products = this.user.getShopLists().get(group).getProducts();
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getBarcode().matches(p.getBarcode())) {
+                Log.v(MainActivity.TAG, "The product " + p.getBarcode()
+                        + " is already added. Just updating the price.");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addItemToList(int group, Product p) {
+        if (!isProductAlreadyAdded(group, p)) {
+            this.user.getShopLists().get(group).getProducts().add(p);
+            exp_lv_shopLists.setAdapter(exp_lv_adapter);
+            exp_lv_shopLists.expandGroup(group);
+            btn_saveChanges.setVisibility(View.VISIBLE);
+        }
     }
 
     private void deleteShopList() {
@@ -303,16 +332,16 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
                     progressDialog.dismiss();
                     btn_saveChanges.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(),
-                            "Your activities are saved.", Toast.LENGTH_SHORT).show();
+
+                    snackIt("Your changes are saved");
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     progressDialog.dismiss();
                     Log.e(MainActivity.TAG, "Volley: User update error.");
-                    Toast.makeText(getApplicationContext(),
-                            "Server error ! Try again later..", Toast.LENGTH_SHORT).show();
+
+                    snackIt("Server error ! Try again later..");
                 }
             });
             //Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
@@ -330,8 +359,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
             btn_saveChanges.setVisibility(View.VISIBLE);
             layout_hintAddShoplist.setVisibility(View.GONE);
             Log.v(MainActivity.TAG, "New Shoplist name: " + listName);
-            Toast.makeText(this, "New Shoplist is created: " + value, Toast.LENGTH_SHORT).show();
-
+            snackIt("New Shoplist is created: " + value);
         } else if (code == SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE) {
             Log.v(MainActivity.TAG, "New Shoplist creation Canceled ");
         }
@@ -424,6 +452,14 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
                 Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).getProduct().getName());
+                addItemToList(selectedList, searchBox.getSearchables().get(pos).getProduct());
+
+                //Use this to un-tint the screen
+                searchBox.clearResults();
+                searchBox.clearSearchable();
+                searchBox.setSearchString("");
+                if (searchBox.isSearchOpen())
+                    closeSearch();
             }
         });
         searchBox.requestFocus();
@@ -432,5 +468,15 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     protected void closeSearch() {
         searchBox.hideCircularly(this);
         toolbar.setTitle(getResources().getString(R.string.title_activity_shop_lists));
+    }
+
+    public void snackIt(String msg) {
+        Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_SHORT)
+            .setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            }).show();
     }
 }
