@@ -490,7 +490,7 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         // getting values from selected ListItem
-        Market market = (Market) adapterView.getAdapter().getItem(i);
+        final Market market = (Market) adapterView.getAdapter().getItem(i);
         Product productServer;
         LinearLayout llPview;
         TextView tvP, tvN;
@@ -542,7 +542,24 @@ public class SearchResultsActivity extends AppCompatActivity
         // Creating the expand animation for the item
         ExpandListviewAnimation expandAni = new ExpandListviewAnimation(lay_results_bar, 500);
 
+        LinearLayout lay_action_tools = (LinearLayout) lay_results_bar.findViewById(R.id.id_action_tools);
+        ImageButton order_btn = (ImageButton) lay_action_tools.findViewById(R.id.id_order_to_market);
+        order_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v(MainActivity.TAG, market.getName() + " does not deliver orders !!");
+            }
+        });
+
+        ImageButton maps_btn = (ImageButton) lay_action_tools.findViewById(R.id.id_open_in_maps);
+        maps_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v(MainActivity.TAG, market.getName() + " will be shown on Maps..");
+            }
+        });
+
         // Start the animation on the toolbar
-        toolbar.startAnimation(expandAni);
+        lay_results_bar.startAnimation(expandAni);
     }
 }
