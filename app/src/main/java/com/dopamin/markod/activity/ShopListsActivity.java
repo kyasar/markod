@@ -479,4 +479,13 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                 }
             }).show();
     }
+
+    public void searchShopList(int groupPosition) {
+        searchNearbyMarkets((ArrayList<Product>) user.getShopLists().get(groupPosition).getProducts());
+    }
+
+    public void addToShopList(int groupPosition) {
+        selectedList = groupPosition;
+        openSearch();
+    }
 }

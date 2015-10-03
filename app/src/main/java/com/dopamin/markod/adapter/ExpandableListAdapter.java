@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dopamin.markod.R;
+import com.dopamin.markod.activity.MainActivity;
+import com.dopamin.markod.activity.ShopListsActivity;
 import com.dopamin.markod.objects.ShopList;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -85,7 +88,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
+    public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         //String headerTitle = (String) getGroup(groupPosition);
         String headerTitle = this.shopLists.get(groupPosition).getName();
@@ -103,7 +106,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.v(MainActivity.TAG, "SEARCH Clicked: " + groupPosition);
+                if (_context instanceof ShopListsActivity) {
+                    ((ShopListsActivity) _context).searchShopList(groupPosition);
+                }
+            }
+        });
 
+        ImageButton addToListBtn = (ImageButton) convertView.findViewById(R.id.id_add_to_shoplist);
+        addToListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v(MainActivity.TAG, "ADD Clicked: " + groupPosition);
+                if (_context instanceof ShopListsActivity) {
+                    ((ShopListsActivity) _context).addToShopList(groupPosition);
+                }
             }
         });
 
