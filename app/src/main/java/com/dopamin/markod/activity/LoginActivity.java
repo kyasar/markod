@@ -70,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements
     // Profile pic image size in pixels
 
     private Toolbar toolbar;
+    private TextView link_to_register;
 
     private Map<String,String> params = new HashMap<String, String>();
 
@@ -132,6 +133,9 @@ public class LoginActivity extends AppCompatActivity implements
         callbackManager = CallbackManager.Factory.create();
         fbLoginButton = (LoginButton) findViewById(R.id.login_button);
         fbLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+
+        link_to_register = (TextView) findViewById(R.id.link_to_register);
+        link_to_register.setOnClickListener(this);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(R.string.dialog_login_title);
@@ -270,7 +274,11 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View view) {
-
+        if (view.getId() == R.id.link_to_register) {
+            Intent intent = new Intent(getBaseContext(), RegisterActivity.class);
+            startActivity(intent);
+            Log.v(MainActivity.TAG, "RegisterActivity is started. OK.");
+        }
     }
 
     /**
