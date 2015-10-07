@@ -134,4 +134,7 @@
     <string name="str_et_lastname">Last name</string>
     <string name="str_et_firstname">First name</string>
     <string name="str_et_password">Password</string>
+    <string name="str_tv_firstname_err">Enter a valid name.</string>
+    <string name="str_tv_email_err">Enter a valid email address</string>
+    <string name="str_tv_password_err">Choose a valid password.</string>
 </resources>

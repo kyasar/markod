@@ -13,6 +13,7 @@ public class User implements Parcelable {
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
     private String username;
     private Integer points;
     private String social_id;
@@ -47,6 +48,14 @@ public class User implements Parcelable {
         this.loginType = parcel.readString();
         this.encodedProfilePhoto = parcel.readString();
         this.shopLists = parcel.readArrayList(ShopList.class.getClassLoader());
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {

@@ -26,6 +26,14 @@
             android:singleLine="true"
             android:paddingLeft="12dp"
             android:hint="@string/str_et_firstname"/>
+        <TextView
+            android:id="@+id/id_tv_firstname_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_firstname_err" />
 
         <EditText
             android:id="@+id/id_et_lastname"
@@ -35,6 +43,14 @@
             android:singleLine="true"
             android:paddingLeft="12dp"
             android:hint="@string/str_et_lastname"/>
+        <TextView
+            android:id="@+id/id_tv_lastname_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_firstname_err" />
 
         <EditText
             android:id="@+id/id_et_email"
@@ -45,6 +61,14 @@
             android:singleLine="true"
             android:paddingLeft="12dp"
             android:hint="@string/str_et_email"/>
+        <TextView
+            android:id="@+id/id_tv_email_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_email_err" />
 
         <EditText
             android:id="@+id/id_et_password"
@@ -55,6 +79,14 @@
             android:singleLine="true"
             android:paddingLeft="12dp"
             android:hint="@string/str_et_password"/>
+        <TextView
+            android:id="@+id/id_tv_password_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_password_err" />
 
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/id_btn_register"
