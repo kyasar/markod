@@ -1,5 +1,9 @@
 package com.dopamin.markod.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +26,7 @@ import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.regex.Matcher;
@@ -33,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     TextView tv_firstName, tv_lastName, tv_email, tv_password;
     ActionProcessButton btn_register;
     private Toolbar toolbar;
+    private CoordinatorLayout snackbarCoordinatorLayout;
 
     String userRegisterURL = MainActivity.MDS_SERVER + "/mds/signup/local/";
 
@@ -47,6 +53,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
+
         et_firstName = (EditText) findViewById(R.id.id_et_firstname);
         et_lastName = (EditText) findViewById(R.id.id_et_lastname);
         et_email = (EditText) findViewById(R.id.id_et_email);
@@ -60,28 +68,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btn_register = (ActionProcessButton) findViewById(R.id.id_btn_register);
         btn_register.setMode(ActionProcessButton.Mode.ENDLESS);
         btn_register.setOnClickListener(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_register, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public static boolean isEmailValid(String email) {
@@ -148,14 +134,35 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     public void onResponse(JSONObject response) {
                         Log.i("volley", "Response: " + response);
                         btn_register.setProgress(0);
-                        setInputs(true);
+                        String status = null;
+
+                        try {
+                            status = response.get("status").toString();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (status != null) {
+                            if (status.equalsIgnoreCase("ALREADY")) {
+                                snackIt("User is already registered !");
+                                setInputs(true);
+                            } else if (status.equalsIgnoreCase("NOT_VERIFIED")) {
+                                snackIt("Activation link is already sent to your email !");
+                                setInputs(true);
+                            } else if (status.toString().equalsIgnoreCase("OK")) {
+                                snackIt("Activation link sent. Check your email !");
+                                showDialog();
+                            }
+                        }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(MainActivity.TAG, "Volley: User register error.");
+                        Log.e(MainActivity.TAG, error.toString());
                         btn_register.setProgress(0);
                         setInputs(true);
+                        snackIt(getResources().getString(R.string.str_dialog_msg_register_failed));
                     }
                 });
         Volley.newRequestQueue(getApplication()).add(jsObjRequest);
@@ -167,5 +174,29 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         et_email.setEnabled(b);
         et_password.setEnabled(b);
         btn_register.setEnabled(b);
+    }
+
+    private void clearInputs() {
+        et_firstName.setText("");
+        et_lastName.setText("");
+        et_email.setText("");
+        et_password.setText("");
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.str_dialog_msg_register_ok))
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public void snackIt(String msg) {
+        Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
     }
 }
