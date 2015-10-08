@@ -128,7 +128,7 @@
     <string name="str_ads_spy">Be a Markod Agent !!\nSpy a market, share product prices and earn money !!</string>
     <string name="str_btn_show_in_maps">Maps</string>
     <string name="str_btn_order_to_market">Order</string>
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_register">Register</string>
     <string name="str_btn_register">Register</string>
     <string name="str_et_email">E-mail</string>
     <string name="str_et_lastname">Last name</string>
@@ -137,4 +137,6 @@
     <string name="str_tv_firstname_err">Enter a valid name.</string>
     <string name="str_tv_email_err">Enter a valid email address</string>
     <string name="str_tv_password_err">Choose a valid password.</string>
+    <string name="str_dialog_msg_register_ok">Success!\nCheck your email\nClick to Verify button to activate your account.</string>
+    <string name="str_dialog_msg_register_failed">An Error occured. Try later..</string>
 </resources>
