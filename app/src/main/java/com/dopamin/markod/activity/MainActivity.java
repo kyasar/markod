@@ -47,8 +47,6 @@ import com.dopamin.markod.search.SearchBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -94,14 +92,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
 
-    static int count = 0;
-    private Timer timer;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        internetConn = isInternetAvailable();
+        //internetConn = isInternetAvailable();
+        /*internetConn = true;
 
         if (!isInternetAvailable()) //returns true if internet available
         {
@@ -117,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 }
             });
             return;
-        }
+        }*/
         setContentView(R.layout.activity_main);
 
         // Setting Toolbar
@@ -438,6 +434,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             tv_welcome.setVisibility(View.VISIBLE);
 
             nvDrawer.getMenu().findItem(R.id.nav_login).setVisible(true);
+            nvDrawer.getMenu().findItem(R.id.nav_declare_product).setVisible(false);
             nvDrawer.getMenu().findItem(R.id.nav_profile).setVisible(false);
             nvDrawer.getMenu().findItem(R.id.nav_shoplists).setVisible(false);
             nvDrawer.getMenu().findItem(R.id.nav_favorites).setVisible(false);

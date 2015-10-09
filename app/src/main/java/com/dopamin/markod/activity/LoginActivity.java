@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity implements
             if(volleyError != null) {
                 // TODO: this line cause to "println needs a message" error - fix it later for log.
                 //Log.e("MainActivity", volleyError.getMessage());
-                Toast.makeText(getApplicationContext(), "Login failed !!", Toast.LENGTH_SHORT).show();
+                snackIt(getResources().getString(R.string.str_msg_login_failed));
                 progressDialog.dismiss();
                 callFacebookLogout();
             }
@@ -291,6 +291,7 @@ public class LoginActivity extends AppCompatActivity implements
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.link_to_register) {
+            link_to_register.setPaintFlags(link_to_register.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
             Intent intent = new Intent(getBaseContext(), RegisterActivity.class);
             startActivity(intent);
             Log.v(MainActivity.TAG, "RegisterActivity is started. OK.");
