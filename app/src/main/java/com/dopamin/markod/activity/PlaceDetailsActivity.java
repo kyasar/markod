@@ -51,7 +51,7 @@ public class PlaceDetailsActivity extends Activity {
 	};
 	
 	
-	/** A method to download json data from url */
+	/** A method to download json data from socialLoginURL */
     private String downloadUrl(String strUrl) throws IOException{
         String data = "";
         InputStream iStream = null;
@@ -60,13 +60,13 @@ public class PlaceDetailsActivity extends Activity {
                 URL url = new URL(strUrl);                
                 
 
-                // Creating an http connection to communicate with url 
+                // Creating an http connection to communicate with socialLoginURL
                 urlConnection = (HttpURLConnection) url.openConnection();                
 
-                // Connecting to url 
+                // Connecting to socialLoginURL
                 urlConnection.connect();                
 
-                // Reading data from url 
+                // Reading data from socialLoginURL
                 iStream = urlConnection.getInputStream();
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
@@ -82,7 +82,7 @@ public class PlaceDetailsActivity extends Activity {
                 br.close();
 
         }catch(Exception e){
-                Log.d("Exception while downloading url", e.toString());
+                Log.d("Exception while downloading socialLoginURL", e.toString());
         }finally{
                 iStream.close();
                 urlConnection.disconnect();
@@ -159,7 +159,7 @@ public class PlaceDetailsActivity extends Activity {
 			String website = hPlaceDetails.get("website");
 			String rating = hPlaceDetails.get("rating");
 			String international_phone_number = hPlaceDetails.get("international_phone_number");
-			String url = hPlaceDetails.get("url");
+			String url = hPlaceDetails.get("socialLoginURL");
 			
 			
 			String mimeType = "text/html";

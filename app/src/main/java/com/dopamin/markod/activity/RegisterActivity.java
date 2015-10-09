@@ -2,20 +2,18 @@ package com.dopamin.markod.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,9 +26,6 @@ import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -151,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 setInputs(true);
                             } else if (status.toString().equalsIgnoreCase("OK")) {
                                 snackIt("Activation link sent. Check your email !");
-                                showDialog();
+                                showSuccRegisterDialog();
                             }
                         }
                     }
@@ -165,6 +160,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         snackIt(getResources().getString(R.string.str_dialog_msg_register_failed));
                     }
                 });
+        // Set timeout to 15 sec, and try only one time
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Volley.newRequestQueue(getApplication()).add(jsObjRequest);
     }
 
@@ -183,20 +182,45 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         et_password.setText("");
     }
 
-    private void showDialog() {
+    static final int MSG_DISMISS_DIALOG = 0;
+    private AlertDialog dialogRegistered;
+
+    private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case MSG_DISMISS_DIALOG:
+                    if (dialogRegistered != null && dialogRegistered.isShowing()) {
+                        dialogRegistered.dismiss();
+                        registrationCompleted();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    private void showSuccRegisterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.str_dialog_msg_register_ok))
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        finish();
+                        registrationCompleted();
                     }
                 });
-        AlertDialog alert = builder.create();
-        alert.show();
+        dialogRegistered = builder.create();
+        dialogRegistered.show();
+
+        // dismiss dialog in TIME_OUT ms
+        mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, 4000);
     }
 
     public void snackIt(String msg) {
         Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
+    }
+
+    public void registrationCompleted() {
+        finish();
     }
 }

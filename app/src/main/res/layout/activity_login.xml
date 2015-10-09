@@ -1,67 +1,123 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/snackbarCoordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
     <include
         layout="@layout/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-        <!--  Email Label -->
-        <EditText android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dip"
-            android:layout_marginBottom="0dip"
-            android:inputType="textEmailAddress"
-            android:hint="@string/str_et_email"
-            android:singleLine="true"/>
-
-        <!--  Password Label -->
-        <EditText android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            android:inputType="textPassword"
-            android:singleLine="true"
-            android:hint="@string/str_et_password"
-            android:password="true"/>
-
-        <!-- Login button -->
-        <Button android:id="@+id/btnLogin"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:text="@string/loginBtn"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:orientation="vertical">
 
-        <!-- Link to Registration Screen -->
-        <TextView android:id="@+id/link_to_register"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:layout_marginBottom="10dip"
-            android:text="@string/registerText"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="#0b84aa"/>
+            <EditText
+                android:id="@+id/id_et_email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:paddingLeft="12dp"
+                android:hint="@string/str_et_email"/>
+            <TextView
+                android:id="@+id/id_tv_email_err"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:paddingLeft="12dp"
+                android:text="@string/str_tv_email_err" />
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dip"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textSize="20sp"
-            facebook:com_facebook_login_text="Facebook Login"
-            facebook:com_facebook_logout_text="Facebook Logout" />
+            <EditText
+                android:id="@+id/id_et_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLength="8"
+                android:singleLine="true"
+                android:paddingLeft="12dp"
+                android:hint="@string/str_et_password"/>
+            <TextView
+                android:id="@+id/id_tv_password_err"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:paddingLeft="12dp"
+                android:text="@string/str_tv_password_err" />
 
+            <com.dd.processbutton.iml.ActionProcessButton
+                android:id="@+id/id_btn_login"
+                android:text="@string/str_btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/white"
+                custom:pb_colorComplete="@color/green_complete"
+                custom:pb_colorNormal="@color/blue_normal"
+                custom:pb_colorPressed="@color/blue_pressed"
+                custom:pb_colorProgress="@color/purple_progress"
+                custom:pb_textComplete="Success"
+                custom:pb_textProgress="Loading"
+                custom:pb_textError="Error"
+                custom:pb_colorError="@color/red_error" />
+
+            <!-- Link to Registration Screen -->
+            <TextView android:id="@+id/link_to_register"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:layout_marginBottom="10dip"
+                android:text="@string/registerText"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/blue_pressed"/>
+
+            <TextView
+                android:gravity="center"
+                android:text="@string/str_tv_use_social"
+                android:shadowColor="@color/text_shadow"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:textSize="20sp"
+                facebook:com_facebook_login_text="Facebook Login"
+                facebook:com_facebook_logout_text="Facebook Logout" />
+
+        </LinearLayout>
+    </ScrollView>
     </LinearLayout>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

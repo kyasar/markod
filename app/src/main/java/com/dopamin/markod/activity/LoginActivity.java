@@ -1,16 +1,18 @@
 package com.dopamin.markod.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInstaller;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -18,15 +20,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
@@ -62,6 +65,10 @@ public class LoginActivity extends AppCompatActivity implements
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
 
+    ActionProcessButton btn_login;
+    EditText et_email, et_password;
+    TextView tv_email, tv_password;
+
     /**
      * A flag indicating that a PendingIntent is in progress and prevents us
      * from starting further intents.
@@ -70,29 +77,22 @@ public class LoginActivity extends AppCompatActivity implements
     // Profile pic image size in pixels
 
     private Toolbar toolbar;
+    private CoordinatorLayout snackbarCoordinatorLayout;
+
     private TextView link_to_register;
 
     private Map<String,String> params = new HashMap<String, String>();
 
-    String url = MainActivity.MDS_SERVER + "/mds/signup/social";
+    String socialLoginURL = MainActivity.MDS_SERVER + "/mds/signup/social";
+    String userRegisterURL = MainActivity.MDS_SERVER + "/mds/signup/login/";
 
-    final GsonRequest gsonRequest = new GsonRequest(Request.Method.POST, url, User.class,
+    final GsonRequest gsonRequest = new GsonRequest(Request.Method.POST, socialLoginURL, User.class,
             null, params, new Response.Listener<User>() {
 
         @Override
         public void onResponse(User user) {
             if (user != null) {
                 LoginActivity.user = user;
-                System.out.println("First name: " + user.getFirstName());
-                System.out.println("Last name : " + user.getLastName());
-                System.out.println("ID        : " + user.get_id());
-                System.out.println("Login Type: " + user.getLoginType());
-                System.out.println("Email     : " + user.getEmail());
-                System.out.println("Points    : " + user.getPoints());
-                System.out.println("Social ID : " + user.getSocial_id());
-
-                Toast.makeText(getApplicationContext(), "Login success User: "
-                        + user.getFirstName(), Toast.LENGTH_SHORT).show();
 
                 // OK, save User into Shared preference
                 // saveUser(user);
@@ -129,10 +129,22 @@ public class LoginActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
+
         /* Facebook Login */
         callbackManager = CallbackManager.Factory.create();
         fbLoginButton = (LoginButton) findViewById(R.id.login_button);
         fbLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+
+        et_email = (EditText) findViewById(R.id.id_et_email);
+        et_password = (EditText) findViewById(R.id.id_et_password);
+
+        tv_email = (TextView) findViewById(R.id.id_tv_email_err);
+        tv_password = (TextView) findViewById(R.id.id_tv_password_err);
+
+        btn_login = (ActionProcessButton) findViewById(R.id.id_btn_login);
+        btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
+        btn_login.setOnClickListener(this);
 
         link_to_register = (TextView) findViewById(R.id.link_to_register);
         link_to_register.setOnClickListener(this);
@@ -186,6 +198,10 @@ public class LoginActivity extends AppCompatActivity implements
                                             + id + ", name: " + fullName );
 
                                     // After adding email to parameters, send the POST login/signup request
+                                    // Set timeout to 15 sec, and try only one time
+                                    gsonRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                                            1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                                     Volley.newRequestQueue(getApplication()).add(gsonRequest);
                                 }
                             }
@@ -278,11 +294,14 @@ public class LoginActivity extends AppCompatActivity implements
             Intent intent = new Intent(getBaseContext(), RegisterActivity.class);
             startActivity(intent);
             Log.v(MainActivity.TAG, "RegisterActivity is started. OK.");
+        } else if (view.getId() == R.id.id_btn_login) {
+            Log.v(MainActivity.TAG, "Logging in with credentials..");
+            registerLocally();
         }
     }
 
     /**
-     * Background Async task to load user profile picture from url
+     * Background Async task to load user profile picture from socialLoginURL
      * */
     private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
 
@@ -354,5 +373,129 @@ public class LoginActivity extends AppCompatActivity implements
         edit.putString("user", gson.toJson(user));
         Log.v(MainActivity.TAG, "User saved into Shared.");
         return edit.commit();
+    }
+
+    // Local Login
+    public static boolean isEmailValid(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public boolean checkInputs() {
+        boolean r = true;
+
+        if (!isEmailValid(et_email.getText().toString().trim())) {
+            tv_email.setVisibility(View.VISIBLE);
+            r = false;
+        } else {
+            tv_email.setVisibility(View.INVISIBLE);
+        }
+
+        if (et_password.getText().toString().trim().length() < 4) {
+            tv_password.setVisibility(View.VISIBLE);
+            r = false;
+        } else {
+            tv_password.setVisibility(View.INVISIBLE);
+        }
+
+        return r;
+    }
+
+    private void setInputs(boolean b) {
+        et_email.setEnabled(b);
+        et_password.setEnabled(b);
+        btn_login.setEnabled(b);
+    }
+
+    private void registerLocally() {
+        if (!checkInputs()) {
+            return;
+        }
+
+        btn_login.setProgress(1);
+        setInputs(false);
+
+        User user = new User();
+        user.setEmail(et_email.getText().toString().trim());
+        user.setPassword(et_password.getText().toString().trim());
+        user.setLoginType("LOCAL");
+
+        // clear parameters list and then add params
+        params.clear();
+        params.put("email", et_email.getText().toString().trim());
+        params.put("password", et_password.getText().toString().trim());
+        params.put("loginType", "LOCAL");
+
+        Gson gson = new Gson();
+        Log.v(MainActivity.TAG, "User: " + gson.toJson(user).toString());
+
+        final GsonRequest gsonLoginRequest = new GsonRequest(Request.Method.POST, userRegisterURL, User.class,
+                null, params, new Response.Listener<User>() {
+
+            @Override
+            public void onResponse(User user) {
+                if (user != null) {
+                    LoginActivity.user = user;
+                    Log.v(MainActivity.TAG, "USer OK.");
+                    snackIt("Login success !");
+
+                    showSuccLoginDialog();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(MainActivity.TAG, "Volley: User register error.");
+                Log.e(MainActivity.TAG, error.toString());
+                btn_login.setProgress(0);
+                setInputs(true);
+                snackIt(getResources().getString(R.string.str_dialog_msg_login_error));
+            }
+        });
+
+        // Set timeout to 15 sec, and try only one time
+        gsonLoginRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication()).add(gsonLoginRequest);
+    }
+
+    static final int MSG_DISMISS_DIALOG = 0;
+    private AlertDialog dialogSuccLogin;
+
+    private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case MSG_DISMISS_DIALOG:
+                    if (dialogSuccLogin != null && dialogSuccLogin.isShowing()) {
+                        dialogSuccLogin.dismiss();
+                        loginCompleted();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    private void showSuccLoginDialog() {
+        // Stop button animation
+        btn_login.setProgress(0);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.str_dialog_msg_login_ok))
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        loginCompleted();
+                    }
+                });
+        dialogSuccLogin = builder.create();
+        dialogSuccLogin.show();
+
+        // dismiss dialog in TIME_OUT ms
+        mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, 4000);
+    }
+
+    public void snackIt(String msg) {
+        Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
     }
 }

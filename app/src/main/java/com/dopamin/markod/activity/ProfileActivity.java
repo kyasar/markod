@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.User;
 import com.facebook.AccessToken;
@@ -33,6 +34,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView imgProfilePic;
     private TextView txtName, txtEmail, txtPoints;
     private Button btn_shoplists;
+    private ActionProcessButton btn_logout;
     private LoginButton fbLoginButton;
     private ProfileTracker mProfileTracker;
 
@@ -62,6 +64,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         fbLoginButton = (LoginButton) findViewById(R.id.login_button);
+        btn_logout = (ActionProcessButton) findViewById(R.id.id_btn_logout);
+        btn_logout.setMode(ActionProcessButton.Mode.ENDLESS);
+        btn_logout.setOnClickListener(this);
+
         txtName = (TextView) findViewById(R.id.txtName);
         txtEmail = (TextView) findViewById(R.id.txtEmail);
         txtPoints = (TextView) findViewById(R.id.txtPoints);
@@ -83,6 +89,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             fbLoginButton.setVisibility(View.VISIBLE);
             setupProfileTracker();
             mProfileTracker.startTracking();
+        } if (user.getLoginType().equalsIgnoreCase("LOCAL")) {
+            btn_logout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -114,6 +122,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             Intent intent = new Intent(getBaseContext(), ShopListsActivity.class);
             startActivity(intent);
             Log.v(MainActivity.TAG, "ShopList Activity is started. OK.");
+        } else if (view.getId() == R.id.id_btn_logout) {
+            btn_logout.setProgress(1);
+            logout();
         }
     }
 
@@ -136,10 +147,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
                 if (currentProfile == null) {
-                    Log.d(MainActivity.TAG, "Profile gone.");
-                    user = null;
-                    saveUser(user);
-                    finish();
+                    logout();
                 }
             }
         };
@@ -156,5 +164,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         this.user = null;
         return false;
+    }
+
+    private void logout() {
+        Log.d(MainActivity.TAG, "Logging out.. Profile gone.");
+        user = null;
+        saveUser(user);
+        finish();
     }
 }
