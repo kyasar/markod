@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -28,6 +30,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
@@ -50,11 +53,12 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     private ImageButton btn_scanBarcode;
     private TextView txt_scannedCode, txt_photoTake;
     private EditText etxt_productDesc;
-    private Button btn_sendProduct;
+    private ActionProcessButton btn_sendProduct;
     private ImageView iv_photo, iv_take_photo, iv_barcode;
     private Bitmap bitmapPhoto;
     private ProgressDialog progressDialog;
     private Toolbar toolbar;
+    private CoordinatorLayout snackbarCoordinatorLayout;
 
     private Product p;
     private User user;
@@ -72,10 +76,13 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
+
         btn_scanBarcode = (ImageButton) findViewById(R.id.id_btn_scanBarcode);
         btn_scanBarcode.setOnClickListener(this);
 
-        btn_sendProduct = (Button) findViewById(R.id.id_btn_sendProduct);
+        btn_sendProduct = (ActionProcessButton) findViewById(R.id.id_btn_sendProduct);
+        btn_sendProduct.setMode(ActionProcessButton.Mode.ENDLESS);
         btn_sendProduct.setOnClickListener(this);
 
         txt_scannedCode = (TextView) findViewById(R.id.txt_scannedCode);
@@ -131,7 +138,9 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
             startActivityForResult(cameraIntent, MainActivity.CAMERA_REQUEST);
         }
         else if (view.getId() == R.id.id_btn_sendProduct) {
-            progressDialog.show();
+            //progressDialog.show();
+            btn_sendProduct.setProgress(1);
+            setInputs(false);
             Log.v(MainActivity.TAG, "Sending Product..");
 
             p = new Product(etxt_productDesc.getText().toString().trim(), txt_scannedCode.getText().toString());
@@ -153,17 +162,21 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                     public void onResponse(JSONObject response) {
                         Log.i("volley", "response: " + response);
                         clearInfos();
-                        progressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(),
-                                "Product \"" + p.getName() +  "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
+                        setInputs(true);
+                        //progressDialog.dismiss();
+                        btn_sendProduct.setProgress(0);
+                        snackIt(getResources().getString(R.string.str_msg_product_declare_succ));
+                        //Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +  "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
+                        //progressDialog.dismiss();
+                        btn_sendProduct.setProgress(0);
+                        setInputs(true);
                         Log.e(MainActivity.TAG, "Volley: product add error.");
-                        Toast.makeText(getApplicationContext(),
-                                "Server error ! Try again later..", Toast.LENGTH_SHORT).show();
+                        snackIt(getResources().getString(R.string.str_msg_err_server));
+                        //Toast.makeText(getApplicationContext(), "Server error ! Try again later..", Toast.LENGTH_SHORT).show();
                     }
                 });
                 //Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
@@ -199,8 +212,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
             String barcode = res.getString("content");
             String format = res.getString("format");
 
-            Toast.makeText(this, "Contents = " + barcode +
-                    ", Format = " + format, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Contents = " + barcode + ", Format = " + format, Toast.LENGTH_SHORT).show();
 
             if (barcode != null) {
                 Log.v(MainActivity.TAG, "scanContent: " + barcode);
@@ -222,7 +234,8 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                 imm.showSoftInput(etxt_productDesc, InputMethodManager.SHOW_IMPLICIT);
             }
             else {
-                Toast.makeText(this, "No Barcode scanned ! Try again..", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "No Barcode scanned ! Try again..", Toast.LENGTH_SHORT).show();
+                snackIt(getResources().getString(R.string.str_msg_barcode_scan_fail));
                 Log.e(MainActivity.TAG, "No Barcode scanned !");
             }
         }
@@ -263,6 +276,17 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         etxt_productDesc.setVisibility(View.GONE);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etxt_productDesc.getWindowToken(), 0);
+    }
+
+    private void setInputs(boolean b) {
+        etxt_productDesc.setEnabled(b);
+        btn_sendProduct.setEnabled(b);
+        iv_take_photo.setEnabled(b);
+        iv_barcode.setEnabled(b);
+    }
+
+    public void snackIt(String msg) {
+        Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
     }
 
     /**************************************************************

@@ -6,116 +6,117 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <include
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
 
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-        <LinearLayout
+        <EditText
+            android:id="@+id/id_et_firstname"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical">
+            android:maxLength="24"
+            android:singleLine="true"
+            android:paddingLeft="12dp"
+            android:hint="@string/str_et_firstname"/>
+        <TextView
+            android:id="@+id/id_tv_firstname_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_firstname_err" />
 
-            <EditText
-                android:id="@+id/id_et_firstname"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="24"
-                android:singleLine="true"
-                android:paddingLeft="12dp"
-                android:hint="@string/str_et_firstname"/>
-            <TextView
-                android:id="@+id/id_tv_firstname_err"
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red"
-                android:paddingLeft="12dp"
-                android:text="@string/str_tv_firstname_err" />
+        <EditText
+            android:id="@+id/id_et_lastname"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="24"
+            android:singleLine="true"
+            android:paddingLeft="12dp"
+            android:hint="@string/str_et_lastname"/>
+        <TextView
+            android:id="@+id/id_tv_lastname_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_firstname_err" />
 
-            <EditText
-                android:id="@+id/id_et_lastname"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="24"
-                android:singleLine="true"
-                android:paddingLeft="12dp"
-                android:hint="@string/str_et_lastname"/>
-            <TextView
-                android:id="@+id/id_tv_lastname_err"
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red"
-                android:paddingLeft="12dp"
-                android:text="@string/str_tv_firstname_err" />
+        <EditText
+            android:id="@+id/id_et_email"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:maxLength="32"
+            android:singleLine="true"
+            android:paddingLeft="12dp"
+            android:hint="@string/str_et_email"/>
+        <TextView
+            android:id="@+id/id_tv_email_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_email_err" />
 
-            <EditText
-                android:id="@+id/id_et_email"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:maxLength="32"
-                android:singleLine="true"
-                android:paddingLeft="12dp"
-                android:hint="@string/str_et_email"/>
-            <TextView
-                android:id="@+id/id_tv_email_err"
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red"
-                android:paddingLeft="12dp"
-                android:text="@string/str_tv_email_err" />
+        <EditText
+            android:id="@+id/id_et_password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:maxLength="8"
+            android:singleLine="true"
+            android:paddingLeft="12dp"
+            android:hint="@string/str_et_password"/>
+        <TextView
+            android:id="@+id/id_tv_password_err"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:paddingLeft="12dp"
+            android:text="@string/str_tv_password_err" />
 
-            <EditText
-                android:id="@+id/id_et_password"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:maxLength="8"
-                android:singleLine="true"
-                android:paddingLeft="12dp"
-                android:hint="@string/str_et_password"/>
-            <TextView
-                android:id="@+id/id_tv_password_err"
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red"
-                android:paddingLeft="12dp"
-                android:text="@string/str_tv_password_err" />
-
-            <com.dd.processbutton.iml.ActionProcessButton
-                android:id="@+id/id_btn_register"
-                android:text="@string/str_btn_register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:textColor="@android:color/white"
-                custom:pb_colorComplete="@color/green_complete"
-                custom:pb_colorNormal="@color/blue_normal"
-                custom:pb_colorPressed="@color/blue_pressed"
-                custom:pb_colorProgress="@color/purple_progress"
-                custom:pb_textComplete="Success"
-                custom:pb_textProgress="Loading"
-                custom:pb_textError="Error"
-                custom:pb_colorError="@color/red_error" />
-        </LinearLayout>
-        </ScrollView>
+        <com.dd.processbutton.iml.ActionProcessButton
+            android:id="@+id/id_btn_register"
+            android:text="@string/str_btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/white"
+            custom:pb_colorComplete="@color/green_complete"
+            custom:pb_colorNormal="@color/blue_normal"
+            custom:pb_colorPressed="@color/blue_pressed"
+            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_textComplete="Success"
+            custom:pb_textProgress="Loading"
+            custom:pb_textError="Error"
+            custom:pb_colorError="@color/red_error" />
 
     </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
