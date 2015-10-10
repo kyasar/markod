@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -42,6 +43,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -161,25 +163,40 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.i("volley", "response: " + response);
+                        String status = null;
+
+                        try {
+                            status = response.get("status").toString();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (status != null && status.equalsIgnoreCase("OK")) {
+                            snackIt(getResources().getString(R.string.str_msg_product_declare_succ));
+                            //Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +
+                            // "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            snackIt(getResources().getString(R.string.str_msg_err_server));
+                        }
+
                         clearInfos();
                         setInputs(true);
-                        //progressDialog.dismiss();
                         btn_sendProduct.setProgress(0);
-                        snackIt(getResources().getString(R.string.str_msg_product_declare_succ));
-                        //Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +  "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //progressDialog.dismiss();
                         btn_sendProduct.setProgress(0);
                         setInputs(true);
                         Log.e(MainActivity.TAG, "Volley: product add error.");
                         snackIt(getResources().getString(R.string.str_msg_err_server));
-                        //Toast.makeText(getApplicationContext(), "Server error ! Try again later..", Toast.LENGTH_SHORT).show();
                     }
                 });
-                //Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
+                // Set timeout to 15 sec, and try only one time
+                jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                        1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 Volley.newRequestQueue(getApplication()).add(jsObjRequest);
             } else {
                 progressDialog.dismiss();
@@ -212,8 +229,6 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
             String barcode = res.getString("content");
             String format = res.getString("format");
 
-            //Toast.makeText(this, "Contents = " + barcode + ", Format = " + format, Toast.LENGTH_SHORT).show();
-
             if (barcode != null) {
                 Log.v(MainActivity.TAG, "scanContent: " + barcode);
                 txt_scannedCode.setText(barcode);
@@ -222,7 +237,6 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                 etxt_productDesc.requestFocus();
 
                 try {
-
                     Bitmap bitmap = encodeAsBitmap(barcode, BarcodeFormat.CODE_128, 200, 50);
                     iv_barcode.setImageBitmap(bitmap);
                     iv_barcode.setVisibility(View.VISIBLE);

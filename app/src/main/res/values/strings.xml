@@ -148,6 +148,6 @@
     <string name="str_tv_forget_password">Forgot your password ?</string>
     <string name="str_msg_changes_saved">Your changes are successfully saved.</string>
     <string name="str_msg_err_server">Server error ! Try again later..</string>
-    <string name="str_msg_product_declare_succ">Product is successfully added to markod. Thanks you !</string>
+    <string name="str_msg_product_declare_succ">Product successfully added. Thank you !</string>
     <string name="str_msg_barcode_scan_fail">No Barcode is scanned ! Try again..</string>
 </resources>
