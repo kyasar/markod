@@ -33,6 +33,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.search.SearchBox;
 import com.google.gson.Gson;
 import com.android.volley.Request;
@@ -56,12 +58,15 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
     private ExpandableListAdapter exp_lv_adapter;
     private ExpandableListView exp_lv_shopLists;
-    private Button btn_saveChanges;
+    private ActionProcessButton btn_saveChanges;
     private LinearLayout layout_hintAddShoplist;
     private ProgressDialog progressDialog;
 
     private User user;
     private int selectedList = -1;
+
+    // ShopList expandable listview cannot be clickable while saving changes
+    private boolean isListClickable = true;
 
     private Toolbar toolbar;
     private SearchBox searchBox;
@@ -100,11 +105,15 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
         snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
 
-        btn_saveChanges = (Button) findViewById(R.id.id_btn_save_changes);
+        btn_saveChanges = (ActionProcessButton) findViewById(R.id.id_btn_save_changes);
+        btn_saveChanges.setMode(ActionProcessButton.Mode.ENDLESS);
         btn_saveChanges.setOnClickListener(this);
 
         // get the listview
         exp_lv_shopLists = (ExpandableListView) findViewById(R.id.lv_exp_shoplists);
+
+        // This necessary to stop auto divider in expandable listview
+        exp_lv_shopLists.setDividerHeight(0);
 
         // setting list adapter
         exp_lv_adapter = new ExpandableListAdapter(this, user.getShopLists());
@@ -126,6 +135,9 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (!isListClickable)
+            return;
+
         super.onCreateContextMenu(menu, v, menuInfo);
         ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
 
@@ -149,6 +161,9 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        if (!isListClickable)
+            return false;
+
         ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) item
                 .getMenuInfo();
 
@@ -320,7 +335,12 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         if (view.getId() == R.id.id_btn_save_changes) {
             Log.v(MainActivity.TAG, "Save Changes button clicked. User changes will be sent to server.");
-            progressDialog.show();
+            //progressDialog.show();
+
+            btn_saveChanges.setProgress(1);
+            btn_saveChanges.setClickable(false);
+            isListClickable = false;
+
             Gson gson = new Gson();
             Log.v(MainActivity.TAG, "User: " + gson.toJson(this.user.createJSON_updateShopLists()).toString());
 
@@ -330,21 +350,31 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                 public void onResponse(JSONObject response) {
                     Log.i("volley", "response: " + response);
 
-                    progressDialog.dismiss();
+                    //progressDialog.dismiss();
+                    btn_saveChanges.setProgress(0);
+                    btn_saveChanges.setClickable(true);
+                    isListClickable = true;
                     btn_saveChanges.setVisibility(View.GONE);
 
-                    snackIt("Your changes are saved");
+                    snackIt(getResources().getString(R.string.str_msg_changes_saved));
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    progressDialog.dismiss();
-                    Log.e(MainActivity.TAG, "Volley: User update error.");
+                    //progressDialog.dismiss();
+                    btn_saveChanges.setProgress(0);
+                    btn_saveChanges.setClickable(true);
+                    isListClickable = true;
 
-                    snackIt("Server error ! Try again later..");
+                    Log.e(MainActivity.TAG, "Volley: User update error.");
+                    snackIt(getResources().getString(R.string.str_msg_err_server));
                 }
             });
-            //Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
+
+            // Set timeout to 15 sec, and try only one time
+            jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                    1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             Volley.newRequestQueue(getApplication()).add(jsObjRequest);
         }
     }
@@ -481,11 +511,15 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void searchShopList(int groupPosition) {
-        searchNearbyMarkets((ArrayList<Product>) user.getShopLists().get(groupPosition).getProducts());
+        if (isListClickable) {
+            searchNearbyMarkets((ArrayList<Product>) user.getShopLists().get(groupPosition).getProducts());
+        }
     }
 
     public void addToShopList(int groupPosition) {
-        selectedList = groupPosition;
-        openSearch();
+        if (isListClickable) {
+            selectedList = groupPosition;
+            openSearch();
+        }
     }
 }

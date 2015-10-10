@@ -1,5 +1,5 @@
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/snackbarCoordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -45,14 +45,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
+        <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/id_btn_save_changes"
             android:visibility="gone"
-            android:layout_margin="10dp"
-            android:layout_width="fill_parent"
+            android:text="@string/str_btn_save_changes"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:text="@string/str_btn_save_changes" />
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            custom:pb_colorComplete="@color/green_complete"
+            custom:pb_colorNormal="@color/holo_red_light"
+            custom:pb_colorPressed="@color/red"
+            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_textComplete="Success"
+            custom:pb_textProgress="Loading"
+            custom:pb_textError="Error"
+            custom:pb_colorError="@color/red_error" />
 
         <LinearLayout
             android:id="@+id/id_layout_hint_create_shoplists"
@@ -85,7 +98,10 @@
 
         <ExpandableListView
             android:id="@+id/lv_exp_shoplists"
-            android:padding="5dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"
+            android:dividerHeight="0dp"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:choiceMode = "singleChoice"
