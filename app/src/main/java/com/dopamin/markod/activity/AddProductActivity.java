@@ -199,7 +199,8 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 Volley.newRequestQueue(getApplication()).add(jsObjRequest);
             } else {
-                progressDialog.dismiss();
+                btn_sendProduct.setProgress(0);
+                snackIt(getResources().getString(R.string.str_msg_err_no_user));
                 Log.e(MainActivity.TAG, "No user found ! Cannot send..");
                 Toast.makeText(getApplicationContext(),
                         "No User found !", Toast.LENGTH_SHORT).show();
