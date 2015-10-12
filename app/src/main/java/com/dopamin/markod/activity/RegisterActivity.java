@@ -144,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             } else if (status.equalsIgnoreCase("NOT_VERIFIED")) {
                                 snackIt("Activation link is already sent to your email !");
                                 setInputs(true);
-                            } else if (status.toString().equalsIgnoreCase("OK")) {
+                            } else if (status.equalsIgnoreCase("OK")) {
                                 snackIt("Activation link sent. Check your email !");
                                 showSuccRegisterDialog();
                             }

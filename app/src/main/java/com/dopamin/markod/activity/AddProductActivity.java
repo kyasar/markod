@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -164,6 +166,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                     public void onResponse(JSONObject response) {
                         Log.i("volley", "response: " + response);
                         String status = null;
+                        int earn = 0;
 
                         try {
                             status = response.get("status").toString();
@@ -172,9 +175,18 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                         }
 
                         if (status != null && status.equalsIgnoreCase("OK")) {
-                            snackIt(getResources().getString(R.string.str_msg_product_declare_succ));
                             //Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +
                             // "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
+                            try {
+                                JSONObject userJSON = response.getJSONObject("user");
+                                earn = userJSON.getInt("points") - user.getPoints();
+                                user.incPoints(earn);
+                                snackIt(getResources().getString(R.string.str_msg_product_declare_succ) + " " + earn);
+                                Log.v(MainActivity.TAG, "User has " + earn + " points.");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                snackIt(getResources().getString(R.string.str_msg_err_server));
+                            }
                         }
                         else {
                             snackIt(getResources().getString(R.string.str_msg_err_server));
@@ -302,6 +314,21 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
 
     public void snackIt(String msg) {
         Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
+    }
+
+    public boolean saveUser(User user) {
+        Gson gson = new Gson();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putString("user", gson.toJson(user));
+        Log.v(MainActivity.TAG, "User saved into Shared.");
+        return edit.commit();
+    }
+
+    @Override
+    protected void onPause() {
+        saveUser(this.user);
+        super.onPause();
     }
 
     /**************************************************************
