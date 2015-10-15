@@ -151,4 +151,5 @@
     <string name="str_msg_product_declare_succ">Success ! Points you have earned: </string>
     <string name="str_msg_barcode_scan_fail">No Barcode is scanned ! Try again..</string>
     <string name="str_msg_err_no_user">No User profile found !</string>
+    <string name="str_err_no_conn">No Internet connection available !</string>
 </resources>

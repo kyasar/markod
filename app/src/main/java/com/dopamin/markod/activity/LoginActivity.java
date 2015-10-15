@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
+import com.dopamin.markod.objects.ConnectionDetector;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
 import com.facebook.AccessToken;
@@ -83,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements
 
     private Map<String,String> params = new HashMap<String, String>();
 
+    private ConnectionDetector cd;
+
     String socialLoginURL = MainActivity.MDS_SERVER + "/mds/signup/social";
     String userRegisterURL = MainActivity.MDS_SERVER + "/mds/signup/login/";
 
@@ -130,6 +133,7 @@ public class LoginActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
+        cd = new ConnectionDetector(getApplicationContext());
 
         /* Facebook Login */
         callbackManager = CallbackManager.Factory.create();
@@ -259,7 +263,6 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(MainActivity.TAG, "onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -412,6 +415,11 @@ public class LoginActivity extends AppCompatActivity implements
             return;
         }
 
+        if (!cd.isConnectingToInternet()) {
+            snackIt(getResources().getString(R.string.str_err_no_conn));
+            return;
+        }
+
         btn_login.setProgress(1);
         setInputs(false);
 
@@ -499,4 +507,6 @@ public class LoginActivity extends AppCompatActivity implements
     public void snackIt(String msg) {
         Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
     }
+
+
 }
