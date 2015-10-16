@@ -295,9 +295,15 @@ public class LoginActivity extends AppCompatActivity implements
     public void onClick(View view) {
         if (view.getId() == R.id.link_to_register) {
             link_to_register.setPaintFlags(link_to_register.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
-            Intent intent = new Intent(getBaseContext(), RegisterActivity.class);
-            startActivity(intent);
-            Log.v(MainActivity.TAG, "RegisterActivity is started. OK.");
+            
+            if (!cd.isConnectingToInternet()) {
+                snackIt(getResources().getString(R.string.str_err_no_conn));
+                return;
+            } else {
+                Intent intent = new Intent(getBaseContext(), RegisterActivity.class);
+                startActivity(intent);
+                Log.v(MainActivity.TAG, "RegisterActivity is started. OK.");
+            }
         } else if (view.getId() == R.id.id_btn_login) {
             Log.v(MainActivity.TAG, "Logging in with credentials..");
             loginLocally();
