@@ -300,7 +300,7 @@ public class LoginActivity extends AppCompatActivity implements
             Log.v(MainActivity.TAG, "RegisterActivity is started. OK.");
         } else if (view.getId() == R.id.id_btn_login) {
             Log.v(MainActivity.TAG, "Logging in with credentials..");
-            registerLocally();
+            loginLocally();
         }
     }
 
@@ -410,7 +410,7 @@ public class LoginActivity extends AppCompatActivity implements
         btn_login.setEnabled(b);
     }
 
-    private void registerLocally() {
+    private void loginLocally() {
         if (!checkInputs()) {
             return;
         }
