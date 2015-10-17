@@ -295,7 +295,7 @@ public class LoginActivity extends AppCompatActivity implements
     public void onClick(View view) {
         if (view.getId() == R.id.link_to_register) {
             link_to_register.setPaintFlags(link_to_register.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
-            
+
             if (!cd.isConnectingToInternet()) {
                 snackIt(getResources().getString(R.string.str_err_no_conn));
                 return;

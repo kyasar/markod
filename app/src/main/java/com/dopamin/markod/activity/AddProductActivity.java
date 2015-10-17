@@ -35,6 +35,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
+import com.dopamin.markod.objects.ConnectionDetector;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.scanner.SimpleScannerActivity;
@@ -67,6 +68,8 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     private Product p;
     private User user;
 
+    private ConnectionDetector cd;
+
     String productAddURL = MainActivity.MDS_SERVER + "/mds/api/products/" + "?token=" + MainActivity.MDS_TOKEN;
 
     @Override
@@ -81,6 +84,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
+        cd = new ConnectionDetector(getApplicationContext());
 
         btn_scanBarcode = (ImageButton) findViewById(R.id.id_btn_scanBarcode);
         btn_scanBarcode.setOnClickListener(this);
@@ -142,6 +146,10 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
             startActivityForResult(cameraIntent, MainActivity.CAMERA_REQUEST);
         }
         else if (view.getId() == R.id.id_btn_sendProduct) {
+            if (!cd.isConnectingToInternet()) {
+                snackIt(getResources().getString(R.string.str_err_no_conn));
+                return;
+            }
             //progressDialog.show();
             btn_sendProduct.setProgress(1);
             setInputs(false);
