@@ -28,6 +28,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
@@ -49,6 +50,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -87,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements
     private ConnectionDetector cd;
 
     String socialLoginURL = MainActivity.MDS_SERVER + "/mds/signup/social";
-    String userRegisterURL = MainActivity.MDS_SERVER + "/mds/signup/login/";
+    String localLoginURL = MainActivity.MDS_SERVER + "/mds/signup/login/";
 
     final GsonRequest gsonRequest = new GsonRequest(Request.Method.POST, socialLoginURL, User.class,
             null, params, new Response.Listener<User>() {
@@ -429,37 +431,55 @@ public class LoginActivity extends AppCompatActivity implements
         btn_login.setProgress(1);
         setInputs(false);
 
-        User user = new User();
-        user.setEmail(et_email.getText().toString().trim());
-        user.setPassword(et_password.getText().toString().trim());
-        user.setLoginType("LOCAL");
+        User queryUser = new User();
+        queryUser.setEmail(et_email.getText().toString().trim());
+        queryUser.setPassword(et_password.getText().toString().trim());
+        queryUser.setLoginType("LOCAL");
 
-        // clear parameters list and then add params
-        params.clear();
-        params.put("email", et_email.getText().toString().trim());
-        params.put("password", et_password.getText().toString().trim());
-        params.put("loginType", "LOCAL");
+        final Gson gson = new Gson();
 
-        Gson gson = new Gson();
-        Log.v(MainActivity.TAG, "User: " + gson.toJson(user).toString());
-
-        final GsonRequest gsonLoginRequest = new GsonRequest(Request.Method.POST, userRegisterURL, User.class,
-                null, params, new Response.Listener<User>() {
-
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, localLoginURL,
+                gson.toJson(queryUser), new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(User user) {
-                if (user != null) {
-                    LoginActivity.user = user;
-                    Log.v(MainActivity.TAG, "USer OK.");
-                    snackIt("Login success !");
+            public void onResponse(JSONObject response) {
+                Log.i("volley", "response: " + response);
+                String status = null;
 
-                    showSuccLoginDialog();
+                try {
+                    status = response.get("status").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+
+                if (status != null) {
+                    if (status.equalsIgnoreCase("NOT_VERIFIED")) {
+                        snackIt(getResources().getString(R.string.str_dialog_msg_not_verified_yet));
+                    } else if (status.equalsIgnoreCase("OK")) {
+                        try {
+                            user = gson.fromJson(response.getJSONObject("user").toString(), User.class);
+                            Log.v(MainActivity.TAG, "User OK: " + user.getFirstName());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            snackIt(getResources().getString(R.string.str_msg_err_server));
+                        }
+                        snackIt(getResources().getString(R.string.str_dialog_msg_login_ok));
+                        showSuccLoginDialog();
+                    } else if (status.equalsIgnoreCase("NO_USER")) {
+                        setInputs(true);
+                        snackIt(getResources().getString(R.string.str_dialog_msg_no_such_user));
+                    }
+                    else {
+                        setInputs(true);
+                        snackIt(getResources().getString(R.string.str_dialog_msg_login_error));
+                    }
+                }
+                setInputs(true);
+                btn_login.setProgress(0);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(MainActivity.TAG, "Volley: User register error.");
+                Log.e(MainActivity.TAG, "Volley: User login error.");
                 Log.e(MainActivity.TAG, error.toString());
                 btn_login.setProgress(0);
                 setInputs(true);
@@ -468,10 +488,10 @@ public class LoginActivity extends AppCompatActivity implements
         });
 
         // Set timeout to 15 sec, and try only one time
-        gsonLoginRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
                 1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Volley.newRequestQueue(getApplication()).add(gsonLoginRequest);
+        Volley.newRequestQueue(getApplication()).add(jsObjRequest);
     }
 
     static final int MSG_DISMISS_DIALOG = 0;

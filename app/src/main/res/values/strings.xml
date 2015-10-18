@@ -155,4 +155,6 @@
     <string name="str_err_no_conn">No Internet connection available !</string>
     <string name="str_dialog_msg_cong">Congratulations !</string>
     <string name="str_ok">OK</string>
+    <string name="str_dialog_msg_not_verified_yet">Account not verified yet! Check your email..</string>
+    <string name="str_dialog_msg_no_such_user">No user found! Try to register..</string>
 </resources>
