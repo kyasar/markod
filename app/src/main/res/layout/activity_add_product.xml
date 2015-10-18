@@ -122,7 +122,7 @@
             custom:pb_textError="Error"
             custom:pb_colorError="@color/red_error" />
 
-        <ImageView
+        <!-- <ImageView
             android:id="@+id/id_img_barcode"
             android:visibility="gone"
             android:background="@color/gray"
@@ -130,7 +130,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" /> -->
 
     </LinearLayout>
     </ScrollView>

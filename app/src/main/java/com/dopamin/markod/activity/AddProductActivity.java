@@ -3,6 +3,7 @@ package com.dopamin.markod.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,12 +11,14 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,11 +42,6 @@ import com.dopamin.markod.objects.ConnectionDetector;
 import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.scanner.SimpleScannerActivity;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -64,6 +62,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     private ProgressDialog progressDialog;
     private Toolbar toolbar;
     private CoordinatorLayout snackbarCoordinatorLayout;
+    private AlertDialog ad;
 
     private Product p;
     private User user;
@@ -99,7 +98,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         etxt_productDesc.addTextChangedListener(this);
 
         iv_photo = (ImageView) findViewById(R.id.id_photo);
-        iv_barcode = (ImageView) findViewById(R.id.id_img_barcode);
+        //iv_barcode = (ImageView) findViewById(R.id.id_img_barcode);
         iv_take_photo = (ImageView) findViewById(R.id.id_take_photo);
         iv_take_photo.setOnClickListener(this);
 
@@ -257,14 +256,14 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
                 etxt_productDesc.setFocusable(true);
                 etxt_productDesc.requestFocus();
 
-                try {
+                /*try {
                     Bitmap bitmap = encodeAsBitmap(barcode, BarcodeFormat.CODE_128, 200, 50);
                     iv_barcode.setImageBitmap(bitmap);
                     iv_barcode.setVisibility(View.VISIBLE);
 
                 } catch (WriterException e) {
                     e.printStackTrace();
-                }
+                }*/
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(etxt_productDesc, InputMethodManager.SHOW_IMPLICIT);
             }
@@ -301,8 +300,8 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
             bitmapPhoto = null;
         }
         iv_photo.setImageBitmap(null);
-        iv_barcode.setImageBitmap(null);
-        iv_barcode.setVisibility(View.GONE);
+        //iv_barcode.setImageBitmap(null);
+        //iv_barcode.setVisibility(View.GONE);
         txt_photoTake.setVisibility(View.VISIBLE);
         txt_scannedCode.setText(getResources().getString(R.string.str_mock_barcode));
 
@@ -317,7 +316,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         etxt_productDesc.setEnabled(b);
         btn_sendProduct.setEnabled(b);
         iv_take_photo.setEnabled(b);
-        iv_barcode.setEnabled(b);
+        //iv_barcode.setEnabled(b);
     }
 
     public void snackIt(String msg) {
@@ -347,7 +346,7 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
      * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/EncodeActivity.java
      * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java
      */
-
+    /*
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
 
@@ -395,4 +394,5 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         }
         return null;
     }
+    */
 }
