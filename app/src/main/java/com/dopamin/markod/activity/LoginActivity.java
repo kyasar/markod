@@ -475,7 +475,7 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     static final int MSG_DISMISS_DIALOG = 0;
-    private AlertDialog dialogSuccLogin;
+    private android.support.v7.app.AlertDialog dialogSuccLogin;
 
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
@@ -495,14 +495,18 @@ public class LoginActivity extends AppCompatActivity implements
     private void showSuccLoginDialog() {
         // Stop button animation
         btn_login.setProgress(0);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.str_dialog_msg_login_ok))
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+        android.support.v7.app.AlertDialog.Builder builder =
+                new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(getResources().getString(R.string.str_dialog_msg_login_succ_title));
+        builder.setPositiveButton(getResources().getString(R.string.str_ok),
+                new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         loginCompleted();
                     }
                 });
+        //builder.setNegativeButton("Cancel", null);
+        builder.setMessage(getResources().getString(R.string.str_dialog_msg_login_ok));
         dialogSuccLogin = builder.create();
         dialogSuccLogin.show();
 
