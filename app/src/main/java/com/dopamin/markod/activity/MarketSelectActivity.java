@@ -1,6 +1,5 @@
 package com.dopamin.markod.activity;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class MarketSelectActivity extends AppCompatActivity implements LocationListener,
         PlacesResult, SearchView.OnQueryTextListener,
         View.OnClickListener, SearchView.OnCloseListener {
@@ -66,7 +65,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
     private ProgressDialog progressDialog;
     private ListView lv_markets;
     private MarketListAdapter adapter;
-    boolean fakeLocation = true;
+    boolean fakeLocation = false;
 
     private Toolbar toolbar;
     private SearchView searchView;
@@ -133,8 +132,8 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
         });
 
 		/* Alert Dialog setting for Selecting the Market from listview */
-        builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        builder = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setPositiveButton(getResources().getString(R.string.str_yes), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing but close the dialog
@@ -162,7 +161,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
             }
         });
 
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.str_no), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

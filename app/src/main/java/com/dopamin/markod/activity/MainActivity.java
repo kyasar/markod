@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -56,11 +57,10 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         View.OnClickListener {
 
     public static final String MDS_TOKEN = "test";
-    public static boolean internetConn = false;
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static String MDS_SERVER = "http://192.168.1.26:8000";
 
-    private Button btn_spy_market, btn_checkIntConn;
+    private Button btn_spy_market;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_MARKET_REQUESTCODE = 1;
@@ -92,29 +92,16 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
 
+    private CoordinatorLayout snackbarCoordinatorLayout;
+    private ConnectionDetector cd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //internetConn = isInternetAvailable();
-        /*internetConn = true;
-
-        if (!isInternetAvailable()) //returns true if internet available
-        {
-            Toast.makeText(this, " No Internet Connection !! \n Check your Connection..", Toast.LENGTH_SHORT).show();
-            //TODO: Draw a new layout informing user that there is no connection.
-            setContentView(R.layout.activity_main_noconn);
-            btn_checkIntConn = (Button) findViewById(R.id.checkConn_button);
-            btn_checkIntConn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    internetConn = isInternetAvailable();
-                }
-            });
-            return;
-        }*/
         setContentView(R.layout.activity_main);
+
+        snackbarCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.snackbarCoordinatorLayout);
+        cd = new ConnectionDetector(getApplicationContext());
 
         // Setting Toolbar
         // Set a Toolbar to replace the ActionBar.
@@ -221,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (isInternetAvailable()) {
+        if (cd.isConnectingToInternet()) {
             Log.v(MainActivity.TAG, "inflating Action bar view..");
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -276,31 +263,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public boolean isInternetAvailable() {
-
-        NetworkInfo info = (NetworkInfo) ((ConnectivityManager)
-                this.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-
-        if (info == null)
-        {
-            Log.d(TAG,"no internet connection");
-            return false;
-        }
-        else
-        {
-            if (info.isConnected())
-            {
-                Log.d(TAG," internet connection available...");
-                return true;
-            }
-            else
-            {
-                Log.d(TAG," internet connection");
-                return true;
-            }
-        }
     }
 
     /*public void loadAdImages() {
@@ -471,8 +433,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public void onClick(View view) {
         // getId() returns this view's identifier.
         if (view.getId() == R.id.id_btn_spy_market) {
-            /* Explicit intent for selecting a nearby market */
-            Log.v(TAG, "Detective Button clicked. OK.");
+            // Check internet conn at first
+            if (!cd.isConnectingToInternet()) {
+                snackIt(getResources().getString(R.string.str_err_no_conn));
+                return;
+            }
+
             if (user == null) {
                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                 startActivityForResult(intent, LOGIN_FOR_SPY_REQUESTCODE);
@@ -623,5 +589,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         intent.putParcelableArrayListExtra("searchProductList", searchProductList);
         startActivity(intent);
         Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
+    }
+
+    public void snackIt(String msg) {
+        Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
     }
 }

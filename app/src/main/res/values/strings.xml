@@ -10,6 +10,7 @@
     <string name="detective">Detective</string>
     <string name="products_text">Your spied products listed here..</string>
     <string name="ok">OK</string>
+    <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
     <string name="comma">,</string>
     <string name="logtag">MDlog</string>

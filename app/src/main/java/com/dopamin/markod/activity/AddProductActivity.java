@@ -59,15 +59,12 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     private ActionProcessButton btn_sendProduct;
     private ImageView iv_photo, iv_take_photo, iv_barcode;
     private Bitmap bitmapPhoto;
-    private ProgressDialog progressDialog;
     private Toolbar toolbar;
     private CoordinatorLayout snackbarCoordinatorLayout;
-    private AlertDialog ad;
+    private ConnectionDetector cd;
 
     private Product p;
     private User user;
-
-    private ConnectionDetector cd;
 
     String productAddURL = MainActivity.MDS_SERVER + "/mds/api/products/" + "?token=" + MainActivity.MDS_TOKEN;
 
@@ -104,12 +101,6 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
 
         Bundle bundle = getIntent().getExtras();
         user = bundle.getParcelable("user");
-
-        /* sending product declaration loading progress */
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage(getResources().getString(R.string.str_send_product_please_wait));
     }
 
     @Override
