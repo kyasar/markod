@@ -1,6 +1,5 @@
 package com.dopamin.markod.activity;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -496,9 +496,9 @@ public class LoginActivity extends AppCompatActivity implements
         // Stop button animation
         btn_login.setProgress(0);
 
-        android.support.v7.app.AlertDialog.Builder builder =
-                new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle(getResources().getString(R.string.str_dialog_msg_login_succ_title));
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        //builder.setTitle(getResources().getString(R.string.str_dialog_msg_login_succ_title));
         builder.setPositiveButton(getResources().getString(R.string.str_ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

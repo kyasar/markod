@@ -1,11 +1,11 @@
 package com.dopamin.markod.activity;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -201,19 +201,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     };
 
     private void showSuccRegisterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.str_dialog_msg_register_ok))
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        //builder.setTitle(getResources().getString(R.string.str_dialog_msg_login_succ_title));
+        builder.setPositiveButton(getResources().getString(R.string.str_ok),
+                new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         registrationCompleted();
                     }
                 });
+        //builder.setNegativeButton("Cancel", null);
+        builder.setMessage(getResources().getString(R.string.str_dialog_msg_register_ok));
+
         dialogRegistered = builder.create();
         dialogRegistered.show();
 
         // dismiss dialog in TIME_OUT ms
-        mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, 4000);
+        mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, 8000);
     }
 
     public void snackIt(String msg) {
