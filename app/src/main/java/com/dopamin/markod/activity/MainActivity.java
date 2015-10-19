@@ -54,13 +54,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        TokenResult {
 
     public static final String MDS_TOKEN = "test";
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
+    public static final String MDS_API_KEY = "15b240618c19d0cb36d0778d52253177";
     public static String MDS_SERVER = "http://192.168.1.26:8000";
 
-    private Button btn_spy_market;
+    private Button btn_spy_market, btn_token_test;
 
     /* Select market request for the Market Select Activity */
     private int SELECT_MARKET_REQUESTCODE = 1;
@@ -131,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         // Main Menu buttons: Spy, Declare, Campaign and Profile
         btn_spy_market = (Button) findViewById(R.id.id_btn_spy_market);
         btn_spy_market.setOnClickListener(this);
+
+        btn_token_test = (Button) findViewById(R.id.id_btn_token_test);
+        btn_token_test.setOnClickListener(this);
 
         /* Load Location-based Ads */
         //loadAdImages();
@@ -448,6 +453,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 startActivityForResult(intent, SELECT_MARKET_REQUESTCODE);
                 Log.v(TAG, "MarketSelectActivity is started. OK.");
             }
+        } else if (view.getId() == R.id.id_btn_token_test) {
+            TokenManager tm = new TokenManager(getApplicationContext());
+            // Result will be returned to this Activity
+            tm.getToken(user);
+            tm.delegateTokenResult = this;
+            Log.v(MainActivity.TAG, "Token is being waited..");
         }
     }
 
@@ -593,5 +604,10 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
     public void snackIt(String msg) {
         Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void tokenReady(String token) {
+        Log.v(MainActivity.TAG, "Token: " + token);
     }
 }

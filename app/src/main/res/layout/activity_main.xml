@@ -79,6 +79,16 @@
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:text="@string/str_btn_spy_market" />
+
+            <Button
+                android:id="@+id/id_btn_token_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="6dp"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:text="Token Test" />
         </LinearLayout>
 
     </LinearLayout>
