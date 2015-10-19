@@ -20,6 +20,7 @@ public class User implements Parcelable {
     private String loginType;
     private String encodedProfilePhoto;
     private List<ShopList> shopLists;
+    private String api_key;
 
     public User(String id, String firstName, String lastName, String email,
                 String loginType, String social_id, int points) {
@@ -42,12 +43,21 @@ public class User implements Parcelable {
         this.firstName = parcel.readString();
         this.lastName = parcel.readString();
         this.email = parcel.readString();
+        this.password = parcel.readString();
         this.username = parcel.readString();
         this.points = parcel.readInt();
         this.social_id = parcel.readString();
         this.loginType = parcel.readString();
         this.encodedProfilePhoto = parcel.readString();
         this.shopLists = parcel.readArrayList(ShopList.class.getClassLoader());
+    }
+
+    public String getApi_key() {
+        return api_key;
+    }
+
+    public void setApi_key(String api_key) {
+        this.api_key = api_key;
     }
 
     public String getPassword() {
@@ -160,6 +170,7 @@ public class User implements Parcelable {
         parcel.writeString(firstName);
         parcel.writeString(lastName);
         parcel.writeString(email);
+        parcel.writeString(password);
         parcel.writeString(username);
         parcel.writeInt(points);
         parcel.writeString(social_id);
