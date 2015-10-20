@@ -40,6 +40,8 @@ import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.ConnectionDetector;
 import com.dopamin.markod.objects.Product;
+import com.dopamin.markod.objects.TokenManager;
+import com.dopamin.markod.objects.TokenResult;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.scanner.SimpleScannerActivity;
 import com.google.gson.Gson;
@@ -51,7 +53,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class AddProductActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class AddProductActivity extends AppCompatActivity implements
+        View.OnClickListener, TextWatcher, TokenResult {
 
     private ImageButton btn_scanBarcode;
     private TextView txt_scannedCode, txt_photoTake;
@@ -62,11 +65,14 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     private Toolbar toolbar;
     private CoordinatorLayout snackbarCoordinatorLayout;
     private ConnectionDetector cd;
+    private Button btn_token_test;
+    private String token;
 
     private Product p;
     private User user;
+    private TokenManager tm;
 
-    String productAddURL = MainActivity.MDS_SERVER + "/mds/api/products/" + "?token=" + MainActivity.MDS_TOKEN;
+    String productAddURL = MainActivity.MDS_SERVER + "/mds/api/products/" + "?token=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +95,9 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         btn_sendProduct.setMode(ActionProcessButton.Mode.ENDLESS);
         btn_sendProduct.setOnClickListener(this);
 
+        btn_token_test = (Button) findViewById(R.id.id_btn_token_test);
+        btn_token_test.setOnClickListener(this);
+
         txt_scannedCode = (TextView) findViewById(R.id.txt_scannedCode);
         txt_photoTake =  (TextView) findViewById(R.id.id_txt_take_photo);
         etxt_productDesc = (EditText) findViewById(R.id.id_etxt_productDesc);
@@ -101,6 +110,10 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
 
         Bundle bundle = getIntent().getExtras();
         user = bundle.getParcelable("user");
+
+        tm = new TokenManager(getApplicationContext());
+        // Result will be returned to this Activity
+        tm.delegateTokenResult = this;
     }
 
     @Override
@@ -117,6 +130,97 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
         // as you specify a parent activity in AndroidManifest.xml.
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendJSONObjectRequest() {
+        if (!cd.isConnectingToInternet()) {
+            snackIt(getResources().getString(R.string.str_err_no_conn));
+            return;
+        }
+        //progressDialog.show();
+        btn_sendProduct.setProgress(1);
+        setInputs(false);
+        Log.v(MainActivity.TAG, "Sending Product..");
+
+        p = new Product(etxt_productDesc.getText().toString().trim(), txt_scannedCode.getText().toString());
+        if (bitmapPhoto != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmapPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+            p.setEncodedPhoto(Base64.encodeToString(imageBytes, Base64.DEFAULT));
+        }
+
+        if (user != null) {
+            p.setUserID(user.get_id());
+            Gson gson = new Gson();
+            Log.v(MainActivity.TAG, "Product: " + gson.toJson(p).toString());
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, productAddURL + token,
+                    gson.toJson(p), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i("volley", "response: " + response);
+                    String status = null;
+                    int earn = 0;
+
+                    try {
+                        status = response.get("status").toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (status != null) {
+                        if (status.equalsIgnoreCase("OK")) {
+                            //Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +
+                            // "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
+                            try {
+                                JSONObject userJSON = response.getJSONObject("user");
+                                earn = userJSON.getInt("points") - user.getPoints();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                snackIt(getResources().getString(R.string.str_msg_err_server));
+                            }
+                            user.incPoints(earn);
+                            snackIt(getResources().getString(R.string.str_msg_product_declare_succ) + " " + earn);
+                            Log.v(MainActivity.TAG, "User has " + earn + " points.");
+
+                            clearInfos();
+                            setInputs(true);
+                        }
+                        else if (status.equalsIgnoreCase("EXPIRED") || status.equalsIgnoreCase("NOTOKEN")) {
+                            Log.v(MainActivity.TAG, "Token expired or not provided");
+                            tm.getToken(user);
+                            Log.v(MainActivity.TAG, "New Token is being waited..");
+                        }
+                        else {
+                            snackIt(getResources().getString(R.string.str_msg_err_server));
+                            setInputs(true);
+                        }
+                    }
+
+                    btn_sendProduct.setProgress(0);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    btn_sendProduct.setProgress(0);
+                    setInputs(true);
+                    Log.e(MainActivity.TAG, "Volley: product add error.");
+                    snackIt(getResources().getString(R.string.str_msg_err_server));
+                }
+            });
+            // Set timeout to 15 sec, and try only one time
+            jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                    1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+        } else {
+            btn_sendProduct.setProgress(0);
+            snackIt(getResources().getString(R.string.str_msg_err_no_user));
+            Log.e(MainActivity.TAG, "No user found ! Cannot send..");
+            Toast.makeText(getApplicationContext(),
+                    "No User found !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -136,85 +240,13 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
             startActivityForResult(cameraIntent, MainActivity.CAMERA_REQUEST);
         }
         else if (view.getId() == R.id.id_btn_sendProduct) {
-            if (!cd.isConnectingToInternet()) {
-                snackIt(getResources().getString(R.string.str_err_no_conn));
-                return;
-            }
-            //progressDialog.show();
-            btn_sendProduct.setProgress(1);
-            setInputs(false);
-            Log.v(MainActivity.TAG, "Sending Product..");
-
-            p = new Product(etxt_productDesc.getText().toString().trim(), txt_scannedCode.getText().toString());
-            if (bitmapPhoto != null) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmapPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] imageBytes = baos.toByteArray();
-                p.setEncodedPhoto(Base64.encodeToString(imageBytes, Base64.DEFAULT));
-            }
-
-            if (user != null) {
-                p.setUserID(user.get_id());
-                Gson gson = new Gson();
-                Log.v(MainActivity.TAG, "Product: " + gson.toJson(p).toString());
-
-                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, productAddURL,
-                        gson.toJson(p), new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i("volley", "response: " + response);
-                        String status = null;
-                        int earn = 0;
-
-                        try {
-                            status = response.get("status").toString();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (status != null && status.equalsIgnoreCase("OK")) {
-                            //Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +
-                            // "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
-                            try {
-                                JSONObject userJSON = response.getJSONObject("user");
-                                earn = userJSON.getInt("points") - user.getPoints();
-                                user.incPoints(earn);
-                                snackIt(getResources().getString(R.string.str_msg_product_declare_succ) + " " + earn);
-                                Log.v(MainActivity.TAG, "User has " + earn + " points.");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                snackIt(getResources().getString(R.string.str_msg_err_server));
-                            }
-                        }
-                        else {
-                            snackIt(getResources().getString(R.string.str_msg_err_server));
-                        }
-
-                        clearInfos();
-                        setInputs(true);
-                        btn_sendProduct.setProgress(0);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        btn_sendProduct.setProgress(0);
-                        setInputs(true);
-                        Log.e(MainActivity.TAG, "Volley: product add error.");
-                        snackIt(getResources().getString(R.string.str_msg_err_server));
-                    }
-                });
-                // Set timeout to 15 sec, and try only one time
-                jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
-                        1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Volley.newRequestQueue(getApplication()).add(jsObjRequest);
-            } else {
-                btn_sendProduct.setProgress(0);
-                snackIt(getResources().getString(R.string.str_msg_err_no_user));
-                Log.e(MainActivity.TAG, "No user found ! Cannot send..");
-                Toast.makeText(getApplicationContext(),
-                        "No User found !", Toast.LENGTH_SHORT).show();
-            }
+            sendJSONObjectRequest();
+        } else if (view.getId() == R.id.id_btn_token_test) {
+            TokenManager tm = new TokenManager(getApplicationContext());
+            // Result will be returned to this Activity
+            tm.getToken(user);
+            tm.delegateTokenResult = this;
+            Log.v(MainActivity.TAG, "Token is being waited..");
         }
     }
 
@@ -327,6 +359,24 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     protected void onPause() {
         saveUser(this.user);
         super.onPause();
+    }
+
+    @Override
+    public void tokenSuccess(String token) {
+        Log.v(MainActivity.TAG, "Token SUCCESS: " + token);
+        this.token = token;
+        // retry request
+        sendJSONObjectRequest();
+    }
+
+    @Override
+    public void tokenExpired() {
+        Log.v(MainActivity.TAG, "Token EXPIRED");
+    }
+
+    @Override
+    public void tokenFailed() {
+        Log.v(MainActivity.TAG, "Token FAILED");
     }
 
     /**************************************************************

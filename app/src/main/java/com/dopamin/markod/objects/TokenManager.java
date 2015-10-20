@@ -55,17 +55,17 @@ public class TokenManager {
                 }
 
                 if (status != null) {
-                    if (status.equalsIgnoreCase("FAIL")) {
-
-                    } else if (status.equalsIgnoreCase("OK")) {
+                    if (status.equalsIgnoreCase("OK")) {
                         try {
-                            delegateTokenResult.tokenReady(response.get("token").toString());
+                            delegateTokenResult.tokenSuccess(response.get("token").toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    } else if (status.equalsIgnoreCase("EXPIRED")) {
+                        delegateTokenResult.tokenExpired();
                     }
                     else {
-
+                        delegateTokenResult.tokenFailed();
                     }
                 }
             }
