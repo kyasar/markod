@@ -155,7 +155,7 @@ public class AddProductActivity extends AppCompatActivity implements
             Gson gson = new Gson();
             Log.v(MainActivity.TAG, "Product: " + gson.toJson(p).toString());
 
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, productAddURL + token,
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, productAddURL + tm.getCurrentToken(),
                     gson.toJson(p), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {

@@ -1,6 +1,8 @@
 package com.dopamin.markod.objects;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -26,13 +28,32 @@ import java.util.Map;
 public class TokenManager {
 
     private Context context;
+    private String token;
     public TokenResult delegateTokenResult = null;
 
     public TokenManager(Context context) {
         this.context = context;
+        loadTokenFromShared();
     }
 
     private String authenticateURL = MainActivity.MDS_SERVER + "/mds/signup/authenticate";
+
+    private void loadTokenFromShared() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.context);
+        this.token = sp.getString("token", "");
+    }
+
+    private boolean saveTokenToShared() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.context);
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putString("token", this.token);
+        Log.v(MainActivity.TAG, "Token saved into Shared.");
+        return edit.commit();
+    }
+
+    public String getCurrentToken() {
+        return this.token;
+    }
 
     public String getToken(User user) {
 
@@ -57,7 +78,10 @@ public class TokenManager {
                 if (status != null) {
                     if (status.equalsIgnoreCase("OK")) {
                         try {
-                            delegateTokenResult.tokenSuccess(response.get("token").toString());
+                            token = response.get("token").toString();
+                            // Store token for future usages
+                            saveTokenToShared();
+                            delegateTokenResult.tokenSuccess(token);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
