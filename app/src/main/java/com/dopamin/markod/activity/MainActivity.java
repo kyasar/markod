@@ -59,12 +59,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static final String MDS_TOKEN = "test";
     public static final String GOOGLE_API_KEY = "AIzaSyAsNF78R8Xfd63JsdSJD9RP22X7M7o_0sE";
     public static final String MDS_API_KEY = "15b240618c19d0cb36d0778d52253177";
-    public static String MDS_SERVER = "http://192.168.1.23:8000";
+    public static String MDS_SERVER = "http://192.168.43.120:8000";
 
     private Button btn_spy_market;
 
     /* Select market request for the Market Select Activity */
-    private int SELECT_MARKET_REQUESTCODE = 1;
+    private int SELECT_MARKET_REQUESTCODE = 1;<
 
     /* User request for Login Activity */
     private int LOGIN_FOR_SPY_REQUESTCODE = 2;
