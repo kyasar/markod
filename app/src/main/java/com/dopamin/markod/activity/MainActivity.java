@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     private Button btn_spy_market;
 
     /* Select market request for the Market Select Activity */
-    private int SELECT_MARKET_REQUESTCODE = 1;<
+    private int SELECT_MARKET_REQUESTCODE = 1;
 
     /* User request for Login Activity */
     private int LOGIN_FOR_SPY_REQUESTCODE = 2;
