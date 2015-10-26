@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     public static User user;
     public static Market market;
 
-    private SliderLayout mDemoSlider;
-
     // Toolbar and Navigation Drawer
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
