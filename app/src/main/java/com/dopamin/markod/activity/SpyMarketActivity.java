@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +56,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 	private Boolean test = false;
 	protected AlertDialog.Builder builder;
     private ProgressDialog progressDialog;
-	private TextView tv_spymarket_info;
+	private RelativeLayout rl_spy_hint;
 	private Toolbar toolbar;
 
 	public static int POINTS_DIALOG_FRAGMENT_SUCC_CODE = 2;
@@ -87,7 +88,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
-		tv_spymarket_info = (TextView) findViewById(R.id.spymarket_info);
+		rl_spy_hint = (RelativeLayout) findViewById(R.id.id_rl_spy_hint);
 
 		scanBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
@@ -139,14 +140,14 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 			total++;
 			sendBtn.setVisibility(View.VISIBLE);
 		}
-		tv_spymarket_info.setVisibility(View.GONE);
+		rl_spy_hint.setVisibility(View.GONE);
 		refreshScannedListView();
 	}
 
     private void clearScannedList() {
         this.productList.clear();
 		sendBtn.setVisibility(View.GONE);
-		tv_spymarket_info.setVisibility(View.VISIBLE);
+		rl_spy_hint.setVisibility(View.VISIBLE);
 		total = 0;
         refreshScannedListView();
     }
