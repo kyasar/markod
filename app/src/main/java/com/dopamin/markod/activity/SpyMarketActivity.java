@@ -169,6 +169,8 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 				// String scanFormat = scanningResult.getFormatName();
 				String uniqueProductURL = productURL + barcode + "?token=" + MainActivity.MDS_TOKEN;
 				Log.v(MainActivity.TAG, "productURL: " + uniqueProductURL);
+
+				@SuppressWarnings("unchecked")
 				GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, uniqueProductURL,
 						Product.class, new Response.Listener<Product>() {
 					@Override
