@@ -66,7 +66,6 @@ public class AddProductActivity extends AppCompatActivity implements
     private CoordinatorLayout snackbarCoordinatorLayout;
     private ConnectionDetector cd;
     private Button btn_token_test;
-    private String token;
 
     private Product p;
     private User user;
@@ -364,7 +363,6 @@ public class AddProductActivity extends AppCompatActivity implements
     @Override
     public void tokenSuccess(String token) {
         Log.v(MainActivity.TAG, "Token SUCCESS: " + token);
-        this.token = token;
         // retry request
         sendJSONObjectRequest();
     }
