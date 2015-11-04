@@ -98,6 +98,7 @@ public class TokenManager {
             public void onErrorResponse(VolleyError error) {
                 Log.e(MainActivity.TAG, "Volley: User login error.");
                 Log.e(MainActivity.TAG, error.toString());
+                delegateTokenResult.tokenFailed();
             }
         });
 
