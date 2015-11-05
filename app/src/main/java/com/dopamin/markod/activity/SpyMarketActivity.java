@@ -15,6 +15,8 @@ import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.*;
 import com.dopamin.markod.objects.Market;
 import com.dopamin.markod.objects.Product;
+import com.dopamin.markod.objects.TokenManager;
+import com.dopamin.markod.objects.TokenResult;
 import com.dopamin.markod.objects.User;
 import com.dopamin.markod.request.GsonRequest;
 import com.dopamin.markod.scanner.SimpleScannerActivity;
@@ -47,7 +49,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SpyMarketActivity extends AppCompatActivity implements OnClickListener {
+public class SpyMarketActivity extends AppCompatActivity implements OnClickListener, TokenResult {
 	
 	private View scanBtn, sendBtn;
 	private ListView products_lv;
@@ -66,10 +68,11 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 	private Product product = null;
 	private Market market = null;
 	private User user = null;
+	private TokenManager tm;
 
 	/* API socialLoginURL to retrieve info about a product with its unique BarCode number */
 	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
-	String marketURL = MainActivity.MDS_SERVER + "/mds/api/market/" + "?token=" + MainActivity.MDS_TOKEN;
+	String marketURL = MainActivity.MDS_SERVER + "/mds/api/market/" + "?token=";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,10 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+		tm = new TokenManager(getApplicationContext());
+		// Result will be returned to this Activity
+		tm.delegateTokenResult = this;
 
 		Bundle bundle = getIntent().getExtras();
 		market = bundle.getParcelable("market");
@@ -270,6 +277,74 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 		ft.commitAllowingStateLoss();
 	}
 
+	private void sendJSONObjectRequest() {
+		progressDialog.setTitle(getResources().getString(R.string.spymarket_sharing_title));
+		progressDialog.setMessage(getResources().getString(R.string.please_wait));
+		progressDialog.show();
+		market.setProducts(this.productList);
+		market.setUserID(user.get_id());
+
+		Gson gson = new Gson();
+		Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(market.createJSON_AssocProducts()));
+
+		JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL + tm.getCurrentToken(),
+				gson.toJson(market), new Response.Listener<JSONObject>() {
+			@Override
+			public void onResponse(JSONObject response) {
+
+				Log.i("volley", "response: " + response);
+				String status = null;
+				int earn = 0;
+
+				try {
+					status = response.get("status").toString();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				if (status != null) {
+					if (status.equalsIgnoreCase("OK")) {
+						//Toast.makeText(getApplicationContext(), "Product \"" + p.getName() +
+						// "\" successfully sent! Thank you.", Toast.LENGTH_SHORT).show();
+						try {
+							JSONObject userJSON = response.getJSONObject("user");
+							earn = userJSON.getInt("points") - user.getPoints();
+						} catch (JSONException e) {
+							e.printStackTrace();
+							//snackIt(getResources().getString(R.string.str_msg_err_server));
+						}
+						user.incPoints(earn);
+						//snackIt(getResources().getString(R.string.str_msg_product_declare_succ) + " " + earn);
+						Log.v(MainActivity.TAG, "User has " + earn + " points.");
+
+						clearScannedList();
+						progressDialog.dismiss();
+						showPointsDialog(response);
+					}
+					else if (status.equalsIgnoreCase("EXPIRED") || status.equalsIgnoreCase("NOTOKEN")) {
+						Log.v(MainActivity.TAG, "Token expired or not provided");
+						tm.getToken(user);
+						Log.v(MainActivity.TAG, "New Token is being waited..");
+					}
+					else {
+						Log.v(MainActivity.TAG, getResources().getString(R.string.str_msg_err_server));
+						//snackIt(getResources().getString(R.string.str_msg_err_server));
+						//setInputs(true);
+						progressDialog.dismiss();
+					}
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.i("volley", "error: " + error);
+				progressDialog.dismiss();
+			}
+		});
+		Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
+		Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+	}
+
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
@@ -287,33 +362,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 				break;
 
 			case R.id.send_button:
-				progressDialog.setTitle(getResources().getString(R.string.spymarket_sharing_title));
-				progressDialog.setMessage(getResources().getString(R.string.please_wait));
-                progressDialog.show();
-				market.setProducts(this.productList);
-				market.setUserID(user.get_id());
-
-                Gson gson = new Gson();
-				Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(market.createJSON_AssocProducts()));
-
-				JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL,
-						gson.toJson(market), new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						Log.i("volley", "response: " + response);
-                        clearScannedList();
-                        progressDialog.dismiss();
-						showPointsDialog(response);
-					}
-				}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.i("volley", "error: " + error);
-                        progressDialog.dismiss();
-					}
-				});
-				Log.v(MainActivity.TAG, "Sending " + total + " products to Market (" + market.getName() + ") ..");
-				Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+				sendJSONObjectRequest();
 				break;
 
 			default:
@@ -346,5 +395,23 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 	public void updateUserPointsUI() {
 		saveUser(this.user);
+	}
+
+	@Override
+	public void tokenSuccess(String token) {
+		Log.v(MainActivity.TAG, "Token SUCCESS: " + token);
+		// retry request
+		sendJSONObjectRequest();
+	}
+
+	@Override
+	public void tokenExpired() {
+
+	}
+
+	@Override
+	public void tokenFailed() {
+		Log.v(MainActivity.TAG, "Token FAILED");
+		progressDialog.dismiss();
 	}
 }
