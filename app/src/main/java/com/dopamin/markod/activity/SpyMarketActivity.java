@@ -174,7 +174,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 				progressDialog.setMessage(getResources().getString(R.string.please_wait));
 				progressDialog.show();
 				// String scanFormat = scanningResult.getFormatName();
-				String uniqueProductURL = productURL + barcode + "?token=" + MainActivity.MDS_TOKEN;
+				String uniqueProductURL = productURL + barcode + "?api_key=" + MainActivity.MDS_API_KEY;
 				Log.v(MainActivity.TAG, "productURL: " + uniqueProductURL);
 
 				@SuppressWarnings("unchecked")
@@ -287,7 +287,8 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 		Gson gson = new Gson();
 		Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(market.createJSON_AssocProducts()));
 
-		JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL + tm.getCurrentToken(),
+		JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL + tm.getCurrentToken()
+				+ "&api_key=" + MainActivity.MDS_API_KEY,
 				gson.toJson(market), new Response.Listener<JSONObject>() {
 			@Override
 			public void onResponse(JSONObject response) {
