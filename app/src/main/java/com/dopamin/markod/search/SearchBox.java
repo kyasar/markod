@@ -266,7 +266,8 @@ public class SearchBox extends RelativeLayout {
 		}
 
 		JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
-				MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + encodedSearchTerm,
+				MainActivity.MDS_SERVER + "/mds/api/products" + "?search=" + encodedSearchTerm
+				+ "&api_key=" + MainActivity.MDS_API_KEY,
 				new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
