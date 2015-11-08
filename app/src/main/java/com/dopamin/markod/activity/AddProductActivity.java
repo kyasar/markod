@@ -65,7 +65,6 @@ public class AddProductActivity extends AppCompatActivity implements
     private Toolbar toolbar;
     private CoordinatorLayout snackbarCoordinatorLayout;
     private ConnectionDetector cd;
-    private Button btn_token_test;
 
     private Product p;
     private User user;
@@ -93,9 +92,6 @@ public class AddProductActivity extends AppCompatActivity implements
         btn_sendProduct = (ActionProcessButton) findViewById(R.id.id_btn_sendProduct);
         btn_sendProduct.setMode(ActionProcessButton.Mode.ENDLESS);
         btn_sendProduct.setOnClickListener(this);
-
-        btn_token_test = (Button) findViewById(R.id.id_btn_token_test);
-        btn_token_test.setOnClickListener(this);
 
         txt_scannedCode = (TextView) findViewById(R.id.txt_scannedCode);
         txt_photoTake =  (TextView) findViewById(R.id.id_txt_take_photo);
@@ -241,12 +237,6 @@ public class AddProductActivity extends AppCompatActivity implements
         }
         else if (view.getId() == R.id.id_btn_sendProduct) {
             sendJSONObjectRequest();
-        } else if (view.getId() == R.id.id_btn_token_test) {
-            TokenManager tm = new TokenManager(getApplicationContext());
-            // Result will be returned to this Activity
-            tm.getToken(user);
-            tm.delegateTokenResult = this;
-            Log.v(MainActivity.TAG, "Token is being waited..");
         }
     }
 
