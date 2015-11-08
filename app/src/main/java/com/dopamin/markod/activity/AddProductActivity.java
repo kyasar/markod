@@ -154,7 +154,8 @@ public class AddProductActivity extends AppCompatActivity implements
             Gson gson = new Gson();
             Log.v(MainActivity.TAG, "Product: " + gson.toJson(p).toString());
 
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, productAddURL + tm.getCurrentToken(),
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, productAddURL + tm.getCurrentToken()
+                    + "&api_key=" + MainActivity.MDS_API_KEY,
                     gson.toJson(p), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
