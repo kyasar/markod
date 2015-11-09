@@ -35,6 +35,8 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.dopamin.markod.objects.TokenManager;
+import com.dopamin.markod.objects.TokenResult;
 import com.dopamin.markod.search.SearchBox;
 import com.google.gson.Gson;
 import com.android.volley.Request;
@@ -49,12 +51,13 @@ import com.dopamin.markod.objects.Product;
 import com.dopamin.markod.objects.ShopList;
 import com.dopamin.markod.objects.User;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopListsActivity extends AppCompatActivity implements View.OnClickListener {
+public class ShopListsActivity extends AppCompatActivity implements View.OnClickListener, TokenResult {
 
     private ExpandableListAdapter exp_lv_adapter;
     private ExpandableListView exp_lv_shopLists;
@@ -63,6 +66,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     private ProgressDialog progressDialog;
 
     private User user;
+    private TokenManager tm;
     private int selectedList = -1;
 
     // ShopList expandable listview cannot be clickable while saving changes
@@ -76,7 +80,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE = 701;
 
-    String userUpdateURL = MainActivity.MDS_SERVER + "/mds/api/user-update/" + "?token=" + MainActivity.MDS_TOKEN;
+    String userUpdateURL = MainActivity.MDS_SERVER + "/mds/api/user-update/" + "?token=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +123,10 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         exp_lv_adapter = new ExpandableListAdapter(this, user.getShopLists());
         exp_lv_shopLists.setAdapter(exp_lv_adapter);
         registerForContextMenu(exp_lv_shopLists);
+
+        tm = new TokenManager(getApplicationContext());
+        // Result will be returned to this Activity
+        tm.delegateTokenResult = this;
 
         /* sending product declaration loading progress */
         progressDialog = new ProgressDialog(this);
@@ -319,6 +327,72 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         alert.show();
     }
 
+    private void sendJSONObjectRequest() {
+        Log.v(MainActivity.TAG, "Save Changes button clicked. User changes will be sent to server.");
+        //progressDialog.show();
+
+        btn_saveChanges.setProgress(1);
+        btn_saveChanges.setClickable(false);
+        isListClickable = false;
+
+        Gson gson = new Gson();
+        Log.v(MainActivity.TAG, "User: " + gson.toJson(this.user.createJSON_updateShopLists()).toString());
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userUpdateURL + tm.getCurrentToken(),
+                gson.toJson(this.user.createJSON_updateShopLists()), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.v(MainActivity.TAG, "Response: " + response);
+                String status = null;
+
+                try {
+                    status = response.get("status").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (status != null) {
+                    if (status.equalsIgnoreCase("OK")) {
+                        btn_saveChanges.setProgress(0);
+                        btn_saveChanges.setClickable(true);
+                        isListClickable = true;
+                        btn_saveChanges.setVisibility(View.GONE);
+                        snackIt(getResources().getString(R.string.str_msg_changes_saved));
+                    }
+                    else if (status.equalsIgnoreCase("EXPIRED") || status.equalsIgnoreCase("NOTOKEN")) {
+                        Log.v(MainActivity.TAG, "Token expired or not provided");
+                        tm.getToken(user);
+                        Log.v(MainActivity.TAG, "New Token is being waited..");
+                    }
+                    else {
+                        btn_saveChanges.setProgress(0);
+                        btn_saveChanges.setClickable(true);
+                        isListClickable = true;
+                        Log.v(MainActivity.TAG, getResources().getString(R.string.str_msg_err_server));
+                        snackIt(getResources().getString(R.string.str_msg_err_server));
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //progressDialog.dismiss();
+                btn_saveChanges.setProgress(0);
+                btn_saveChanges.setClickable(true);
+                isListClickable = true;
+
+                Log.e(MainActivity.TAG, "Volley: User update error.");
+                snackIt(getResources().getString(R.string.str_msg_err_server));
+            }
+        });
+
+        // Set timeout to 15 sec, and try only one time
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -334,48 +408,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.id_btn_save_changes) {
-            Log.v(MainActivity.TAG, "Save Changes button clicked. User changes will be sent to server.");
-            //progressDialog.show();
-
-            btn_saveChanges.setProgress(1);
-            btn_saveChanges.setClickable(false);
-            isListClickable = false;
-
-            Gson gson = new Gson();
-            Log.v(MainActivity.TAG, "User: " + gson.toJson(this.user.createJSON_updateShopLists()).toString());
-
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userUpdateURL,
-                    gson.toJson(this.user.createJSON_updateShopLists()), new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.i("volley", "response: " + response);
-
-                    //progressDialog.dismiss();
-                    btn_saveChanges.setProgress(0);
-                    btn_saveChanges.setClickable(true);
-                    isListClickable = true;
-                    btn_saveChanges.setVisibility(View.GONE);
-
-                    snackIt(getResources().getString(R.string.str_msg_changes_saved));
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    //progressDialog.dismiss();
-                    btn_saveChanges.setProgress(0);
-                    btn_saveChanges.setClickable(true);
-                    isListClickable = true;
-
-                    Log.e(MainActivity.TAG, "Volley: User update error.");
-                    snackIt(getResources().getString(R.string.str_msg_err_server));
-                }
-            });
-
-            // Set timeout to 15 sec, and try only one time
-            jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
-                    1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Volley.newRequestQueue(getApplication()).add(jsObjRequest);
+            sendJSONObjectRequest();
         }
     }
 
@@ -521,5 +554,22 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
             selectedList = groupPosition;
             openSearch();
         }
+    }
+
+    @Override
+    public void tokenSuccess(String token) {
+        Log.v(MainActivity.TAG, "Token SUCCESS: " + token);
+        // retry request
+        sendJSONObjectRequest();
+    }
+
+    @Override
+    public void tokenExpired() {
+
+    }
+
+    @Override
+    public void tokenFailed() {
+
     }
 }
