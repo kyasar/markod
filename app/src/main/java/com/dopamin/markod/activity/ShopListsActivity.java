@@ -338,7 +338,8 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         Gson gson = new Gson();
         Log.v(MainActivity.TAG, "User: " + gson.toJson(this.user.createJSON_updateShopLists()).toString());
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userUpdateURL + tm.getCurrentToken(),
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userUpdateURL + tm.getCurrentToken()
+                + "&api_key=" + MainActivity.MDS_API_KEY,
                 gson.toJson(this.user.createJSON_updateShopLists()), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

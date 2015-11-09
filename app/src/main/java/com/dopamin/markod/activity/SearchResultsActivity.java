@@ -456,7 +456,8 @@ public class SearchResultsActivity extends AppCompatActivity
         Gson gson = new Gson();
         Log.v(MainActivity.TAG, "Market JSON: " + gson.toJson(scanRequest));
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, scanURL,
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, scanURL
+                + "?api_key=" + MainActivity.MDS_API_KEY,
                 gson.toJson(scanRequest), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
