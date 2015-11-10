@@ -123,7 +123,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Gson gson = new Gson();
         Log.v(MainActivity.TAG, "User: " + gson.toJson(user).toString());
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userRegisterURL,
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, userRegisterURL
+                + "?api_key=" + MainActivity.MDS_API_KEY,
                 gson.toJson(user), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

@@ -438,7 +438,8 @@ public class LoginActivity extends AppCompatActivity implements
 
         final Gson gson = new Gson();
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, localLoginURL,
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, localLoginURL
+                + "?api_key=" + MainActivity.MDS_API_KEY,
                 gson.toJson(queryUser), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
