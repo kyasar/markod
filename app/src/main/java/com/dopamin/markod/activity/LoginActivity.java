@@ -34,7 +34,6 @@ import com.dd.processbutton.iml.ActionProcessButton;
 import com.dopamin.markod.R;
 import com.dopamin.markod.objects.ConnectionDetector;
 import com.dopamin.markod.objects.User;
-import com.dopamin.markod.request.GsonRequest;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -70,7 +69,8 @@ public class LoginActivity extends AppCompatActivity implements
 
     ActionProcessButton btn_login;
     EditText et_email, et_password;
-    TextView tv_email, tv_password;
+    private TextView link_to_register, tv_email, tv_password;
+
 
     /**
      * A flag indicating that a PendingIntent is in progress and prevents us
@@ -82,43 +82,72 @@ public class LoginActivity extends AppCompatActivity implements
     private Toolbar toolbar;
     private CoordinatorLayout snackbarCoordinatorLayout;
 
-    private TextView link_to_register;
-
-    private Map<String,String> params = new HashMap<String, String>();
-
     private ConnectionDetector cd;
 
     String socialLoginURL = MainActivity.MDS_SERVER + "/mds/signup/social";
     String localLoginURL = MainActivity.MDS_SERVER + "/mds/signup/login/";
 
-    final GsonRequest gsonRequest = new GsonRequest(Request.Method.POST, socialLoginURL, User.class,
-            null, params, new Response.Listener<User>() {
+    private void loginSocially(User queryUser) {
+        setInputs(false);
 
-        @Override
-        public void onResponse(User user) {
-            if (user != null) {
-                LoginActivity.user = user;
+        final Gson gson = new Gson();
 
-                // OK, save User into Shared preference
-                // saveUser(user);
-                new LoadProfileImage().execute("https://graph.facebook.com/"
-                        + user.getSocial_id() + "/picture?type=large");
+        JsonObjectRequest jsObjRequestLocal = new JsonObjectRequest(Request.Method.POST, socialLoginURL
+                + "?api_key=" + MainActivity.MDS_API_KEY,
+                gson.toJson(queryUser), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i("volley", "response: " + response);
+                String status = null;
 
-                updateUI(true);
-            }
-        }
-    }, new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError volleyError) {
-            if(volleyError != null) {
-                // TODO: this line cause to "println needs a message" error - fix it later for log.
-                //Log.e("MainActivity", volleyError.getMessage());
-                snackIt(getResources().getString(R.string.str_msg_login_failed));
+                try {
+                    status = response.get("status").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (status != null) {
+                    if (status.equalsIgnoreCase("NOT_VERIFIED")) {
+                        snackIt(getResources().getString(R.string.str_dialog_msg_not_verified_yet));
+                    } else if (status.equalsIgnoreCase("OK")) {
+                        try {
+                            user = gson.fromJson(response.getJSONObject("user").toString(), User.class);
+                            Log.v(MainActivity.TAG, "User OK: " + user.getFirstName());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            snackIt(getResources().getString(R.string.str_msg_err_server));
+                        }
+                        snackIt(getResources().getString(R.string.str_dialog_msg_login_ok));
+                        showSuccLoginDialog();
+                    } else if (status.equalsIgnoreCase("NO_USER")) {
+                        setInputs(true);
+                        snackIt(getResources().getString(R.string.str_dialog_msg_no_such_user));
+                    }
+                    else {
+                        setInputs(true);
+                        snackIt(getResources().getString(R.string.str_dialog_msg_login_error));
+                    }
+                }
+                setInputs(true);
                 progressDialog.dismiss();
-                callFacebookLogout();
             }
-        }
-    });
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(MainActivity.TAG, "Volley: User login error.");
+                Log.e(MainActivity.TAG, error.toString());
+                progressDialog.dismiss();
+                setInputs(true);
+                snackIt(getResources().getString(R.string.str_dialog_msg_login_error));
+            }
+        });
+
+        // Set timeout to 15 sec, and try only one time
+        jsObjRequestLocal.setRetryPolicy(new DefaultRetryPolicy(15000,
+                1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication()).add(jsObjRequestLocal);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,28 +216,14 @@ public class LoginActivity extends AppCompatActivity implements
                                 } else {
                                     progressDialog.show();
 
-                                    String email = me.optString("email");
-                                    String id = me.optString("id");
-                                    String fullName = me.optString("name");
+                                    User newSocialUser = new User();
+                                    newSocialUser.setFirstName(me.optString("first_name"));
+                                    newSocialUser.setLastName(me.optString("last_name"));
+                                    newSocialUser.setSocial_id(me.optString("id"));
+                                    newSocialUser.setLoginType("FACEBOOK");
+                                    newSocialUser.setEmail(me.optString("email"));
 
-                                    // clear parameters list and then add params
-                                    params.clear();
-                                    params.put("firstName", me.optString("first_name"));
-                                    params.put("lastName", me.optString("last_name"));
-                                    params.put("social_id", me.optString("id"));
-                                    params.put("loginType", "FACEBOOK");
-                                    params.put("email", email);
-
-                                    // send email and id to your web server
-                                    Log.e(MainActivity.TAG, "facebook profile email: " + email + ", id: "
-                                            + id + ", name: " + fullName );
-
-                                    // After adding email to parameters, send the POST login/signup request
-                                    // Set timeout to 15 sec, and try only one time
-                                    gsonRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
-                                            1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                    Volley.newRequestQueue(getApplication()).add(gsonRequest);
+                                    loginSocially(newSocialUser);
                                 }
                             }
                         }).executeAsync();
