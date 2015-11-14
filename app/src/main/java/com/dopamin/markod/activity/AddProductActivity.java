@@ -64,6 +64,8 @@ public class AddProductActivity extends AppCompatActivity implements
     private Bitmap bitmapPhoto;
     private Toolbar toolbar;
     private CoordinatorLayout snackbarCoordinatorLayout;
+    private Button btn_test;
+
     private ConnectionDetector cd;
 
     private Product p;
@@ -102,6 +104,9 @@ public class AddProductActivity extends AppCompatActivity implements
         //iv_barcode = (ImageView) findViewById(R.id.id_img_barcode);
         iv_take_photo = (ImageView) findViewById(R.id.id_take_photo);
         iv_take_photo.setOnClickListener(this);
+
+        btn_test = (Button) findViewById(R.id.id_btn_test);
+        btn_test.setOnClickListener(this);
 
         Bundle bundle = getIntent().getExtras();
         user = bundle.getParcelable("user");
@@ -238,6 +243,9 @@ public class AddProductActivity extends AppCompatActivity implements
         else if (view.getId() == R.id.id_btn_sendProduct) {
             sendJSONObjectRequest();
         }
+        else if (view.getId() == R.id.id_btn_test) {
+            sendTestJSON();
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -366,6 +374,29 @@ public class AddProductActivity extends AppCompatActivity implements
     @Override
     public void tokenFailed() {
         Log.v(MainActivity.TAG, "Token FAILED");
+    }
+
+
+    public void sendTestJSON() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
+                "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA"
+                + "&key=" + MainActivity.GOOGLE_API_KEY,
+                new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.v(MainActivity.TAG, "TEST response: " + response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(MainActivity.TAG, "Volley: product add error.");
+            }
+        });
+        // Set timeout to 15 sec, and try only one time
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication()).add(jsObjRequest);
     }
 
     /**************************************************************
