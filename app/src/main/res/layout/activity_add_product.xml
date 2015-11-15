@@ -135,6 +135,7 @@
         <Button
             android:id="@+id/id_btn_test"
             android:text="TEST"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
