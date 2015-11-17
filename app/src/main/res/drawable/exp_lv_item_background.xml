@@ -54,8 +54,8 @@
                 <shape android:shape="rectangle">
                     <corners android:radius="2dp" />
                     <gradient
-                        android:startColor="@color/blue_normal"
-                        android:endColor="@color/blue_pressed"
+                        android:startColor="@android:color/holo_blue_bright"
+                        android:endColor="@android:color/holo_blue_bright"
                         android:angle="270" />
                 </shape>
             </item>

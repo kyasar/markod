@@ -39,9 +39,9 @@
     </style>
 
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">#FFCC00</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:background">#5fa3d0</item>
+        <item name="colorAccent">@color/yellow</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">@color/dialog_blue</item>
     </style>
 
 </resources>

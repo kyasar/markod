@@ -5,9 +5,12 @@
     <color name="white">#FFFFFF</color>
     <color name="red">#D50000</color>
     <color name="orange">#FF6E40</color>
+    <color name="yellow">#FFCC00</color>
     <color name="markod_bg_color">#E0E0E0</color>
     <color name="open_gray">#E0E0E0</color>
     <color name="text_shadow">#7F000000</color>
+
+    <color name="dialog_blue">#5fa3d0</color>
 
     <item name="blue" type="color">#FF33B5E5</item>
     <item name="purple" type="color">#FFAA66CC</item>

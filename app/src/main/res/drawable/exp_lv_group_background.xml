@@ -41,7 +41,7 @@
                     <solid android:color="@color/darkgreen" />
                     <corners android:radius="2dp" />
                     <gradient
-                        android:startColor="@color/darkgreen"
+                        android:startColor="@color/green"
                         android:endColor="@color/green"
                         android:angle="270" />
                 </shape>

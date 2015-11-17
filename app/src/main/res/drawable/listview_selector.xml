@@ -9,6 +9,6 @@
 
     <item
         android:state_pressed="true"
-        android:drawable="@drawable/listview_selector_pressed" />
+        android:drawable="@android:color/holo_blue_bright" />
 
 </selector>
