@@ -38,8 +38,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -91,6 +95,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 		sendBtn.setVisibility(View.GONE);	// at first, nothing scanned to send
 		products_lv = (ListView) findViewById(R.id.productList);
+		registerForContextMenu(products_lv);
 		rl_spy_hint = (RelativeLayout) findViewById(R.id.id_rl_spy_hint);
 
 		scanBtn.setOnClickListener(this);
@@ -383,6 +388,33 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 		} else if (code == PRICE_DIALOG_FRAGMENT_FAIL_CODE) {
 			//Toast.makeText(this, "Product is discarded !!", Toast.LENGTH_SHORT).show();
 			total--;
+		}
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		if (v.getId() == R.id.productList) {
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.context_spy_product, menu);
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		Log.v(MainActivity.TAG, "Selected product: " + this.productList.get(info.position).getName());
+
+		switch(item.getItemId()) {
+			case R.id.id_menu_product_reprice:
+				Log.v(MainActivity.TAG, "Price will be updated..");
+				return true;
+			case R.id.id_menu_product_delete:
+				Log.v(MainActivity.TAG, "Price will be removed..");
+				return true;
+			default:
+				return super.onContextItemSelected(item);
 		}
 	}
 

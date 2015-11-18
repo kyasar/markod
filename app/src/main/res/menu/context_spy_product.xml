@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/id_menu_product_reprice"
+        android:title="@string/str_menu_product_reprice"
+        android:orderInCategory="100" />
+    <item android:id="@+id/id_menu_product_delete"
+        android:title="@string/str_menu_remove_product"
+        android:orderInCategory="100" />
+</menu>
