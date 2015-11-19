@@ -409,13 +409,16 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 		switch(item.getItemId()) {
 			case R.id.id_menu_product_reprice:
 				Log.v(MainActivity.TAG, "Price will be updated..");
-				return true;
+				break;
 			case R.id.id_menu_product_delete:
 				Log.v(MainActivity.TAG, "Price will be removed..");
-				return true;
+				this.productList.remove(info.position);
+				refreshScannedListView();
+				break;
 			default:
-				return super.onContextItemSelected(item);
+				break;
 		}
+		return super.onContextItemSelected(item);
 	}
 
 	public boolean saveUser(User user) {
