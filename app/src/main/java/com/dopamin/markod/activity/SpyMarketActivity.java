@@ -394,10 +394,12 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
 		if (v.getId() == R.id.productList) {
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.context_spy_product, menu);
+			menu.setHeaderTitle(this.productList.get(info.position).getName());
 		}
 	}
 
