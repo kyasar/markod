@@ -411,6 +411,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 		switch(item.getItemId()) {
 			case R.id.id_menu_product_reprice:
 				Log.v(MainActivity.TAG, "Price will be updated..");
+				showAlertDialog(this.productList.get(info.position));
 				break;
 			case R.id.id_menu_product_delete:
 				Log.v(MainActivity.TAG, "Price will be removed..");
