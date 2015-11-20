@@ -3,6 +3,7 @@ package com.dopamin.markod.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -82,8 +83,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_spymarket);
-		
-		Log.v(MainActivity.TAG, "onCreate Spy Market Activity.");
+
 		// Setting Toolbar
 		// Set a Toolbar to replace the ActionBar.
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -129,8 +129,8 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 	private int isProductAlreadyAdded(Product p) {
 		for (int i = 0; i < productList.size(); i++) {
 			if (productList.get(i).getBarcode().matches(p.getBarcode())) {
-				Log.v(MainActivity.TAG, "The product " + p.getBarcode()
-						+ " is already added. Just updating the price.");
+				//Log.v(MainActivity.TAG, "The product " + p.getBarcode()
+				//		+ " is already added. Just updating the price.");
 				return i;
 			}
 		}
@@ -172,15 +172,13 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 			String barcode = res.getString("content");
 			String format = res.getString("format");
 
-			//Toast.makeText(this, "Contents = " + barcode +", Format = " + format, Toast.LENGTH_SHORT).show();
-
 			if (barcode != null) {
 				progressDialog.setTitle(getResources().getString(R.string.spymarket_product_title));
 				progressDialog.setMessage(getResources().getString(R.string.please_wait));
 				progressDialog.show();
 				// String scanFormat = scanningResult.getFormatName();
 				String uniqueProductURL = productURL + barcode + "?api_key=" + MainActivity.MDS_API_KEY;
-				Log.v(MainActivity.TAG, "productURL: " + uniqueProductURL);
+				// Log.v(MainActivity.TAG, "productURL: " + uniqueProductURL);
 
 				@SuppressWarnings("unchecked")
 				GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, uniqueProductURL,
@@ -220,9 +218,9 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 				});
 
 				/* Retry policy default timeout was 2500ms, now 3 * 5000 */
-				/*gsonRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
-						3, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
+				gsonRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+						1, //DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 				Volley.newRequestQueue(getApplication()).add(gsonRequest);
 			}
 			else {
@@ -410,11 +408,11 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 		switch(item.getItemId()) {
 			case R.id.id_menu_product_reprice:
-				Log.v(MainActivity.TAG, "Price will be updated..");
+				// Log.v(MainActivity.TAG, "Price will be updated..");
 				showAlertDialog(this.productList.get(info.position));
 				break;
 			case R.id.id_menu_product_delete:
-				Log.v(MainActivity.TAG, "Price will be removed..");
+				// Log.v(MainActivity.TAG, "Price will be removed..");
 				this.productList.remove(info.position);
 				refreshScannedListView();
 				break;
@@ -450,7 +448,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 	@Override
 	public void tokenFailed() {
-		Log.v(MainActivity.TAG, "Token FAILED");
+		Log.e(MainActivity.TAG, "Token FAILED");
 		progressDialog.dismiss();
 	}
 }
