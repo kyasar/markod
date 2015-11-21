@@ -158,11 +158,11 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         // Show context menu for groups
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             inflater.inflate(R.menu.context_shoplist, menu);
-            Log.v(MainActivity.TAG, "Group: " + groupPosition );
+            // Log.v(MainActivity.TAG, "Group: " + groupPosition );
             menu.setHeaderTitle(user.getShopLists().get(groupPosition).getName());
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             inflater.inflate(R.menu.context_shoplist_item, menu);
-            Log.v(MainActivity.TAG, "Group: " + groupPosition + ", Child: " + childPosition);
+            // Log.v(MainActivity.TAG, "Group: " + groupPosition + ", Child: " + childPosition);
             menu.setHeaderTitle(user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
         }
     }
@@ -184,26 +184,26 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_search:
-                    Log.v(MainActivity.TAG, "Searching ShopList " + user.getShopLists().get(groupPosition).getName());
+                    // Log.v(MainActivity.TAG, "Searching ShopList " + user.getShopLists().get(groupPosition).getName());
                     searchNearbyMarkets((ArrayList<Product>) user.getShopLists().get(groupPosition).getProducts());
                     break;
                 case R.id.id_menu_shoplist_delete:
-                    Log.v(MainActivity.TAG, "Deleting ShopList " + user.getShopLists().get(groupPosition).getName());
+                    // Log.v(MainActivity.TAG, "Deleting ShopList " + user.getShopLists().get(groupPosition).getName());
                     deleteShopList();
                     break;
                 case R.id.id_menu_add_product:
-                    Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
+                    // Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
                     openSearch();
                     break;
             }
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             switch(item.getItemId()) {
                 case R.id.id_menu_shoplist_item_search:
-                    Log.v(MainActivity.TAG, "Searching A Product " + user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
+                    // Log.v(MainActivity.TAG, "Searching A Product " + user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
                     searchNearbyMarkets(user.getShopLists().get(groupPosition).getProducts().get(childPosition));
                     break;
                 case R.id.id_menu_shoplist_item_delete:
-                    Log.v(MainActivity.TAG, "Removing A Product " + user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
+                    // Log.v(MainActivity.TAG, "Removing A Product " + user.getShopLists().get(groupPosition).getProducts().get(childPosition).getName());
                     removeItemFromList(groupPosition, childPosition);
                     break;
             }
@@ -233,7 +233,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         //noinspection SimplifiableIfStatement
         switch(item.getItemId()) {
             case R.id.action_search:
-                Log.v(MainActivity.TAG, "Search clicked.");
                 openSearch();
                 break;
             case R.id.action_settings:
@@ -278,8 +277,8 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         List<Product> products = this.user.getShopLists().get(group).getProducts();
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getBarcode().matches(p.getBarcode())) {
-                Log.v(MainActivity.TAG, "The product " + p.getBarcode()
-                        + " is already added. Just updating the price.");
+                // Log.v(MainActivity.TAG, "The product " + p.getBarcode()
+                //        + " is already added. Just updating the price.");
                 return true;
             }
         }
@@ -343,7 +342,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                 gson.toJson(this.user.createJSON_updateShopLists()), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.v(MainActivity.TAG, "Response: " + response);
+                // Log.v(MainActivity.TAG, "Response: " + response);
                 String status = null;
 
                 try {
@@ -361,9 +360,9 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                         snackIt(getResources().getString(R.string.str_msg_changes_saved));
                     }
                     else if (status.equalsIgnoreCase("EXPIRED") || status.equalsIgnoreCase("NOTOKEN")) {
-                        Log.v(MainActivity.TAG, "Token expired or not provided");
+                        // Log.v(MainActivity.TAG, "Token expired or not provided");
                         tm.getToken(user);
-                        Log.v(MainActivity.TAG, "New Token is being waited..");
+                        // Log.v(MainActivity.TAG, "New Token is being waited..");
                     }
                     else {
                         btn_saveChanges.setProgress(0);
@@ -422,7 +421,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
             exp_lv_shopLists.setAdapter(exp_lv_adapter);
             btn_saveChanges.setVisibility(View.VISIBLE);
             layout_hintAddShoplist.setVisibility(View.GONE);
-            Log.v(MainActivity.TAG, "New Shoplist name: " + listName);
+            // Log.v(MainActivity.TAG, "New Shoplist name: " + listName);
             snackIt("New Shoplist is created: " + value);
         } else if (code == SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE) {
             Log.v(MainActivity.TAG, "New Shoplist creation Canceled ");
@@ -433,7 +432,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
         intent.putParcelableArrayListExtra("searchProductList", searchProductList);
         startActivity(intent);
-        Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
+        // Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
     }
 
     private void searchNearbyMarkets(Product searchProduct) {
@@ -443,7 +442,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
         intent.putParcelableArrayListExtra("searchProductList", searchProductList);
         startActivity(intent);
-        Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
+        // Log.v(MainActivity.TAG, "ShopListActivity: SearchResultsActivity is started. OK.");
     }
 
     public boolean saveUser(User user) {
@@ -451,7 +450,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor edit = sp.edit();
         edit.putString("user", gson.toJson(user));
-        Log.v(MainActivity.TAG, "User saved into Shared.");
+        // Log.v(MainActivity.TAG, "User saved into Shared.");
         return edit.commit();
     }
 
@@ -461,7 +460,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         String user_str = sp.getString("user", "");
         if (!user_str.equalsIgnoreCase("")) {
             this.user = gson.fromJson(user_str, User.class);
-            Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
+            // Log.v(MainActivity.TAG, "User (" + user.getFirstName() + ") loaded from Shared.");
             return true;
         }
         this.user = null;
@@ -483,14 +482,14 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onSearchOpened() {
-                //Use this to tint the screen
-                Log.v(MainActivity.TAG, "Search Opened.");
+                // Use this to tint the screen
+                // Log.v(MainActivity.TAG, "Search Opened.");
             }
 
             @Override
             public void onSearchClosed() {
-                //Use this to un-tint the screen
-                Log.v(MainActivity.TAG, "Search Closed.");
+                // Use this to un-tint the screen
+                // Log.v(MainActivity.TAG, "Search Closed.");
                 searchBox.clearResults();
                 if (searchBox.isSearchOpen())
                     closeSearch();
@@ -509,13 +508,13 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onSearchCleared() {
-                Log.v(MainActivity.TAG, "Search Cleared.");
-                //Called when the clear button is clicked
+                // Log.v(MainActivity.TAG, "Search Cleared.");
+                // Called when the clear button is clicked
             }
 
             @Override
             public void onResultItemClicked(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-                Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).getProduct().getName());
+                // Log.v(MainActivity.TAG, "Search Item Clicked: " + searchBox.getSearchables().get(pos).getProduct().getName());
                 addItemToList(selectedList, searchBox.getSearchables().get(pos).getProduct());
 
                 //Use this to un-tint the screen
@@ -559,7 +558,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void tokenSuccess(String token) {
-        Log.v(MainActivity.TAG, "Token SUCCESS: " + token);
+        // Log.v(MainActivity.TAG, "Token SUCCESS: " + token);
         // retry request
         sendJSONObjectRequest();
     }
