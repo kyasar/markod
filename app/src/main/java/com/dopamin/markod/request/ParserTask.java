@@ -4,7 +4,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.dopamin.markod.PlaceJSONParser;
+import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Market;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -77,6 +79,8 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
 
             // Setting the position for the marker
             markerOptions.position(latLng);
+
+            // markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_market));
 
             // Setting the title for the marker.
             //This will be displayed on taping the marker
