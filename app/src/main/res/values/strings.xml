@@ -159,4 +159,5 @@
     <string name="str_dialog_msg_no_such_user">No user found! Try to register..</string>
     <string name="str_menu_product_reprice">Update the price</string>
     <string name="str_menu_remove_product">Remove</string>
+    <string name="str_you_are_here">You are here</string>
 </resources>

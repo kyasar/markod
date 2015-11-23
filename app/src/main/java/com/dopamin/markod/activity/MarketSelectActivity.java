@@ -273,7 +273,8 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
                 // TODO: Do not focus on every gps data ready
                 LatLng myCoordinates = new LatLng(latitude, longitude);
                 Log.i(MainActivity.TAG, "Re-focusing on Google Map..");
-                googleMap.addMarker(new MarkerOptions().position(myCoordinates).title("You are here"));
+                googleMap.addMarker(new MarkerOptions().position(myCoordinates).title(
+                        getResources().getString(R.string.str_you_are_here)));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, 15));
             }
 
