@@ -40,6 +40,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -114,6 +115,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
             mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment));
             googleMap = mapFragment.getMap();
             googleMap.setMyLocationEnabled(true);
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
             Log.v(MainActivity.TAG, "Google Map fragment is OK.");
         }
 
@@ -128,6 +130,13 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
 
                 // Starting the Place Details Activity
                 startActivity(intent);
+            }
+        });
+
+        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition position) {
+                Log.d("Zoom", "Zoom: " + position.zoom);
             }
         });
 
@@ -273,8 +282,8 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
                 // TODO: Do not focus on every gps data ready
                 LatLng myCoordinates = new LatLng(latitude, longitude);
                 Log.i(MainActivity.TAG, "Re-focusing on Google Map..");
-                googleMap.addMarker(new MarkerOptions().position(myCoordinates).title(
-                        getResources().getString(R.string.str_you_are_here)));
+                //googleMap.addMarker(new MarkerOptions().position(myCoordinates).title(
+                //        getResources().getString(R.string.str_you_are_here)));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, 15));
             }
 
