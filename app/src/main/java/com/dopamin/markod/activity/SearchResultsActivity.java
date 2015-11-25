@@ -153,7 +153,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
 		/* Alert Dialog setting for Selecting the Market from listview */
         builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getResources().getString(R.string.str_yes), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing but close the dialog
@@ -181,7 +181,7 @@ public class SearchResultsActivity extends AppCompatActivity
             }
         });
 
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.str_no), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
