@@ -11,6 +11,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -557,10 +558,19 @@ public class SearchResultsActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Log.v(MainActivity.TAG, market.getName() + " will be shown on Maps..");
+                sendIntentToGMaps(market.getMarkerOptions().getPosition());
             }
         });
 
         // Start the animation on the toolbar
         lay_results_bar.startAnimation(expandAni);
+    }
+
+    private void sendIntentToGMaps(LatLng pos) {
+        // Search for restaurants nearby
+        String uri_string = "http://maps.google.com/maps?daddr=" + pos.latitude + "," + pos.longitude;
+        Log.v(MainActivity.TAG, "GMaps Intent uri: " + uri_string);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri_string));
+        startActivity(intent);
     }
 }
