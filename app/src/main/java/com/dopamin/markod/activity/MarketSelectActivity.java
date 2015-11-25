@@ -115,7 +115,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
             mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment));
             googleMap = mapFragment.getMap();
             googleMap.setMyLocationEnabled(true);
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            //googleMap.getUiSettings().setZoomControlsEnabled(true);
             Log.v(MainActivity.TAG, "Google Map fragment is OK.");
         }
 
@@ -136,7 +136,14 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition position) {
-                Log.d("Zoom", "Zoom: " + position.zoom);
+                Log.d(MainActivity.TAG, "Zoom: " + position.zoom);
+            }
+        });
+
+        googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                return false;
             }
         });
 

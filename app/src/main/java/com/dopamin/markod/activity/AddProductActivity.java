@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
@@ -244,8 +245,16 @@ public class AddProductActivity extends AppCompatActivity implements
             sendJSONObjectRequest();
         }
         else if (view.getId() == R.id.id_btn_test) {
-            sendTestJSON();
+            //sendTestJSON();
+            sendIntentToGMaps();
         }
+    }
+
+    private void sendIntentToGMaps() {
+        // Search for restaurants nearby
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+        Uri.parse("http://maps.google.com/maps?daddr=39.89616096,32.79735661"));
+        startActivity(intent);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
