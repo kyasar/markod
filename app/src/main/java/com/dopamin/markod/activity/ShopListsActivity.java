@@ -19,6 +19,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -233,7 +234,8 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         //noinspection SimplifiableIfStatement
         switch(item.getItemId()) {
             case R.id.action_search:
-                openSearch();
+                Log.v(MainActivity.TAG, "menu item openSearch().");
+                // openSearch();
                 break;
             case R.id.action_create_new_shoplist:
                 showNewShopListNameDialog();
@@ -410,6 +412,22 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.v(MainActivity.TAG, "Back pressed !");
+            if (searchBox.getSearchOpen()) {
+                closeSearch();
+            } else {
+                // close activity, searchbox is already closed
+                finish();
+            }
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
     /* Price Fragment Dialog Select Button Listener */
     public void onUserSelectValue(int code, String value) {
         // TODO Auto-generated method stub
@@ -466,8 +484,9 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void openSearch() {
+        Log.v(MainActivity.TAG, " openSearch().");
         searchBox.setVisibility(View.VISIBLE);
-        searchBox.revealFromMenuItem(R.id.action_search, this);
+        searchBox.revealFromMenuItem(R.id.action_create_new_shoplist, this);
         searchBox.setMenuListener(new SearchBox.MenuListener() {
             @Override
             public void onMenuClick() {
@@ -548,6 +567,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     public void addToShopList(int groupPosition) {
         if (isListClickable) {
             selectedList = groupPosition;
+            Log.v(MainActivity.TAG, "add btn openSearch().");
             openSearch();
         }
     }
