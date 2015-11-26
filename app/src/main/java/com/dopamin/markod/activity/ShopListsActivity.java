@@ -193,7 +193,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                     deleteShopList();
                     break;
                 case R.id.id_menu_add_product:
-                    Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
+                    // Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
                     openSearch();
                     break;
             }
@@ -233,10 +233,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
         //noinspection SimplifiableIfStatement
         switch(item.getItemId()) {
-            case R.id.action_search:
-                Log.v(MainActivity.TAG, "menu item openSearch().");
-                // openSearch();
-                break;
             case R.id.action_create_new_shoplist:
                 showNewShopListNameDialog();
                 break;
