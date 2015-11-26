@@ -192,7 +192,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                     deleteShopList();
                     break;
                 case R.id.id_menu_add_product:
-                    // Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
+                    Log.v(MainActivity.TAG, "Adding a Product to ShopList " + user.getShopLists().get(groupPosition).getName());
                     openSearch();
                     break;
             }
@@ -234,8 +234,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         switch(item.getItemId()) {
             case R.id.action_search:
                 openSearch();
-                break;
-            case R.id.action_settings:
                 break;
             case R.id.action_create_new_shoplist:
                 showNewShopListNameDialog();
@@ -468,7 +466,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void openSearch() {
-        toolbar.setTitle("");
         searchBox.setVisibility(View.VISIBLE);
         searchBox.revealFromMenuItem(R.id.action_search, this);
         searchBox.setMenuListener(new SearchBox.MenuListener() {
@@ -483,7 +480,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onSearchOpened() {
                 // Use this to tint the screen
-                // Log.v(MainActivity.TAG, "Search Opened.");
+                Log.v(MainActivity.TAG, "Search Opened.");
             }
 
             @Override
@@ -525,7 +522,6 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
                     closeSearch();
             }
         });
-        searchBox.requestFocus();
     }
 
     protected void closeSearch() {
