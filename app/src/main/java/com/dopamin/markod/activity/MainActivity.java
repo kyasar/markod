@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -448,6 +449,19 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 Log.v(TAG, "MarketSelectActivity is started. OK.");
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.v(MainActivity.TAG, "Back pressed !");
+            if (searchBox.getSearchOpen()) {
+                closeSearch();
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
