@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -236,10 +237,15 @@ public class AddProductActivity extends AppCompatActivity implements
             startActivityForResult(intent, MainActivity.BARCODE_REQUEST);
         }
         else if (view.getId() == R.id.id_take_photo) {
-            Log.v(MainActivity.TAG, "Taking photo..");
+            if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                Log.v(MainActivity.TAG, "Taking photo..");
 
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, MainActivity.CAMERA_REQUEST);
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, MainActivity.CAMERA_REQUEST);
+            } else {
+                Log.e(MainActivity.TAG, "Your device does not have a camera, sorry :(");
+                snackIt(getResources().getString(R.string.str_no_camera));
+            }
         }
         else if (view.getId() == R.id.id_btn_sendProduct) {
             sendJSONObjectRequest();

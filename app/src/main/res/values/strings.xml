@@ -160,4 +160,5 @@
     <string name="str_menu_product_reprice">Update the price</string>
     <string name="str_menu_remove_product">Remove</string>
     <string name="str_you_are_here">You are here</string>
+    <string name="str_no_camera">No Camera found !</string>
 </resources>
