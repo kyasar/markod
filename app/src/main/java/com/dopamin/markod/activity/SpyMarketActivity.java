@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
@@ -360,8 +361,13 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 					showAlertDialog(product);
 				} else {
 					// Scan Bar Code
-					Intent intent = new Intent(this, SimpleScannerActivity.class);
-					startActivityForResult(intent, MainActivity.BARCODE_REQUEST);
+					if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+						Intent intent = new Intent(this, SimpleScannerActivity.class);
+						startActivityForResult(intent, MainActivity.BARCODE_REQUEST);
+					} else {
+						Log.e(MainActivity.TAG, "Your device does not have a camera, sorry :(");
+						// snackIt(getResources().getString(R.string.str_no_camera));
+					}
 				}
 				break;
 
