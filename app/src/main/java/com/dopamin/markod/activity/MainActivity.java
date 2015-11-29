@@ -558,6 +558,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             public void onSearchCleared() {
                 Log.v(MainActivity.TAG, "Search Cleared.");
                 //Called when the clear button is clicked
+                searchBox.setSearchString("");
             }
 
             @Override
