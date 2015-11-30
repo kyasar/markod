@@ -537,7 +537,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             @Override
             public void onSearchClosed() {
                 //Use this to un-tint the screen
-                Log.v(MainActivity.TAG, "Search Closed.");
+                //Log.v(MainActivity.TAG, "Search Closed.");
                 searchBox.clearResults();
                 if (searchBox.isSearchOpen())
                     closeSearch();
@@ -551,12 +551,12 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
             @Override
             public void onSearch(String searchTerm) {
-                Log.v(MainActivity.TAG, "Search DONE.");
+                //Log.v(MainActivity.TAG, "Search DONE.");
             }
 
             @Override
             public void onSearchCleared() {
-                Log.v(MainActivity.TAG, "Search Cleared.");
+                //Log.v(MainActivity.TAG, "Search Cleared.");
                 //Called when the clear button is clicked
                 searchBox.setSearchString("");
             }

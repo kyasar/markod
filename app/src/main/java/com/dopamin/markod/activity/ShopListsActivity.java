@@ -479,8 +479,8 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
         return false;
     }
 
-    public void openSearch() {
-        Log.v(MainActivity.TAG, " openSearch().");
+    public void openSearch()
+    {
         searchBox.setVisibility(View.VISIBLE);
         searchBox.revealFromMenuItem(R.id.action_create_new_shoplist, this);
         searchBox.setMenuListener(new SearchBox.MenuListener() {
@@ -515,13 +515,14 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onSearch(String searchTerm) {
-                Log.v(MainActivity.TAG, "Search DONE.");
+                //Log.v(MainActivity.TAG, "Search DONE.");
             }
 
             @Override
             public void onSearchCleared() {
                 // Log.v(MainActivity.TAG, "Search Cleared.");
                 // Called when the clear button is clicked
+                searchBox.setSearchString("");
             }
 
             @Override
