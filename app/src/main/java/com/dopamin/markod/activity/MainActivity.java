@@ -239,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
                 return true;
 
             case R.id.action_search:
-                Log.v(MainActivity.TAG, "Search clicked.");
                 openSearch();
                 //startActivity(new Intent(this, SearchRevealActivity.class));
                 break;
@@ -442,11 +441,9 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             if (user == null) {
                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                 startActivityForResult(intent, LOGIN_FOR_SPY_REQUESTCODE);
-                Log.v(TAG, "LoginActivity is started. OK.");
             } else {
                 Intent intent = new Intent(getBaseContext(), MarketSelectActivity.class);
                 startActivityForResult(intent, SELECT_MARKET_REQUESTCODE);
-                Log.v(TAG, "MarketSelectActivity is started. OK.");
             }
         }
     }
@@ -454,7 +451,6 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.v(MainActivity.TAG, "Back pressed !");
             if (searchBox.getSearchOpen()) {
                 closeSearch();
                 return true;
@@ -531,7 +527,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
             @Override
             public void onSearchOpened() {
                 //Use this to tint the screen
-                Log.v(MainActivity.TAG, "Search Opened.");
+                //Log.v(MainActivity.TAG, "Search Opened.");
             }
 
             @Override
