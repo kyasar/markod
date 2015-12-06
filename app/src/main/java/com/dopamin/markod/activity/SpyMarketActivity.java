@@ -120,6 +120,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 		if (market != null && user != null) {
 			getSupportActionBar().setTitle(market.getName());
+			// Log.v(MainActivity.TAG, "MArket geo location: " + market.getGeoCoordinates());
 		} else {
 			Toast.makeText(this, "No Market or User defined !!", Toast.LENGTH_SHORT).show();
 			Log.e(MainActivity.TAG, "Fatal Error. No Market or User defined !!");
@@ -293,7 +294,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 		JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, marketURL + tm.getCurrentToken()
 				+ "&api_key=" + MainActivity.MDS_API_KEY,
-				gson.toJson(market), new Response.Listener<JSONObject>() {
+				gson.toJson(market.createJSON_AssocProducts()), new Response.Listener<JSONObject>() {
 			@Override
 			public void onResponse(JSONObject response) {
 
