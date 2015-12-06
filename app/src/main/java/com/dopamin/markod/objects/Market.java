@@ -1,13 +1,10 @@
 package com.dopamin.markod.objects;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.Serializable;
-import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class Market implements Parcelable {
     private Integer missing;
     private List<Product> products;
     private MarkerOptions markerOptions;
-    private String geoCoordinates;
+    private String loc;
 
     public Market(String place_name, String id, String vicinity, String reference) {
         this.name = place_name;
@@ -48,15 +45,15 @@ public class Market implements Parcelable {
         this.userID = parcel.readString();
         this.products = parcel.readArrayList(Product.class.getClassLoader()); // be careful, Product type is parcelable?
         this.markerOptions = parcel.readParcelable(MarkerOptions.class.getClassLoader());
-        this.geoCoordinates = parcel.readString();
+        this.loc = parcel.readString();
     }
 
-    public String getGeoCoordinates() {
-        return geoCoordinates;
+    public String getLoc() {
+        return loc;
     }
 
-    public void setGeoCoordinates(String geoCoordinates) {
-        this.geoCoordinates = geoCoordinates;
+    public void setLoc(String loc) {
+        this.loc = loc;
     }
 
     public int getMissing() {
@@ -79,7 +76,7 @@ public class Market implements Parcelable {
 
     public void setMarkerOptions(MarkerOptions markerOptions) {
         this.markerOptions = markerOptions;
-        this.geoCoordinates = markerOptions.getPosition().toString();
+        this.loc = markerOptions.getPosition().toString();
     }
 
     public String getReference() {
@@ -192,7 +189,7 @@ public class Market implements Parcelable {
         parcel.writeString(userID);
         parcel.writeList(products);
         parcel.writeParcelable(markerOptions, i);
-        parcel.writeString(geoCoordinates);
+        parcel.writeString(loc);
     }
 
     public static final Parcelable.Creator<Market> CREATOR = new Parcelable.Creator<Market>() {
@@ -231,7 +228,7 @@ public class Market implements Parcelable {
         market.setVicinity(this.vicinity);
         market.setProducts(removeNames(this.products));
         market.setUserID(this.userID);
-        market.setGeoCoordinates(this.geoCoordinates);
+        market.setLoc(this.loc);
         return market;
     }
 

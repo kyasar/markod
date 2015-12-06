@@ -120,7 +120,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 		if (market != null && user != null) {
 			getSupportActionBar().setTitle(market.getName());
-			// Log.v(MainActivity.TAG, "MArket geo location: " + market.getGeoCoordinates());
+			// Log.v(MainActivity.TAG, "Market geo location: " + market.getLoc());
 		} else {
 			Toast.makeText(this, "No Market or User defined !!", Toast.LENGTH_SHORT).show();
 			Log.e(MainActivity.TAG, "Fatal Error. No Market or User defined !!");

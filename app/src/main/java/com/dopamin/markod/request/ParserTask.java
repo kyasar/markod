@@ -4,11 +4,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.dopamin.markod.PlaceJSONParser;
-import com.dopamin.markod.R;
 import com.dopamin.markod.objects.Market;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONObject;
@@ -86,7 +83,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
             //This will be displayed on taping the marker
             markerOptions.title(name + " : " + vicinity);
             m.setMarkerOptions(markerOptions);
-            m.setGeoCoordinates(markerOptions.getPosition().latitude + "," + markerOptions.getPosition().longitude);
+            m.setLoc(markerOptions.getPosition().latitude + "," + markerOptions.getPosition().longitude);
 
             nearbyMarkets.add(m);
         }
