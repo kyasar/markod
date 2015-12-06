@@ -86,6 +86,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
             //This will be displayed on taping the marker
             markerOptions.title(name + " : " + vicinity);
             m.setMarkerOptions(markerOptions);
+            m.setGeoCoordinates(markerOptions.getPosition().latitude + "," + markerOptions.getPosition().longitude);
 
             nearbyMarkets.add(m);
         }
