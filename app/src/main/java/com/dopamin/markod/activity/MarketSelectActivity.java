@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dopamin.markod.R;
 import com.dopamin.markod.adapter.*;
@@ -147,8 +148,18 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
             }
         });
 
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+           @Override
+           public boolean onMarkerClick(Marker arg0) {
+               //Toast.makeText(MarketSelectActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();
+               arg0.showInfoWindow();
+               return true;
+           }
+        });
+
 		/* Alert Dialog setting for Selecting the Market from listview */
-        builder = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+                builder = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
         builder.setPositiveButton(getResources().getString(R.string.str_yes), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {

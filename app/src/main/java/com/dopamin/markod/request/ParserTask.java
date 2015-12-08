@@ -81,7 +81,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,S
 
             // Setting the title for the marker.
             //This will be displayed on taping the marker
-            markerOptions.title(name + " : " + vicinity);
+            markerOptions.title(name);
             m.setMarkerOptions(markerOptions);
             m.setLoc(markerOptions.getPosition().longitude  + "," + markerOptions.getPosition().latitude);
 
