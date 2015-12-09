@@ -125,12 +125,23 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
             @Override
             public void onInfoWindowClick(Marker arg0) {
                 Log.v(MainActivity.TAG, "onInfoWindowClick Listener is invoked.");
-                Intent intent = new Intent(getBaseContext(), PlaceDetailsActivity.class);
+                //Intent intent = new Intent(getBaseContext(), PlaceDetailsActivity.class);
                 String reference = mMarkerPlaceLink.get(arg0.getId());
-                intent.putExtra("reference", reference);
+                Market m = findMarketbyReference(reference);
+                if (m != null) {
+                    selectedMarketName = m.getName();
+                    Log.v(MainActivity.TAG, "Listview item is clicked (" + selectedMarketName + "). OK.");
+
+                    builder.setMessage(R.string.select_this_market);
+                    builder.setTitle(selectedMarketName);
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                //intent.putExtra("reference", reference);
 
                 // Starting the Place Details Activity
-                startActivity(intent);
+                //startActivity(intent);
             }
         });
 
@@ -355,6 +366,15 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
             Marker marker = googleMap.addMarker(m.getMarkerOptions());
             mMarkerPlaceLink.put(marker.getId(), m.getReference());
         }
+    }
+
+    private Market findMarketbyReference(String reference) {
+        for (Market m : nearbyMarkets) {
+            if (m.getReference().equals(reference)) {
+                return m;
+            }
+        }
+        return null;
     }
 
     @Override
