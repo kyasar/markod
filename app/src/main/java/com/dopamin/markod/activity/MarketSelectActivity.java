@@ -132,11 +132,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
                     selectedMarketName = m.getName();
                     Log.v(MainActivity.TAG, "Listview item is clicked (" + selectedMarketName + "). OK.");
 
-                    builder.setMessage(R.string.select_this_market);
-                    builder.setTitle(selectedMarketName);
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    showSelectMarketDialog(selectedMarketName);
                 }
                 //intent.putExtra("reference", reference);
 
@@ -177,16 +173,10 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
                 // Do nothing but close the dialog
                 Log.v(MainActivity.TAG, "Market Selected.");
 
-                Market market = null;
-
-                for (int i=0; i < nearbyMarkets.size(); i++) {
-                    // Getting a place from the places list
-                    market = nearbyMarkets.get(i);
-
-                    if (market.getName().equals(selectedMarketName)) {
-                        break;
-                    }
-                }
+                /*
+                Market name is selected on listview item clicked
+                 */
+                Market market = findMarketbyName(selectedMarketName);
 
                 if (market != null) {
                     Intent output = new Intent();
@@ -222,11 +212,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
                 selectedMarketName = ((TextView) view.findViewById(R.id.place_name)).getText().toString();
                 Log.v(MainActivity.TAG, "Listview item is clicked (" + selectedMarketName + "). OK.");
 
-                builder.setMessage(R.string.select_this_market);
-                builder.setTitle(selectedMarketName);
-
-                AlertDialog alert = builder.create();
-                alert.show();
+                showSelectMarketDialog(selectedMarketName);
             }
         });
 
@@ -377,6 +363,15 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
         return null;
     }
 
+    private Market findMarketbyName(String name) {
+        for (Market m : nearbyMarkets) {
+            if (m.getName().equals(name)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
@@ -423,5 +418,14 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
         ft.commit();
         //mapFragment.getView().setVisibility(View.VISIBLE);
         return false;
+    }
+
+    private void showSelectMarketDialog(String marketName)
+    {
+        builder.setMessage(R.string.select_this_market);
+        builder.setTitle(marketName);
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
