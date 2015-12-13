@@ -77,57 +77,50 @@
 
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_margin="10dp"
+    <ScrollView
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TableLayout
-            android:id="@+id/tableLayout1"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="1" >
-
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="10dip" >
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/id_btn_shoplists"
-                android:layout_width="0dp"
+                style="@style/MarkodButton"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:drawableTop="@drawable/ico_detective"
+                android:drawableLeft="@drawable/ico_checklist"
                 android:text="@string/str_btn_shoplists" />
 
             <Button
                 android:id="@+id/id_catalog"
-                android:layout_width="0dp"
+                style="@style/MarkodButton"
+                android:layout_marginTop="8dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:drawableTop="@drawable/ico_detective"
+                android:drawableLeft="@drawable/ico_catalog_or_news"
                 android:text="@string/str_btn_catalog" />
-        </TableRow>
 
-    </TableLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_margin="8dp"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:textSize="20sp"
             facebook:com_facebook_login_text="Facebook Login"
             facebook:com_facebook_logout_text="Facebook Logout" />
@@ -138,7 +131,9 @@
             android:text="@string/str_btn_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             custom:pb_colorComplete="@color/green_complete"
             custom:pb_colorNormal="@color/blue_normal"
@@ -148,6 +143,6 @@
             custom:pb_textProgress="Loading"
             custom:pb_textError="Error"
             custom:pb_colorError="@color/red_error" />
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
