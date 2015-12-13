@@ -79,6 +79,27 @@
         </LinearLayout>
     </LinearLayout>
 
+    <FrameLayout
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/gray" />
+        <TextView
+            android:layout_gravity="center"
+            android:text="MENU"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/markod_bg_color"/>
+    </FrameLayout>
+
     <ScrollView
         android:layout_weight="1"
         android:layout_width="match_parent"
@@ -112,13 +133,37 @@
 
     <FrameLayout
         android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/gray" />
+        <TextView
+            android:layout_gravity="center"
+            android:text="@string/str_btn_logout"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/markod_bg_color"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="16dp"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
