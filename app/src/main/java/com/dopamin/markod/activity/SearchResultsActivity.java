@@ -373,7 +373,7 @@ public class SearchResultsActivity extends AppCompatActivity
             try {
                 m = scannedJSONMarkets.getJSONObject(i);
                 for(int j=0; j < nearbyMarkets.size(); j++) {
-                    if (nearbyMarkets.get(j).getId().equalsIgnoreCase(m.getString("id"))) {
+                    if (nearbyMarkets.get(j).getMaps_id().equalsIgnoreCase(m.getString("id"))) {
                         market = nearbyMarkets.get(j);
                         market.setProducts(jsonArrayToProductList(m.getJSONArray("products")));
                         market.calculateProductList();
@@ -424,7 +424,7 @@ public class SearchResultsActivity extends AppCompatActivity
         //DEBUG
         for (Market m : nearbyMarkets) {
             Log.v(MainActivity.TAG, "Market: " + m.getName()
-                    + " (" + m.getId() + ") has products.. Missing: " + m.getMissing()
+                    + " (" + m.getMaps_id() + ") has products.. Missing: " + m.getMissing()
                     + " Total Main: " + m.getpMain() + " Cent: " + m.getpCent());
             for (int i=0; i < m.getProducts().size(); i++) {
                 Log.v(MainActivity.TAG, "   #" + i + " Product price: "

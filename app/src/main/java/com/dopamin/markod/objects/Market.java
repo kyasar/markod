@@ -14,7 +14,8 @@ import java.util.List;
 public class Market implements Parcelable {
 
     private String name;
-    private String id;
+    private String maps_id;      // MAPS provider's ID
+    private String _id;     // ID provided by Our DB
     private String provider;
     private String vicinity;
     private String reference;
@@ -27,9 +28,9 @@ public class Market implements Parcelable {
     private MarkerOptions markerOptions;
     private String loc;
 
-    public Market(String place_name, String id, String vicinity, String reference) {
+    public Market(String place_name, String maps_id, String vicinity, String reference) {
         this.name = place_name;
-        this.id = id;
+        this.maps_id = maps_id;
         this.vicinity = vicinity;
         this.reference = reference;
         this.provider = "GOOGLE_MAPS";
@@ -38,7 +39,7 @@ public class Market implements Parcelable {
 
     public Market(Parcel parcel) {
         this.name = parcel.readString();
-        this.id = parcel.readString();
+        this.maps_id = parcel.readString();
         this.provider = parcel.readString();
         this.vicinity = parcel.readString();
         this.reference = parcel.readString();
@@ -95,12 +96,12 @@ public class Market implements Parcelable {
         this.name = place_name;
     }
 
-    public String getId() {
-        return this.id;
+    public String getMaps_id() {
+        return maps_id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMaps_id(String maps_id) {
+        this.maps_id = maps_id;
     }
 
     public String getProvider() {
@@ -182,7 +183,7 @@ public class Market implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
-        parcel.writeString(id);
+        parcel.writeString(maps_id);
         parcel.writeString(provider);
         parcel.writeString(vicinity);
         parcel.writeString(reference);
@@ -222,7 +223,7 @@ public class Market implements Parcelable {
 
     public Market createJSON_AssocProducts() {
         Market market = new Market();
-        market.setId(this.id);
+        market.setMaps_id(this.maps_id);
         market.setName(this.name);
         market.setProvider(this.provider);
         market.setVicinity(this.vicinity);
@@ -234,7 +235,7 @@ public class Market implements Parcelable {
 
     public Market createJSON_ScanMarket() {
         Market market = new Market();
-        market.setId(this.id);
+        market.setMaps_id(this.maps_id);
         return market;
     }
 }
