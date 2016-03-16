@@ -553,6 +553,4 @@ public class LoginActivity extends AppCompatActivity implements
     public void snackIt(String msg) {
         Snackbar.make(snackbarCoordinatorLayout, msg, Snackbar.LENGTH_LONG).show();
     }
-
-
 }
