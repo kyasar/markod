@@ -102,7 +102,7 @@
     <string name="str_yes">YES</string>
     <string name="str_no">NO</string>
     <string name="str_toast_product_already_added">Product is already added into the shoplist</string>
-    <string name="str_hint_add_new_shoplist">Your shoplists are empty\nUse Menu to create a new shoplist</string>
+    <string name="str_hint_add_new_shoplist">Your shoplists are empty\nUse + button to create a new shoplist</string>
     <string name="str_btn_save_changes">SAVE CHANGES</string>
     <string name="str_progress_saving_user_changes">Saving your changes..</string>
     <string name="str_toast_no_valid_user">No User profile found !!</string>
