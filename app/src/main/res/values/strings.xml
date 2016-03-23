@@ -161,4 +161,5 @@
     <string name="str_menu_remove_product">Remove</string>
     <string name="str_you_are_here">You are here</string>
     <string name="str_no_camera">No Camera found !</string>
+    <string name="str_no_search_results">No Result Found !</string>
 </resources>
