@@ -83,6 +83,7 @@ public class SearchResultsActivity extends AppCompatActivity
     private ListView lv_markets;
     private FrameLayout view_map_fragment;
     boolean fakeLocation = true;
+    private LinearLayout ll_no_result;
 
     private Toolbar toolbar;
 
@@ -111,6 +112,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         view_map_fragment = (FrameLayout) findViewById(R.id.id_fl_map);
         view_map_fragment.setVisibility(View.GONE);
+
+        ll_no_result = (LinearLayout) findViewById(R.id.id_ll_no_results);
 
         /* Nearby Markets loading progress */
         progressDialog = new ProgressDialog(this);
@@ -276,9 +279,11 @@ public class SearchResultsActivity extends AppCompatActivity
 
         if (location != null) {
             if (fakeLocation) {
+                Log.v(MainActivity.TAG, "Using fake location..");
                 latitude = 39.893621;	// My home, sweet home..
                 longitude = 32.801732;
             } else {
+                Log.v(MainActivity.TAG, "Using real location..");
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
             }
@@ -422,6 +427,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void printMarkets() {
         //DEBUG
+        if (nearbyMarkets == null)
+            return;
         for (Market m : nearbyMarkets) {
             Log.v(MainActivity.TAG, "Market: " + m.getName()
                     + " (" + m.getMaps_id() + ") has products.. Missing: " + m.getMissing()
@@ -467,14 +474,22 @@ public class SearchResultsActivity extends AppCompatActivity
                 try {
                     if (response.get("status").toString().equalsIgnoreCase("OK")) {
                         JSONArray jsonMarkets = (JSONArray) response.get("markets");
-                        parseScanMarketsRespond(jsonMarkets);
-                        printMarkets();
+                        if (jsonMarkets.length() > 0) {
+                            parseScanMarketsRespond(jsonMarkets);
+                            printMarkets();
 
-                        adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SCAN);
-                        lv_markets.setAdapter(adapter);
+                            adapter = new MarketListAdapter(getApplicationContext(), nearbyMarkets, MarketListAdapter.LIST_TYPE.MARKET_SCAN);
+                            lv_markets.setAdapter(adapter);
+
+                            ll_no_result.setVisibility(View.GONE);
+                        } else {
+                            Log.v(MainActivity.TAG, "No result found !");
+                            ll_no_result.setVisibility(View.VISIBLE);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    ll_no_result.setVisibility(View.VISIBLE);
                 }
 
                 progressDialog.dismiss();

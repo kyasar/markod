@@ -67,7 +67,7 @@ public class MarketSelectActivity extends AppCompatActivity implements LocationL
     private ProgressDialog progressDialog;
     private ListView lv_markets;
     private MarketListAdapter adapter;
-    boolean fakeLocation = false;
+    boolean fakeLocation = true;
 
     private Toolbar toolbar;
     private SearchView searchView;
