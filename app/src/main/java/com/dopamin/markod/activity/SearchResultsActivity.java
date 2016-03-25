@@ -82,8 +82,8 @@ public class SearchResultsActivity extends AppCompatActivity
     private List<Product> productSearchList;
     private ListView lv_markets;
     private FrameLayout view_map_fragment;
-    boolean fakeLocation = true;
     private LinearLayout ll_no_result;
+    boolean fakeLocation = false;
 
     private Toolbar toolbar;
 
