@@ -67,18 +67,24 @@
                 android:layout_width="fill_parent"
                 android:layout_height="120dp" />
 
-            <Button
-                android:id="@+id/id_btn_spy_market"
+            <RelativeLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="6dp"
-                android:drawableLeft="@drawable/ico_scan_market"
-                android:background="@drawable/btn_background"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="@string/str_btn_spy_market" />
+                android:layout_height="match_parent">
+                <Button
+                    android:id="@+id/id_btn_spy_market"
+                    android:layout_alignParentBottom="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:padding="6dp"
+                    android:drawableLeft="@drawable/ico_scan_market"
+                    android:background="@drawable/btn_background"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:text="@string/str_btn_spy_market" />
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>
