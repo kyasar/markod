@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
 
         ads_viewpager.setCycle(true);
         ads_viewpager.setSlideBorderMode(AutoScrollViewPager.SLIDE_BORDER_MODE_CYCLE);
-        ads_viewpager.setInterval(3000);
+        ads_viewpager.setInterval(5000);
         ads_viewpager.setScrollDurationFactor(2);
         ads_viewpager.startAutoScroll();
     }
