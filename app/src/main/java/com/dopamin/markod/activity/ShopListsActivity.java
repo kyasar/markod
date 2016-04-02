@@ -81,7 +81,7 @@ public class ShopListsActivity extends AppCompatActivity implements View.OnClick
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_SUCC_CODE = 700;
     public static int SHOPLIST_NAME_DIALOG_FRAGMENT_FAIL_CODE = 701;
 
-    String userUpdateURL = MainActivity.MDS_SERVER + "/mds/api/user-update/" + "?token=";
+    String userUpdateURL = MainActivity.MDS_SERVER + "/mds/api/users/update/" + "?token=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

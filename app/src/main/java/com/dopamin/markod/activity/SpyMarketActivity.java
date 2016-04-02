@@ -78,7 +78,7 @@ public class SpyMarketActivity extends AppCompatActivity implements OnClickListe
 
 	/* API socialLoginURL to retrieve info about a product with its unique BarCode number */
 	String productURL = MainActivity.MDS_SERVER + "/mds/api/products/";
-	String marketURL = MainActivity.MDS_SERVER + "/mds/api/market/" + "?token=";
+	String marketURL = MainActivity.MDS_SERVER + "/mds/api/markets/" + "?token=";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
